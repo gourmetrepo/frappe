@@ -24,7 +24,7 @@ PDF_CONTENT_ERRORS = ["ContentNotFoundError", "ContentOperationNotPermittedError
 def get_pdf(html, options=None, output=None):
 	html = scrub_urls(html)
 	html, options = prepare_options(html, options)
-
+	html = html.replace("<body>", "<body class='custom-body-width'>")
 	options.update({
 		"disable-javascript": "",
 		"disable-local-file-access": ""

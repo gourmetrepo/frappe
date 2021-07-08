@@ -220,8 +220,11 @@ export default class Grid {
 
 		this.truncate_rows(data);
 		this.grid_rows_by_docname = {};
+		let length = 250;
+		if(data.length < 250)
+			length = data.length;
 
-		for(var ri=0; ri < data.length; ri++) {
+		for(var ri=0; ri < length; ri++) {
 			var d = data[ri];
 
 			if(d.idx===undefined) {

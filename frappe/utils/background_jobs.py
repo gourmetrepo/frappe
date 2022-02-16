@@ -18,7 +18,8 @@ queue_timeout = {
 	'background': 2500,
 	'long': 1500,
 	'default': 300,
-	'short': 300
+	'short': 300,
+    'sales': 1500
 }
 
 redis_connection = None

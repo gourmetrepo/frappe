@@ -240,7 +240,7 @@ class MariaDBDatabase(Database):
 			column_key = 'MUL' as 'index',
 			column_key = 'UNI' as 'unique'
 			from information_schema.columns
-			where table_name = '{table_name}' '''.format(table_name=table_name), as_dict=1)
+			where table_name = '{table_name}' and table_schema = '{db_name}' '''.format(table_name=table_name,db_name=self.db_name), as_dict=1)
 
 	def has_index(self, table_name, index_name):
 		return self.sql("""SHOW INDEX FROM `{table_name}`

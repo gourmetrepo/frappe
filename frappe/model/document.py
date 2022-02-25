@@ -1199,7 +1199,7 @@ class Document(BaseDocument):
 
 		return self.get('__onload')[key]
 
-	def queue_action(self, action, **kwargs):
+	def queue_action(self, action,queue_name="default", **kwargs):
 		'''Run an action in background. If the action has an inner function,
 		like _submit for submit, it will call that instead'''
 		# call _submit instead of submit, so you can override submit to call
@@ -1213,7 +1213,7 @@ class Document(BaseDocument):
 				title=_('Document Queued'))
 
 		self.lock()
-		enqueue('frappe.model.document.execute_action', doctype=self.doctype, name=self.name,
+		enqueue('frappe.model.document.execute_action', doctype=self.doctype, name=self.name,queue=queue_name,
 			action=action, **kwargs)
 
 	def lock(self, timeout=None):

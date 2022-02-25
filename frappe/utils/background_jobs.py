@@ -20,7 +20,8 @@ queue_timeout = {
 	'default': 300,
 	'short': 300,
     'sales':1500,
-    'se_gl_queue': 1500
+    'se_gl_queue': 1500,
+    'dn_queue': 300
 }
 
 redis_connection = None

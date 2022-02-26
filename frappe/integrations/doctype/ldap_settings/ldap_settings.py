@@ -162,7 +162,9 @@ class LDAPSettings(Document):
 			user = conn.entries[0]
 			# only try and connect as the user, once we have their fqdn entry.
 			self.connect_to_ldap(base_dn=user.entry_dn, password=password)
-
+			is_enabled = frappe.get_value('User',{'username':user.username},'enabled')
+			if is_enabled != 1:
+				frappe.throw(_("Your login is disabled, Please contact administrator"))
 			groups = None
 			if self.ldap_group_field:
 				groups = getattr(user, self.ldap_group_field).values

@@ -1277,4 +1277,7 @@ def execute_action(doctype, name, action, **kwargs):
 			msg = '<pre><code>' + frappe.get_traceback() + '</pre></code>'
 
 		doc.add_comment('Comment', _('Action Failed') + '<br><br>' + msg)
+		if doctype == 'Delivery Note':
+			frappe.db.sql("UPDATE `tabDelivery Note` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
+			frappe.db.commit()
 		doc.notify_update()

@@ -7,7 +7,6 @@ frappe.provide('frappe.query_reports');
 
 frappe.standard_pages['query-report'] = function() {
 	var wrapper = frappe.container.add_page('query-report');
-
 	frappe.ui.make_app_page({
 		parent: wrapper,
 		title: __('Query Report'),
@@ -191,7 +190,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	setup_progress_bar() {
 		let seconds_elapsed = 0;
 		const execution_time = this.report_settings.execution_time || 0;
-
 		if (execution_time < 5) return;
 
 		this.interval = setInterval(function()  {
@@ -312,11 +310,22 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			});
 		}).then(r => {
 			let data = r.message;
+
 			this.hide_status();
 			clearInterval(this.interval);
-
+			let custom_message = ''
 			this.execution_time = data.execution_time || 0.1;
-
+			custom_message = data.message
+			if(custom_message !== ''){
+				let page_form = this.page.main.find('.form-inner-toolbar');
+				this.$status = $(`<div class="custom_message" style='    display: block;
+				font-size: 13px;				
+				padding: 5px;
+				text-align: justify;
+			}'><b style='color: red'>Note::</b> ${custom_message}</div>`)
+				.show().insertBefore(page_form);
+			}
+			
 			if (data.prepared_report) {
 				this.prepared_report = true;
 				// If query_string contains prepared_report_name then set filters
@@ -1368,7 +1377,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 
 		let page_form = this.page.main.find('.page-form');
 		this.$status = $(`<div class="form-message text-muted small"></div>`)
-			.hide().insertAfter(page_form);
+			.show().insertAfter(page_form);
 
 		this.$chart = $('<div class="chart-wrapper">').hide().appendTo(this.page.main);
 		this.$report = $('<div class="report-wrapper">').appendTo(this.page.main);

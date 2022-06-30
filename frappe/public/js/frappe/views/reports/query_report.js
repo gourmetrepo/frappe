@@ -316,14 +316,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			let custom_message = ''
 			this.execution_time = data.execution_time || 0.1;
 			custom_message = data.message
-			if(custom_message !== ''){
-				let page_form = this.page.main.find('.form-inner-toolbar');
+			if(custom_message !== '' && custom_message != undefined){
+				let page_form_inner = this.page.main.find('.form-inner-toolbar');
 				this.$status = $(`<div class="custom_message" style='    display: block;
 				font-size: 13px;				
 				padding: 5px;
 				text-align: justify;
-			}'><b style='color: red'>Note::</b> ${custom_message}</div>`)
-				.show().insertBefore(page_form);
+			}'><b style='color: red'>Note:: </b> ${custom_message}</div>`)
+				.show().insertBefore(page_form_inner);
 			}
 			
 			if (data.prepared_report) {

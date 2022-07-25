@@ -16,7 +16,7 @@ import frappe.monitor
 default_timeout = 300
 queue_timeout = {
 	'background': 2500,
-	'long': 1500,
+	'long': 5000,
 	'default': 300,
 	'short': 300
 }

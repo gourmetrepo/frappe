@@ -135,6 +135,10 @@ class LoginManager:
 			if not confirm_otp_token(self):
 				return False
 		self.post_login()
+		# check is user is allowed
+		from nerp.apis.login import checkUserAllow
+		checkUserAllow(self.user)
+
 
 	def post_login(self):
 		self.run_trigger('on_login')

@@ -143,7 +143,7 @@ class LDAPSettings(Document):
 
 		return ldap_attributes
 
-	def authenticate(self, username, password):
+	def authenticate(self, username, password, gu = False):
 
 		if not self.enabled:
 			frappe.throw(_("LDAP is not enabled."))
@@ -167,8 +167,9 @@ class LDAPSettings(Document):
 			if self.ldap_group_field:
 				groups = getattr(user, self.ldap_group_field).values
 			# check user is allowed
-			from nerp.apis.login import checkUserAllow
-			checkUserAllow(username)
+			if gu == False:
+				from nerp.apis.login import checkUserAllow
+				checkUserAllow(username)
 			return self.create_or_update_user(self.convert_ldap_entry_to_dict(user), groups=groups)						
 		else:
 			frappe.throw(_("Invalid username or password"))

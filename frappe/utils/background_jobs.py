@@ -19,9 +19,14 @@ queue_timeout = {
 	'long': 1500,
 	'default': 300,
 	'short': 300,
-    'sales':1500,
-    'se_gl_queue': 1500,
-    'dn_queue': 300
+    'si_primary': 500,
+	'si_secondary': 500,
+    'gl': 1500,
+    'dn_primary': 300,
+	'dn_secondary': 300,
+	'return':300,
+	'slu':500,
+	'sync':1500,
 }
 
 redis_connection = None

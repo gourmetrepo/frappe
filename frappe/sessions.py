@@ -177,13 +177,15 @@ def generate_csrf_token():
 		user=frappe.session.user, after_commit=True)
 
 class Session:
-	def __init__(self, user, resume=False, full_name=None, user_type=None):
+	def __init__(self, user, resume=False, full_name=None, user_type=None, company=None):
 		self.sid = cstr(frappe.form_dict.get('sid') or
 			unquote(frappe.request.cookies.get('sid', 'Guest')))
 		self.user = user
 		self.device = frappe.form_dict.get("device") or "desktop"
 		self.user_type = user_type
 		self.full_name = full_name
+		## add new company param
+		self.company = company
 		self.data = frappe._dict({'data': frappe._dict({})})
 		self.time_diff = None
 
@@ -206,6 +208,8 @@ class Session:
 			sid = frappe.generate_hash()
 
 		self.data.user = self.user
+		## Assign company param
+		self.data.company = self.company
 		self.data.sid = sid
 		self.data.data.user = self.user
 		self.data.data.session_ip = frappe.local.request_ip
@@ -215,6 +219,7 @@ class Session:
 				"session_expiry": get_expiry_period(self.device),
 				"full_name": self.full_name,
 				"user_type": self.user_type,
+				"company":self.company,
 				"device": self.device,
 				"session_country": get_geo_ip_country(frappe.local.request_ip) if frappe.local.request_ip else None,
 			})

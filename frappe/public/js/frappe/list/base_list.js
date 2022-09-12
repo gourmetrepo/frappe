@@ -40,7 +40,7 @@ frappe.views.BaseList = class BaseList {
 		this.user_settings = frappe.get_user_settings(this.doctype);
 
 		this.start = 0;
-		this.page_length = 20;
+		this.page_length = 50;
 		this.data = [];
 		this.method = 'frappe.desk.reportview.get';
 
@@ -278,7 +278,7 @@ frappe.views.BaseList = class BaseList {
 	}
 
 	setup_paging_area() {
-		const paging_values = [20, 100, 500];
+		const paging_values = [50, 100, 500];
 		this.$paging_area = $(
 			`<div class="list-paging-area level">
 				<div class="level-left">

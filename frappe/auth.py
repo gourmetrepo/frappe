@@ -100,6 +100,7 @@ class LoginManager:
 		self.info = None
 		self.full_name = None
 		self.user_type = None
+		self.company = None
 
 		if frappe.local.form_dict.get('cmd')=='login' or frappe.local.request.path=="/api/method/login":
 			if self.login()==False: return
@@ -150,10 +151,13 @@ class LoginManager:
 
 	def get_user_info(self, resume=False):
 		self.info = frappe.db.get_value("User", self.user,
-			["user_type", "first_name", "last_name", "user_image"], as_dict=1)
-
+			["user_type", "first_name", "last_name", "user_image","username"], as_dict=1)
+		if self.info.get('username'):
+			company = frappe.db.get_value("Employee", self.info.username, ["company"], as_dict=1)
 		self.user_type = self.info.user_type
-
+		if company:
+			self.company = company.get('company')
+			print(self)
 	def set_user_info(self, resume=False):
 		# set sid again
 		frappe.local.cookie_manager.init_cookies()
@@ -184,12 +188,13 @@ class LoginManager:
 
 		frappe.local.cookie_manager.set_cookie("full_name", self.full_name)
 		frappe.local.cookie_manager.set_cookie("user_id", self.user)
+		frappe.local.cookie_manager.set_cookie("company", self.company)
 		frappe.local.cookie_manager.set_cookie("user_image", self.info.user_image or "")
 
 	def make_session(self, resume=False):
 		# start session
 		frappe.local.session_obj = Session(user=self.user, resume=resume,
-			full_name=self.full_name, user_type=self.user_type)
+			full_name=self.full_name, user_type=self.user_type,company=self.company)
 
 		# reset user if changed to Guest
 		self.user = frappe.local.session_obj.user

@@ -1209,6 +1209,7 @@ class Document(BaseDocument):
 			action = '_' + action
 
 		if file_lock.lock_exists(self.get_signature()):
+			self.unlock()
 			frappe.throw(_('This document is currently queued for execution. Please try again'),
 				title=_('Document Queued'))
 

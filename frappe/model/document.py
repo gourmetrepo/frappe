@@ -1210,8 +1210,10 @@ class Document(BaseDocument):
 
 		if file_lock.lock_exists(self.get_signature()):
 			self.unlock()
-			frappe.throw(_('This document is currently queued for execution. Please try again'),
-				title=_('Document Queued'))
+			self.reload()
+			# frappe.throw(_('This document is currently queued for execution. Please try again'),
+			# 	title=_('Document Queued'))
+			
 
 		self.lock()
 		enqueue('frappe.model.document.execute_action', doctype=self.doctype, name=self.name,queue=queue_name,

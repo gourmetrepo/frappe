@@ -197,25 +197,25 @@ scheduler_events = {
 		"frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.remove_unverified_record",
 		#"frappe.desk.form.document_follow.send_daily_updates",
 		"frappe.social.doctype.energy_point_settings.energy_point_settings.allocate_review_points",
-		"frappe.integrations.doctype.google_contacts.google_contacts.sync",
+		#"frappe.integrations.doctype.google_contacts.google_contacts.sync",
 		"frappe.automation.doctype.auto_repeat.auto_repeat.make_auto_repeat_entry",
 		"frappe.automation.doctype.auto_repeat.auto_repeat.set_auto_repeat_as_completed",
 		"frappe.email.doctype.unhandled_email.unhandled_email.remove_old_unhandled_emails",
 		"frappe.core.doctype.prepared_report.prepared_report.delete_expired_prepared_reports"
 	],
 	"daily_long": [
-		"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_daily",
-		"frappe.utils.change_log.check_for_update",
-		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_daily",
-		"frappe.integrations.doctype.google_drive.google_drive.daily_backup",
+		#"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_daily",
+		#"frappe.utils.change_log.check_for_update",
+		#"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_daily",
+		#"frappe.integrations.doctype.google_drive.google_drive.daily_backup",
         "frappe.desk.doctype.route_history.route_history.flush_old_route_records", #shift from weekly long to daily long
 	],
 	"weekly_long": [
 		#"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_weekly",
-		"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_weekly",
+		#"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_weekly",
 		#"frappe.desk.doctype.route_history.route_history.flush_old_route_records",
 		#"frappe.desk.form.document_follow.send_weekly_updates",
-		"frappe.social.doctype.energy_point_log.energy_point_log.send_weekly_summary",
+		#"frappe.social.doctype.energy_point_log.energy_point_log.send_weekly_summary",
 		#"frappe.integrations.doctype.google_drive.google_drive.weekly_backup",
         "frappe.core.doctype.error_log.error_log.set_old_logs_as_seen", # shift from daily to weekly long
 	],

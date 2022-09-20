@@ -25,7 +25,8 @@ queue_timeout = {
     'dn_primary': 300,
 	'dn_secondary': 300,
 	'return':300,
-	'slu':500,
+	'slu_primary':300,
+	'slu_secondary':300,
 	'sync':1500,
 }
 

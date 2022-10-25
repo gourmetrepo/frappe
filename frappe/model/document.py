@@ -1283,4 +1283,7 @@ def execute_action(doctype, name, action, **kwargs):
 		if doctype == 'Delivery Note':
 			frappe.db.sql("UPDATE `tabDelivery Note` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
 			frappe.db.commit()
+		if doctype == 'Stock Entry':
+			frappe.db.sql("UPDATE `tabStock Entry` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
+			frappe.db.commit()
 		doc.notify_update()

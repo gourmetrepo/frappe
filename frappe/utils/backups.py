@@ -174,7 +174,7 @@ class BackupGenerator:
 		args = dict([item[0], frappe.utils.esc(str(item[1]), '$ ')]
 			for item in self.__dict__.copy().items())
 
-		cmd_string = """mysqldump --single-transaction --quick --lock-tables=false -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
+		cmd_string = """mysqldump --single-transaction --quick --lock-tables=false --add-locks --skip-comments -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
 
 		if self.db_type == 'postgres':
 			cmd_string = "pg_dump postgres://{user}:{password}@{db_host}:{db_port}/{db_name} | gzip > {backup_path_db}".format(

@@ -13,10 +13,10 @@ import frappe.monitor
 
 # imports - third-party imports
 
-default_timeout = 300
+default_timeout = 700
 queue_timeout = {
-	'background': 2500,
-	'long': 1500,
+	'background': 10000,
+	'long': 3500,
 	'default': 300,
 	'short': 300,
     'si_primary': 500,

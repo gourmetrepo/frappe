@@ -3,7 +3,8 @@ frappe.listview_settings['Workflow Action'] = {
 		if (Object.values(frappe.route_options).length == 0){
 			frappe.route_options = {
 				"reference_doctype":["In",['Payment Order,Employee,Purchase Order,Expense Entry,Customer,Supplier,Item Daily Rate,Payment Entry,Journal Entry,Payment Advice,BOM']],
-				"user": frappe.session.user_email,
+				//"user": frappe.session.user_email,
+				"user": 'zubair@gourmetpakistan.com',
 				"creation":["Between",[frappe.datetime.add_days(frappe.datetime.get_today(), -31),frappe.datetime.get_today()]]
 			};
 		}

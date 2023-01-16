@@ -12,8 +12,7 @@ def get_notification_config():
 			"ToDo": "frappe.core.notifications.get_things_todo",
 			"Event": "frappe.core.notifications.get_todays_events",
 			"Error Snapshot": {"seen": 0, "parent_error_snapshot": None},
-			"Workflow Action": {"reference_doctype":["in",['Payment Order,Employee,Purchase Order,Expense Entry,Customer,Supplier,Item Daily Rate,Payment Entry,Journal Entry,Payment Advice,BOM']]}
-		},
+			"Workflow Action": {"user": 'zubair@gourmetpakistan.com'},
 	}
 
 def get_things_todo(as_list=False):

@@ -12,7 +12,9 @@ def get_notification_config():
 			"ToDo": "frappe.core.notifications.get_things_todo",
 			"Event": "frappe.core.notifications.get_todays_events",
 			"Error Snapshot": {"seen": 0, "parent_error_snapshot": None},
-			"Workflow Action": {"status": 'Open'}
+			"Workflow Action": {"status": 'Open',"reference_doctype":["in",['Payment Order,Employee,Purchase Order,Expense Entry,Customer,Supplier,Item Daily Rate,Payment Entry,Journal Entry,Payment Advice,BOM']],
+				"user": frappe.session.user_email,"creation":["Between",[frappe.datetime.add_days(frappe.datetime.get_today(), -10),frappe.datetime.get_today()]]
+}
 		},
 	}
 

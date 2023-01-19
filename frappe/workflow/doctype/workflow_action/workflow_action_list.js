@@ -20,7 +20,7 @@ frappe.listview_settings['Workflow Action'] = {
 							var data =""
 						
 						data += '<div class="row visible-section" style="border-bottom: 1px solid rgb(209, 216, 221);border-top: 1px solid rgb(209, 216, 221);padding: 1px 15px;  position:relative; margin-top: 5px; margin-left:0px; margin-right:0px">'	
-						data += '<p style="margin:0px;"><a class="section-head collapsed h6 uppercase" style="display:block;margin:0px;background-color: transparent;text-align: left;padding: 15px;color:#000;padding-right: 0;" data-toggle="collapse" href="#multiCollapseExample1">Open Purchase Order Wise Total Amount</a><span class="octicon collapse-indicator octicon-chevron-down" style="position:absolute;right:15px;top:15px;"></span></p>'
+						data += '<p style="margin:0px;border-bottom:1px solid;"><a class="section-head collapsed h6 uppercase" style="display:block;margin:0px;background-color: transparent;text-align: left;padding: 15px;color:#000;padding-right: 0;" data-toggle="collapse" href="#multiCollapseExample1">Open Purchase Order Wise Total Amount</a><span class="octicon collapse-indicator octicon-chevron-down" style="position:absolute;right:15px;top:15px;"></span></p>'
 						data += '<div class="collapse" id="multiCollapseExample1">'
 						data += '<div class="card card-body" >'
 

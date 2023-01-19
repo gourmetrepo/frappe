@@ -66,6 +66,6 @@ unittest-xml-reporting==3.0.4
 urllib3==1.26.4
 watchdog==2.0.2
 Werkzeug==0.16.1
-xlrd==2.2.0.1
+xlrd==2.0.1
 zxcvbn-python==4.4.24
 wrapt==1.13.2

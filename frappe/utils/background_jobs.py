@@ -21,7 +21,7 @@ queue_timeout = {
 	'short': 300,
     'si_primary': 500,
 	'si_secondary': 500,
-    'gl': 1500,
+    'gl': 3500,
     'dn_primary': 300,
 	'dn_secondary': 300,
 	'dn_tertiary': 300,

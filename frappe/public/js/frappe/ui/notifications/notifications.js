@@ -135,7 +135,7 @@ frappe.ui.Notifications = class Notifications {
 			: Object.keys(map).sort().filter(e => !excluded.includes(e));
 		keys.map(key => {
 			let doc_dt = map.doctypes ? map.doctypes[key] : undefined;
-			if (map[key] > 0 || target) {
+			if (map[key] >= 0 || target) {
 				this.add_open_document_html(key, map[key], doc_dt, target);
 				empty_map = 0;
 			}

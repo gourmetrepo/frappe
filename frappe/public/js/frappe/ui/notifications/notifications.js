@@ -107,7 +107,7 @@ frappe.ui.Notifications = class Notifications {
 
 	render_open_document_count() {
 		this.$open_docs.html('');
-		let defaults = ['ToDo'];
+		let defaults = ['ToDo','Workflow Action'];
 		this.get_counts(this.open_document_list['open_count_doctype'], 1, defaults);
 		let targets = { doctypes: {} },
 			map = this.open_document_list['targets'];

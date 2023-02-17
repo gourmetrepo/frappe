@@ -68,7 +68,7 @@ def get_notifications_for_doctypes(config, notification_count):
 				else:
 					open_count_doctype[d] = result
 					frappe.cache().hset("notification_count:" + d, frappe.session.user, result)
-
+	# frappe.cache().flushall()
 	return open_count_doctype
 
 def get_notifications_for_targets(config, notification_percent):
@@ -196,7 +196,7 @@ def get_notification_config():
 					else:
 						config[key].update(nc.get(key, {}))
 		return config
-
+	frappe.cache().delete_key("notification_config")
 	return frappe.cache().hget("notification_config", user, _get)
 
 def get_filters_for(doctype):

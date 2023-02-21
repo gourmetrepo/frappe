@@ -1373,14 +1373,16 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	setup_report_wrapper() {
-		if (this.$report) return;
-
+		let report_class_name = this.page_name.split("/");
+		report_class_name = report_class_name[1].toLowerCase()
+             .replace(/[^\w ]+/g, '')
+             .replace(/ +/g, '-');
 		let page_form = this.page.main.find('.page-form');
 		this.$status = $(`<div class="form-message text-muted small"></div>`)
 			.show().insertAfter(page_form);
-
+		
 		this.$chart = $('<div class="chart-wrapper">').hide().appendTo(this.page.main);
-		this.$report = $('<div class="report-wrapper">').appendTo(this.page.main);
+		this.$report = $(`<div class="report-wrapper ${report_class_name}">`).appendTo(this.page.main);
 		this.$message = $(this.message_div('')).hide().appendTo(this.page.main);
 	}
 

@@ -324,3 +324,7 @@ var continue_email = function(setup, prompt){
 		$('#otp_div').prepend(email_div);
 	}
 }
+	window.addEventListener("load", (event) => {
+	$('#login_email').focus()
+	$('#login_password').focus()
+  });

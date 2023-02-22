@@ -17,13 +17,22 @@ frappe.listview_settings['Workflow Action'] = {
 				callback: function(r) {
 					if (!r.exc) {
 						if (r.message.length > 0){
-							var data =""
-						data += '<div style="padding:10px 20px;">'
+						var data =""						
+						data += '<div class="row visible-section" style="border-bottom: 1px solid rgb(209, 216, 221);border-top: 1px solid rgb(209, 216, 221);padding: 1px 15px;  position:relative; margin-top: 5px; margin-left:0px; margin-right:0px">'	
+						data += '<p style="margin:0px;border-bottom:1px solid #d1d8dd;margin-bottom: 13px;"><a class="section-head collapsed h6 uppercase" style="display:block;margin:0px;background-color: transparent;text-align: left;padding: 15px;color:#000;padding-right: 0;" data-toggle="collapse" href="#multiCollapseExample1">Open Purchase Order Wise Total Amount</a><span class="octicon collapse-indicator octicon-chevron-down" style="position:absolute;right:15px;top:15px;"></span></p>'
+						data += '<div class="collapse" id="multiCollapseExample1">'
+						data += '<div class="card card-body" >'
+
 						$.each(r.message, function( index, value ) {
-							data += '<div class="inner-row"><div style="width:60px;font-weight:bold;display: inline-block;">'+value.company+' </div>' + '<span class="total"> '+value.total+'</span></div>' 
+							data += '<div class="inner-row col-lg-2 col-md-4 col-sm-6 text-center border-right" style="margin-bottom:20px;"><div style="width:60px;font-weight:bold;display: inline-block;">'+value.company+' </div>' + '</br><span class="total"> '+value.total+'</span></div>' 
 							// console.log( index + ": " + value.company );
 						  });
+
 						data += '</div">'
+						data += '</div>'  
+						data += '</div>'
+						data += '</div>'
+
 						$(data).insertBefore(".page-form");
 						}
 					}

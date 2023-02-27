@@ -75,6 +75,9 @@ def set_name_from_naming_options(autoname, doc):
 		doc.name = _format_autoname(autoname, doc)
 	elif "#" in autoname:
 		doc.name = make_autoname(autoname, doc=doc)
+	else:
+		import time
+		doc.name = str(time.time_ns())
 
 def set_name_by_naming_series(doc):
 	"""Sets name by the `naming_series` property"""
@@ -105,7 +108,9 @@ def make_autoname(key="", doctype="", doc=""):
 		   DE/09/01/0001 where 09 is the year, 01 is the month and 0001 is the series
 	"""
 	if key == "hash":
-		return frappe.generate_hash(doctype, 10)
+		# return frappe.generate_hash(doctype, 10)
+		import time
+		return str(time.time_ns())
 
 	if "#" not in key:
 		key = key + ".#####"

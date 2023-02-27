@@ -110,7 +110,7 @@ def make_autoname(key="", doctype="", doc=""):
 	if key == "hash":
 		# return frappe.generate_hash(doctype, 10)
 		import time
-		return time.time_ns()
+		return str(time.time_ns())
 
 	if "#" not in key:
 		key = key + ".#####"

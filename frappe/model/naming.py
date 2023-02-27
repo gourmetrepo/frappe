@@ -77,7 +77,7 @@ def set_name_from_naming_options(autoname, doc):
 		doc.name = make_autoname(autoname, doc=doc)
 	else:
 		import time
-		doc.name = time.time_ns()
+		doc.name = str(time.time_ns())
 
 def set_name_by_naming_series(doc):
 	"""Sets name by the `naming_series` property"""

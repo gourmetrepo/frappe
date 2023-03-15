@@ -119,19 +119,22 @@ def execute_job(site, method, event, job_name, kwargs, user=None, is_async=True,
 	except (frappe.db.InternalError, frappe.RetryBackgroundJobError) as e:
 		frappe.db.rollback()
 
-		if (retry < 5 and
-			(isinstance(e, frappe.RetryBackgroundJobError) or
-				(frappe.db.is_deadlocked(e) or frappe.db.is_timedout(e)))):
+		if (retry < 1 and isinstance(e, frappe.RetryBackgroundJobError)):
+			# or RetryBackgroundJobError is explicitly raised
+			frappe.destroy()
+			retry = retry + 1
+			time.sleep(retry*10)
+			log(method_name, message='Retry Bg = '+str(retry)+repr(locals()))
+			return execute_job(site, method, event, job_name, kwargs,is_async=is_async, retry=retry)
+		elif (retry < 5 and (frappe.db.is_deadlocked(e) or frappe.db.is_timedout(e))):
 			# retry the job if
 			# 1213 = deadlock
 			# 1205 = lock wait timeout
-			# or RetryBackgroundJobError is explicitly raised
+			retry = retry+1
 			frappe.destroy()
-			time.sleep(retry+1)
-
-			return execute_job(site, method, event, job_name, kwargs,
-				is_async=is_async, retry=retry+1)
-
+			time.sleep(retry*10)
+			log(method_name, message='Retry DL = '+str(retry)+repr(locals()))
+			return execute_job(site, method, event, job_name, kwargs,is_async=is_async, retry=retry)
 		else:
 			log(method_name, message=repr(locals()))
 			raise

@@ -175,6 +175,7 @@ def getseries(key, digits):
 
 
 def revert_series_if_last(key, name, doc=None):
+	pass # for update remove
 	"""
 	Reverts the series for particular naming series:
 	* key is naming series		- SINV-.YYYY-.####

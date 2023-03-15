@@ -124,7 +124,7 @@ def set_default(key, value, parent, parenttype="__default"):
 			`tabDefaultValue`
 		where
 			defkey=%s and parent=%s
-		for update''', (key, parent)):
+		''', (key, parent)): # for update remove
 		frappe.db.sql("""
 			delete from
 				`tabDefaultValue`

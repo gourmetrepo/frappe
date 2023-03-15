@@ -400,7 +400,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	render() {
 		this.render_list();
 		this.on_row_checked();
-		this.render_count();
+		// this.render_count();
 		this.render_tags();
 	}
 

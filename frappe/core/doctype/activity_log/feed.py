@@ -11,41 +11,41 @@ from six import string_types
 
 def update_feed(doc, method=None):
 	pass
-	if frappe.flags.in_patch or frappe.flags.in_install or frappe.flags.in_import:
-		return
+	# if frappe.flags.in_patch or frappe.flags.in_install or frappe.flags.in_import:
+	# 	return
 
-	if doc._action!="save" or doc.flags.ignore_feed:
-		return
+	# if doc._action!="save" or doc.flags.ignore_feed:
+	# 	return
 
-	if doc.doctype == "Activity Log" or doc.meta.issingle:
-		return
+	# if doc.doctype == "Activity Log" or doc.meta.issingle:
+	# 	return
 
-	if hasattr(doc, "get_feed"):
-		feed = doc.get_feed()
+	# if hasattr(doc, "get_feed"):
+	# 	feed = doc.get_feed()
 
-		if feed:
-			if isinstance(feed, string_types):
-				feed = {"subject": feed}
+	# 	if feed:
+	# 		if isinstance(feed, string_types):
+	# 			feed = {"subject": feed}
 
-			feed = frappe._dict(feed)
-			doctype = feed.doctype or doc.doctype
-			name = feed.name or doc.name
+	# 		feed = frappe._dict(feed)
+	# 		doctype = feed.doctype or doc.doctype
+	# 		name = feed.name or doc.name
 
-			# delete earlier feed
-			frappe.db.sql("""delete from `tabActivity Log`
-				where
-					reference_doctype=%s and reference_name=%s
-					and link_doctype=%s""", (doctype, name,feed.link_doctype))
-			frappe.get_doc({
-				"doctype": "Activity Log",
-				"reference_doctype": doctype,
-				"reference_name": name,
-				"subject": feed.subject,
-				"full_name": get_fullname(doc.owner),
-				"reference_owner": frappe.db.get_value(doctype, name, "owner"),
-				"link_doctype": feed.link_doctype,
-				"link_name": feed.link_name
-			}).insert(ignore_permissions=True)
+	# 		# delete earlier feed
+	# 		frappe.db.sql("""delete from `tabActivity Log`
+	# 			where
+	# 				reference_doctype=%s and reference_name=%s
+	# 				and link_doctype=%s""", (doctype, name,feed.link_doctype))
+	# 		frappe.get_doc({
+	# 			"doctype": "Activity Log",
+	# 			"reference_doctype": doctype,
+	# 			"reference_name": name,
+	# 			"subject": feed.subject,
+	# 			"full_name": get_fullname(doc.owner),
+	# 			"reference_owner": frappe.db.get_value(doctype, name, "owner"),
+	# 			"link_doctype": feed.link_doctype,
+	# 			"link_name": feed.link_name
+	# 		}).insert(ignore_permissions=True)
 
 def login_feed(login_manager):
 	if login_manager.user != "Guest":

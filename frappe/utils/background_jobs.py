@@ -33,6 +33,7 @@ queue_timeout = {
 	'return':300,
 	'slu_primary':300,
 	'slu_secondary':300,
+	'slu_tertiary':300,
 	'sync':1500,
 }
 

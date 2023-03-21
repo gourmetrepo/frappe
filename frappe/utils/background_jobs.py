@@ -35,6 +35,7 @@ queue_timeout = {
 	'slu_secondary':300,
 	'slu_tertiary':300,
 	'sync':1500,
+	'rms_push_queue':1500
 }
 
 redis_connection = None

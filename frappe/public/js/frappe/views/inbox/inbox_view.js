@@ -93,7 +93,7 @@ frappe.views.InboxView = class InboxView extends frappe.views.ListView {
 		this.render_header();
 		this.render_list();
 		this.on_row_checked();
-		this.render_count();
+		// this.render_count();
 		this.render_tags();
 	}
 

@@ -420,7 +420,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	render_count() {
-		if (!this.list_view_settings.disable_count) {
+		if (frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com') {
+			this.get_count_str().then(str => {
+				this.$result.find('.list-count').html(`<span>${str}</span>`);
+			});
+		}
+		else if(!this.list_view_settings.disable_count){
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);
 			});

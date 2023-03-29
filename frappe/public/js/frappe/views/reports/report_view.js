@@ -176,7 +176,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 
 	render(force) {
 		if (this.data.length === 0) return;
-		//this.render_count();
+		this.render_count();
 		this.setup_columns();
 
 		if (this.group_by) {

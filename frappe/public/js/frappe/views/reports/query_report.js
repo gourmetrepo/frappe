@@ -325,8 +325,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			'><b style='color: red'>Note:: </b> ${custom_message}</div>`)
 				.show().insertBefore(page_form_inner);
 			}
-			
-			if (data.prepared_report) {
+
+			if (data.prepared_report) {			
 				this.prepared_report = true;
 				// If query_string contains prepared_report_name then set filters
 				// to match the mentioned prepared report doc and disable editing

@@ -23,6 +23,7 @@ class PreparedReport(Document):
 
 	def enqueue_report(self):
 		enqueue(run_background, prepared_report=self.name, timeout=6000)
+		# run_background(prepared_report=self.name)
 
 
 
@@ -44,7 +45,10 @@ def run_background(prepared_report):
 			filters=instance.filters,
 			user=instance.owner
 		)
-		create_json_gz_file(result["result"], "Prepared Report", instance.name)
+		data = {}
+		data['result'] = result['result']
+		data['chart'] = result['chart']
+		create_json_gz_file( data ,"Prepared Report", instance.name)
 
 		instance.status = "Completed"
 		instance.columns = json.dumps(result["columns"])

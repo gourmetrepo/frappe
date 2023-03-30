@@ -420,7 +420,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	render_count() {
-		if (!this.list_view_settings.disable_count) {
+		if (frappe.session.user_email=='muhammadyasir@gourmetpakistan.com' || frappe.session.user_email=='muhammad.rauf@gourmetpakistan.com' || frappe.session.user_email=='anwar.haq@gourmetpakistan.com' || frappe.session.user_email=='khizer.shujra@gourmetpakistan.com' || frappe.session.user_email=='rizwan.ali@gourmetpakistan.com' || frappe.session.user_email=='administrator' || frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com') {
+			this.get_count_str().then(str => {
+				this.$result.find('.list-count').html(`<span>${str}</span>`);
+			});
+		}
+		else if(!this.list_view_settings.disable_count){
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);
 			});
@@ -686,20 +691,19 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	get_count_str() {
-		return "";
-		// let current_count = this.data.length;
-		// let count_without_children = this.data.uniqBy(d => d.name).length;
+		let current_count = this.data.length;
+		let count_without_children = this.data.uniqBy(d => d.name).length;
 
-		// return frappe.db.count(this.doctype, {
-		// 	filters: this.get_filters_for_args()
-		// }).then(total_count => {
-		// 	this.total_count = total_count || current_count;
-		// 	let str = __('{0} of {1}', [current_count, this.total_count]);
-		// 	if (count_without_children !== current_count) {
-		// 		str = __('{0} of {1} ({2} rows with children)', [count_without_children, this.total_count, current_count]);
-		// 	}
-		// 	return str;
-		// });
+		return frappe.db.count(this.doctype, {
+			filters: this.get_filters_for_args()
+		}).then(total_count => {
+			this.total_count = total_count || current_count;
+			let str = __('{0} of {1}', [current_count, this.total_count]);
+			if (count_without_children !== current_count) {
+				str = __('{0} of {1} ({2} rows with children)', [count_without_children, this.total_count, current_count]);
+			}
+			return str;
+		});
 	}
 
 	get_form_link(doc) {

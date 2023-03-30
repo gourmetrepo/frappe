@@ -165,6 +165,12 @@ def parse_naming_series(parts, doctype='', doc=''):
 
 def getseries(key, digits):
 	# series created ?
+	if key == "":
+		import time
+		# doc.name = str(time.time_ns())
+		_t = str(time.time())
+		return _t.replace(".","")
+
 	current = frappe.db.sql("SELECT `current` FROM `tabSeries` WHERE `name`=%s FOR UPDATE", (key,))
 	if current and current[0][0] is not None:
 		current = current[0][0]

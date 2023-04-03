@@ -13,11 +13,25 @@ from six import string_types, StringIO
 from frappe.core.doctype.access_log.access_log import make_access_log
 from frappe.utils import cstr
 
+# Umair added code for report builder logs
+### Start ###
+def report_builder_log():
+	data = frappe._dict(frappe.local.form_dict)
+	is_report = data.get('view') == 'Report'
+	if is_report:
+		# from frappe.utils import get_fullname
+		user = frappe.session.user
+		# fullname = get_fullname(user)
+		message = "Report is opened by ther user '{}' for doctype '{}' with fields={} and filters={}".format(user,data['doctype'],data['fields'],data['filters'])   
+		frappe.log_error(message=message, title="Report Builder Log")
+### End ###
 
 @frappe.whitelist()
 @frappe.read_only()
 def get():
 	args = get_form_params()
+
+	report_builder_log()
 
 	data = compress(execute(**args), args = args)
 

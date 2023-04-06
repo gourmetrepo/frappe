@@ -305,6 +305,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					report_name: this.report_name,
 					filters: filters,
 				},
+				freeze:true,
+				freeze_message: "Please Wait Till Completed",
 				callback: resolve,
 				always: () => this.page.btn_secondary.prop('disabled', false)
 			});
@@ -513,6 +515,8 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					report_name: this.report_name,
 					filters: filters
 				},
+				freeze:true,
+				freeze_message: "Please Wait Till Completed",
 				callback: resolve
 			})).then(r => {
 				const data = r.message;

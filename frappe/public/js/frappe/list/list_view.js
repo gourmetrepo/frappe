@@ -1462,12 +1462,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
 				.replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 				value = JSON.parse(value);
-				const fil_str = value[1].join(', ');
 				console.log('Valid JSON string');}
 				else {
 				console.log("not valid")
 				value = eval(value);
-				const fil_str = value[1].join(', ');
+				const fil_str = value[1].join(',');
 				
 				value[1]=fil_str;
 				console.log(value)

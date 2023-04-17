@@ -769,7 +769,8 @@ class Database(object):
 		return ("tab" + doctype) in self.get_tables()
 
 	def get_tables(self):
-		return [d[0] for d in self.sql("select table_name from information_schema.tables where table_schema not in ('pg_catalog', 'information_schema')")]
+		return [d[0] for d in self.sql("select table_name from information_schema.tables where table_schema ='{0}' ".format(self.db_name))]
+		# return [d[0] for d in self.sql("select table_name from information_schema.tables where table_schema not in ('pg_catalog', 'information_schema')")]
 
 	def a_row_exists(self, doctype):
 		"""Returns True if atleast one row exists."""

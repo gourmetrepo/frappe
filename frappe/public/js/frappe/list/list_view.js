@@ -332,6 +332,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	before_refresh() {
+		console.log("before_refresh")
 		if (frappe.route_options) {
 			this.filters = this.parse_filters_from_route_options();
 			frappe.route_options = null;
@@ -463,8 +464,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	get_header_html() {
 		const subject_field = this.columns[0].df;
+		console.log("before")
+		console.log(this)
+		console.log("this is executed")
 		let subject_html = `
-			<input class="level-item list-check-all hidden-xs" type="checkbox" title="${__("Select All")}">
+			<input class="level-item ] hidden-xs" type="checkbox" title="${__("Select All")}">
 			<span class="level-item list-liked-by-me">
 				<i class="octicon octicon-heart text-extra-muted" title="${__("Likes")}"></i>
 			</span>
@@ -1446,21 +1450,34 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	parse_filters_from_route_options() {
 		const filters = [];
-
+		console.log("parse_filters_from_route_options")
 		for (let field in frappe.route_options) {
 
 			let doctype = null;
 			let value = frappe.route_options[field];
-
+			console.log(value)
 			let value_array;
 			if ($.isArray(value) && value[0].startsWith('[') && value[0].endsWith(']')) {
-				value_array = [];
-				for(var i=0; i<value.length; i++) {
-					value_array.push(JSON.parse(value[i]));
-				}
-			} else if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
+					value_array = [];
+					for(var i=0; i<value.length; i++) {
+						value_array.push(JSON.parse(value[i]));
+					}
+				} else if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
+				const jsonRegEx = /^[\],:{}\s]*$/;
+				if (jsonRegEx.test(value.replace(/\\["\\\/bfnrtu]/g, '@')
+				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+				.replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 				value = JSON.parse(value);
-			}
+				console.log('Valid JSON string');}
+				else {
+				console.log("not valid")
+				value = eval(value);
+				const fil_str = value[1].join(',');
+				
+				value[1]=fil_str;
+				console.log(value)
+				}
+				}
 
 			// if `Child DocType.fieldname`
 			if (field.includes('.')) {
@@ -1523,3 +1540,5 @@ frappe.get_list_view = (doctype) => {
 	let route = `List/${doctype}/List`;
 	return frappe.views.list_view[route];
 };
+
+

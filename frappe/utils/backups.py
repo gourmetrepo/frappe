@@ -168,6 +168,7 @@ class BackupGenerator:
 		self.site_config_backup_path = site_config_backup_path
 
 	def take_dump(self):
+		pass
 		import frappe.utils
 
 		# escape reserved characters

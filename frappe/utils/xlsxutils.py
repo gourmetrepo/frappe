@@ -62,7 +62,13 @@ def handle_html(data):
 
 	h = HTML2Text()
 	h.unicode_snob = True
-	h = h.unescape(data or "")
+
+	import sys
+	if sys.version_info[0] == 3 and sys.version_info[1] > 8:
+		from html import unescape
+		h = unescape(data or "")
+	else:
+		h = h.unescape(data or "")
 
 	obj = HTML2Text()
 	obj.ignore_links = True

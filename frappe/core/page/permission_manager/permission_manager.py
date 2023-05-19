@@ -72,6 +72,9 @@ def get_permissions(doctype=None, role=None):
 
 @frappe.whitelist()
 def add(parent, role, permlevel):
+	user = frappe.session.user
+	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,parent,role,permlevel,"add new role",None))
+	frappe.db.commit()
 	frappe.only_for("System Manager")
 	add_permission(parent, role, permlevel)
 
@@ -89,12 +92,19 @@ def update(doctype, role, permlevel, ptype, value=None):
 	Returns:
 	    str: Refresh flag is permission is updated successfully
 	"""
+	#code to save logs for permission change by any user
+	user = frappe.session.user
+	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,doctype,role,permlevel,ptype,value))
+	frappe.db.commit()
 	frappe.only_for("System Manager")
 	out = update_permission_property(doctype, role, permlevel, ptype, value)
 	return 'refresh' if out else None
 
 @frappe.whitelist()
 def remove(doctype, role, permlevel):
+	user = frappe.session.user
+	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,doctype,role,permlevel,"Role deleted",None))
+	frappe.db.commit()
 	frappe.only_for("System Manager")
 	setup_custom_perms(doctype)
 

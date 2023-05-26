@@ -121,16 +121,21 @@
     right: 0px;
     display: flex;
 }
-.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0{
+@media screen and (min-width:768px) {
+	.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0, .employee-detail-report .dt-scrollable .dt-row .dt-cell--col-0{
 	position: sticky;
 	left: 0px;
     z-index: 1;
+	border-right: 1px solid #d1d8dd;
 }
-  .profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-1{
+.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-1, .employee-detail-report .dt-scrollable .dt-row .dt-cell--col-1{
 	position: sticky;
 	left: 48px;
     z-index: 1;
+	border-right: 1px solid #d1d8dd;
   }
+
+}
 // .my-pending-documents .dt-scrollable .dt-row .dt-cell--col-0{
 // 	position: sticky;
 // 	left: 0px;

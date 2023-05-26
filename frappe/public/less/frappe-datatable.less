@@ -37,6 +37,10 @@
 	max-height: calc(100vh - 250px);
 	min-height: 100px;
 	scrollbar-width: thin;
+	overflow-y: overlay !important;
+	@media screen and (max-width:767px) {
+		width: 100% !important;
+	}
 }
 
 table td.dt-cell {
@@ -108,3 +112,12 @@ table td.dt-cell {
 		background-color: transparent;
 	}
 }
+.dt-instance-1 .dt-cell__content--col-14,.dt-instance-1 .dt-cell__content--col-2{
+	padding-right: 20px;
+}
+// .dt-scrollable .dt-row:last-child{
+// 	padding-bottom: 47px;
+// }
+// .segment-wise-profit-csd .dt-scrollable .dt-row:last-child{
+// 	padding-bottom: 20px;
+// }

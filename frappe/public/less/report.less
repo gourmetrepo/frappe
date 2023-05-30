@@ -113,7 +113,47 @@
 		}
 	}
 }
-
+@media screen and (min-width:768px) {
+	.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0,
+	.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-0,
+	.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-0,
+	.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-0{
+		position: sticky;
+		left: 0px;
+		z-index: 1;
+		border-right: 1px solid #d1d8dd;
+	}
+	.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-1,
+	.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-1{
+		position: sticky;
+		left: 48px;
+		z-index: 1;
+		border-right: 1px solid #d1d8dd;
+	} 
+	.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-1{
+		position: sticky;
+		left: 39px;
+		z-index: 1;
+		border-right: 1px solid #d1d8dd;
+	}
+	.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-1{
+		position: sticky;
+		left: 31px;
+		z-index: 1;
+		border-right: 1px solid #d1d8dd;
+	} 
+	
+	}
+	.shipping-efficiency-report-summary .dt-cell--header .dt-cell__content{
+		white-space: normal;
+		text-align: center;
+	}
+	.shipping-efficiency-report-summary .dt-header .dt-row{
+		height: 46px;
+	}
+	.shipping-efficiency-report-summary .dt-header .dt-cell{
+		height: 46px;
+	}
 .tag-groupby-area {
 	padding: 10px 150px 10px 10px;
 	position: absolute;
@@ -121,44 +161,4 @@
     right: 0px;
     display: flex;
 }
-@media screen and (min-width:768px) {
-.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0,
-.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-0,
-.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-0,
-.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-0{
-	position: sticky;
-	left: 0px;
-    z-index: 1;
-	border-right: 1px solid #d1d8dd;
-}
-.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-1,
-.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-1{
-	position: sticky;
-	left: 48px;
-    z-index: 1;
-	border-right: 1px solid #d1d8dd;
-} 
-.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-1{
-	position: sticky;
-	left: 39px;
-    z-index: 1;
-	border-right: 1px solid #d1d8dd;
-}
-.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-1{
-	position: sticky;
-	left: 31px;
-    z-index: 1;
-	border-right: 1px solid #d1d8dd;
-} 
 
-}
-.shipping-efficiency-report-summary .dt-cell--header .dt-cell__content{
-	white-space: normal;
-	text-align: center;
-}
-.shipping-efficiency-report-summary .dt-header .dt-row{
-	height: 46px;
-}
-.shipping-efficiency-report-summary .dt-header .dt-cell{
-	height: 46px;
-}

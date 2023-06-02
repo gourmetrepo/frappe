@@ -114,31 +114,44 @@
 	}
 }
 @media screen and (min-width:768px) {
-	.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0,
-	.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-0,
-	.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-0,
-	.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-0{
+	// .profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-0,
+	// .employee-detail-report .dt-scrollable .dt-row .dt-cell--col-0,
+	// .sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-0,
+	// .sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-0,
+	// .stock-balance .dt-scrollable .dt-row .dt-cell--col-0,
+	// .stock-ledger .dt-scrollable .dt-row .dt-cell--col-0{
+	// 	position: sticky;
+	// 	left: 0px;
+	// 	z-index: 1;
+	// 	border-right: 1px solid #d1d8dd;
+	// }
+	:is(.profit-and-loss-statement,
+	 .profit-and-loss-statement,
+	  .sales-target-analysis,
+	   .stock-balance,
+	    .trial-balance,
+		 .itemwise-sales-register) .dt-scrollable .dt-row .dt-cell--col-1{
 		position: sticky;
 		left: 0px;
 		z-index: 1;
 		border-right: 1px solid #d1d8dd;
 	}
-	.profit-and-loss-statement .dt-scrollable .dt-row .dt-cell--col-1,
-	.sales-target-analysis .dt-scrollable .dt-row .dt-cell--col-1{
+	.stock-ledger .dt-scrollable .dt-row .dt-cell--col-2,
+	.general-ledger .dt-scrollable .dt-row .dt-cell--col-2{
 		position: sticky;
-		left: 48px;
+		left: 0px;
 		z-index: 1;
 		border-right: 1px solid #d1d8dd;
 	} 
 	.employee-detail-report .dt-scrollable .dt-row .dt-cell--col-1{
 		position: sticky;
-		left: 39px;
+		left: 0px;
 		z-index: 1;
 		border-right: 1px solid #d1d8dd;
 	}
 	.sale-production-dispatch-report .dt-scrollable .dt-row .dt-cell--col-1{
 		position: sticky;
-		left: 31px;
+		left: 0px;
 		z-index: 1;
 		border-right: 1px solid #d1d8dd;
 	} 
@@ -153,6 +166,27 @@
 	}
 	.shipping-efficiency-report-summary .dt-header .dt-cell{
 		height: 46px;
+	}
+	.layout-footer span:first-child{
+		width: 60% !important;
+	}
+	.layout-footer span:last-child{
+		width: 40% !important;
+	}
+	@media screen and (max-width:767px) {
+		.layout-footer span:first-child{
+			width: 100% !important;
+			display: block;
+		}
+		.layout-footer span:last-child{
+			width: 100% !important;
+			display: block;
+		}
+	}
+	@media screen and (max-width:575px) {
+		.page-form .form-group{
+			width: 100%;
+		}
 	}
 .tag-groupby-area {
 	padding: 10px 150px 10px 10px;

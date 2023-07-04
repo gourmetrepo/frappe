@@ -37,6 +37,10 @@
 	max-height: calc(100vh - 250px);
 	min-height: 100px;
 	scrollbar-width: thin;
+	overflow-y: overlay !important;
+	@media screen and (max-width:767px) {
+		width: 100% !important;
+	}
 }
 
 table td.dt-cell {
@@ -96,7 +100,22 @@ table td.dt-cell {
 .dt-tree-node__toggle + a {
 	margin-left: 4px;
 }
+.dt-instance-1 .dt-cell__content--col-14,.dt-instance-1 .dt-cell__content--col-2{
+	padding-right: 20px;
+}
+.dt-cell:last-child .dt-cell__content{
+	padding-right: 20px;
+}
 
+.dt-scrollable {
+	max-height: calc(100vh - 250px);
+	min-height: 100px;
+	scrollbar-width: thin;
+	overflow-y: overlay !important;
+	@media screen and (max-width:767px) {
+		width: 100% !important;
+	}
+}
 @keyframes breathe {
 	0% {
 		background-color: transparent;
@@ -108,3 +127,4 @@ table td.dt-cell {
 		background-color: transparent;
 	}
 }
+

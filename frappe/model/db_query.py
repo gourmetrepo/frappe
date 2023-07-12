@@ -527,10 +527,15 @@ class DatabaseQuery(object):
 				column_name=column_name, operator=f.operator,
 				value=value)
 		else:
-			condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
+			col_list_set = ['name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+			if(f.fieldname not in col_list_set):
+				condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
 				column_name=column_name, fallback=fallback, operator=f.operator,
 				value=value)
-
+			else:
+				condition = '{column_name} {operator} {value}'.format(
+				column_name=column_name, operator=f.operator,
+				value=value)
 		return condition
 
 	def build_match_conditions(self, as_condition=True):

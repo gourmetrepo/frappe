@@ -426,7 +426,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);
 			});
-		}
+		}}
 		else if(!this.list_view_settings.disable_count){
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);

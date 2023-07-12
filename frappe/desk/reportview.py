@@ -294,27 +294,29 @@ def get_stats(stats, doctype, filters=[]):
 		filters = json.loads(filters)
 	stats = {}
 
-	try:
-		columns = frappe.db.get_table_columns(doctype)
-	except frappe.db.InternalError:
-		# raised when _user_tags column is added on the fly
-		columns = []
+	# try:
+	# 	#columns = frappe.db.get_table_columns(doctype)
+	# except frappe.db.InternalError:
+	# 	# raised when _user_tags column is added on the fly
+	columns = []
 
 	for tag in tags:
 		if not tag in columns: continue
 		try:
-			tagcount = frappe.get_list(doctype, fields=[tag, "count(*)"],
-				#filters=["ifnull(`%s`,'')!=''" % tag], group_by=tag, as_list=True)
-				filters = filters + ["ifnull(`%s`,'')!=''" % tag], group_by = tag, as_list = True)
+			tagcount=0
+			# tagcount = frappe.get_list(doctype, fields=[tag, "count(*)"],
+			# 	#filters=["ifnull(`%s`,'')!=''" % tag], group_by=tag, as_list=True)
+			# 	filters = filters + ["ifnull(`%s`,'')!=''" % tag], group_by = tag, as_list = True)
 
 			if tag=='_user_tags':
-				stats[tag] = scrub_user_tags(tagcount)
-				stats[tag].append([_("No Tags"), frappe.get_list(doctype,
-					fields=[tag, "count(*)"],
-					filters=filters +["({0} = ',' or {0} = '' or {0} is null)".format(tag)], as_list=True)[0][1]])
+				stats[tag].append([_("No Tags"),0])
+				# stats[tag] = scrub_user_tags(tagcount)
+				# stats[tag].append([_("No Tags"), frappe.get_list(doctype,
+				# 	fields=[tag, "count(*)"],
+				# 	filters=filters +["({0} = ',' or {0} = '' or {0} is null)".format(tag)], as_list=True)[0][1]])
 			else:
+				# stats[tag] = tagcount
 				stats[tag] = tagcount
-
 		except frappe.db.SQLError:
 			# does not work for child tables
 			pass

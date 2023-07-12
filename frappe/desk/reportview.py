@@ -31,7 +31,7 @@ from frappe.utils import cstr
 def get():
 	args = get_form_params()
 
-	report_builder_log()
+	#report_builder_log()
 
 	data = compress(execute(**args), args = args)
 

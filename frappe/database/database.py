@@ -347,11 +347,14 @@ class Database(object):
 
 			if "[" in key:
 				split_key = key.split("[")
-				condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
-					+ _operator + _rhs
+				col_list_set = ['creation','company','modified','_user_tags']
+				if(split_key not in col_list_set):
+					condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
+						+ _operator + _rhs
+				else:
+					condition = "`" + key + "` " + _operator + _rhs
 			else:
-				condition = "`" + key + "` " + _operator + _rhs
-
+					condition = "`" + key + "` " + _operator + _rhs
 			conditions.append(condition)
 
 		if isinstance(filters, int):

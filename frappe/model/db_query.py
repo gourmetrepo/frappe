@@ -116,7 +116,10 @@ class DatabaseQuery(object):
 		if self.distinct:
 			args.fields = 'distinct ' + args.fields
 			args.order_by = '' # TODO: recheck for alternative
-
+			if not args.limit:
+				args.limit = "limit 500 offset 0"
+			if not args.conditions:
+				args.conditions = "where creation < (NOW() - INTERVAL '1' MONTH)"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s

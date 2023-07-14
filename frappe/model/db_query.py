@@ -116,10 +116,11 @@ class DatabaseQuery(object):
 		if self.distinct:
 			args.fields = 'distinct ' + args.fields
 			args.order_by = '' # TODO: recheck for alternative
-			if not args.limit:
-				args.limit = "limit 500 offset 0"
-			if not args.conditions:
-				args.conditions = "where creation < (NOW() - INTERVAL '1' MONTH)"
+			doctype_list = {'Stock Ledger Entry','GL Entry','Batch'}
+			#if not args.limit:
+				#args.limit = "limit 500 offset 0"
+			if not args.conditions and self.doctype in doctype_list:
+				args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s

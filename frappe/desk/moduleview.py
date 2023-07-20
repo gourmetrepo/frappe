@@ -14,7 +14,7 @@ def get(module):
 	"""Returns data (sections, list of reports, counts) to render module view in desk:
 	`/desk/#Module/[name]`."""
 	
-	data = frappe.cache().get_value("module_".module)
+	data = frappe.cache().get_value('module_'+module)
 	if not data:
 		data = get_data(module)
 		if (frappe.flags.in_patch
@@ -24,7 +24,7 @@ def get(module):
 			or frappe.flags.in_setup_wizard):
 			return
 		_cache = frappe.cache()
-		_cache.set_value("module_".module, data)
+		_cache.set_value("module_"+module, data)
 	
 	out = {
 		"data": data

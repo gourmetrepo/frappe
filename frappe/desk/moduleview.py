@@ -13,9 +13,9 @@ from frappe.cache_manager import build_domain_restriced_doctype_cache, build_dom
 def get(module):
 	"""Returns data (sections, list of reports, counts) to render module view in desk:
 	`/desk/#Module/[name]`."""
-	
+
 	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
-	if not data:
+	if not data and len(data)>0:
 		data = get_data(module)
 		if (frappe.flags.in_patch
 			or frappe.flags.in_install

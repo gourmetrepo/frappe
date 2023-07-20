@@ -4,6 +4,8 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
+import frappe.defaults
 from frappe.core.doctype.report.report import is_prepared_report_disabled
 from frappe.model.document import Document
 
@@ -97,6 +99,7 @@ class RolePermissionforPageandReport(Document):
 @frappe.whitelist()
 def remove_cache(doctype,role):
 	role_users = frappe.db.sql("SELECT DISTINCT parent FROM `tabHas Role` WHERE parenttype='user' AND ROLE=%s", (role),as_dict=True)
-	module_name = frappe.db.sql("SELECT module FROM `tabReport` WHERE NAME=%s", (doctype),as_dict=True)
+	module_name = frappe.db.sql("SELECT DISTINCT module   FROM `tabBlock Module`",as_dict=True)
 	for u in role_users:
-		frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(module_name[0]['module']))
+		for m in module_name:
+			frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(m.module))

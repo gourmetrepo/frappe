@@ -24,7 +24,7 @@ def get(module):
 			or frappe.flags.in_setup_wizard):
 			return
 		_cache = frappe.cache()
-		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
+		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
 	
 	out = {
 		"data": data

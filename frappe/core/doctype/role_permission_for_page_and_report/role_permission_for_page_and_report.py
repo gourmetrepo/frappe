@@ -44,6 +44,9 @@ class RolePermissionforPageandReport(Document):
 	def update_report_page_data(self):
 		self.update_custom_roles()
 		self.update_disable_prepared_report()
+		for u in self.roles:
+			remove_cache(self.report,u.role)
+	
 
 	def update_custom_roles(self):
 		args = self.get_args()
@@ -90,3 +93,10 @@ class RolePermissionforPageandReport(Document):
 
 	def update_status(self):
 		return frappe.render_template
+
+@frappe.whitelist()
+def remove_cache(doctype,role):
+	role_users = frappe.db.sql("SELECT DISTINCT parent  FROM `tabHas Role` WHERE ROLE='%s'", (role))
+	module_name = frappe.db.sql("SELECT module FROM `tabReport` WHERE NAME='''%s'", (doctype))
+	for u in role_users:
+		frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(module_name.module))

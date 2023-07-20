@@ -15,7 +15,7 @@ def get(module):
 	`/desk/#Module/[name]`."""
 
 	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
-	if not data and len(data)>0:
+	if not data:
 		data = get_data(module)
 		if (frappe.flags.in_patch
 			or frappe.flags.in_install

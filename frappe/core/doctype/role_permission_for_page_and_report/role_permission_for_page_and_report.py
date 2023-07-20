@@ -96,7 +96,7 @@ class RolePermissionforPageandReport(Document):
 
 @frappe.whitelist()
 def remove_cache(doctype,role):
-	role_users = frappe.db.sql("SELECT DISTINCT parent FROM `tabHas Role` WHERE parenttype='user' AND ROLE=%s", (role))
-	module_name = frappe.db.sql("SELECT module FROM `tabReport` WHERE NAME=%s", (doctype))
+	role_users = frappe.db.sql("SELECT DISTINCT parent FROM `tabHas Role` WHERE parenttype='user' AND ROLE=%s", (role),as_dict=True)
+	module_name = frappe.db.sql("SELECT module FROM `tabReport` WHERE NAME=%s", (doctype),as_dict=True)
 	for u in role_users:
-		frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(module_name.module))
+		frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(module_name[0]['module']))

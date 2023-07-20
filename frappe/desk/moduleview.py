@@ -165,7 +165,6 @@ def get_doctype_info(module):
 		"module": module,
 		"istable": 0
 	}, or_filters={
-		"ifnull(restrict_to_domain, '')": "",
 		"restrict_to_domain": ("in", active_domains)
 	}, fields=["'doctype' as type", "name", "description", "document_type",
 		"custom", "issingle"], order_by="custom asc, document_type desc, name asc")

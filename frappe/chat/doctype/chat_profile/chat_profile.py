@@ -72,22 +72,22 @@ def get(user, fields = None):
 
 @frappe.whitelist()
 def create(user, exists_ok = False, fields = None):
-	authenticate(user)
+	# authenticate(user)
 
-	exists_ok, fields = safe_json_loads(exists_ok, fields)
+	# exists_ok, fields = safe_json_loads(exists_ok, fields)
 
-	try:
-		dprof = frappe.new_doc('Chat Profile')
-		dprof.user = user
-		dprof.save(ignore_permissions = True)
-	except frappe.DuplicateEntryError:
-		frappe.clear_messages()
-		if not exists_ok:
-			frappe.throw(_('Chat Profile for User {0} exists.').format(user))
+	# try:
+	# 	dprof = frappe.new_doc('Chat Profile')
+	# 	dprof.user = user
+	# 	dprof.save(ignore_permissions = True)
+	# except frappe.DuplicateEntryError:
+	# 	frappe.clear_messages()
+	# 	if not exists_ok:
+	# 		frappe.throw(_('Chat Profile for User {0} exists.').format(user))
 
-	profile = get(user, fields = fields)
+	# profile = get(user, fields = fields)
 
-	return profile
+	# return profile
 
 @frappe.whitelist()
 def update(user, data):

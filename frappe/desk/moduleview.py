@@ -13,8 +13,19 @@ from frappe.cache_manager import build_domain_restriced_doctype_cache, build_dom
 def get(module):
 	"""Returns data (sections, list of reports, counts) to render module view in desk:
 	`/desk/#Module/[name]`."""
-	data = get_data(module)
-
+	
+	data = frappe.cache().get_value('module_'+module)
+	if not data:
+		data = get_data(module)
+		if (frappe.flags.in_patch
+			or frappe.flags.in_install
+			or frappe.flags.in_migrate
+			or frappe.flags.in_import
+			or frappe.flags.in_setup_wizard):
+			return
+		_cache = frappe.cache()
+		_cache.set_value("module_"+module, data)
+	
 	out = {
 		"data": data
 	}
@@ -165,7 +176,6 @@ def get_doctype_info(module):
 		"module": module,
 		"istable": 0
 	}, or_filters={
-		"ifnull(restrict_to_domain, '')": "",
 		"restrict_to_domain": ("in", active_domains)
 	}, fields=["'doctype' as type", "name", "description", "document_type",
 		"custom", "issingle"], order_by="custom asc, document_type desc, name asc")

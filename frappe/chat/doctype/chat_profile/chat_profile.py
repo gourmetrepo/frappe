@@ -72,6 +72,8 @@ def get(user, fields = None):
 
 @frappe.whitelist()
 def create(user, exists_ok = False, fields = None):
+	#optimization point 
+	pass
 	# authenticate(user)
 
 	# exists_ok, fields = safe_json_loads(exists_ok, fields)

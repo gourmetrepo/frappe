@@ -46,6 +46,7 @@ class RolePermissionforPageandReport(Document):
 	def update_report_page_data(self):
 		self.update_custom_roles()
 		self.update_disable_prepared_report()
+		frappe.db.commit()
 		for u in self.roles:
 			remove_cache(self.report,u.role)
 	

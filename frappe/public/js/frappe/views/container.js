@@ -22,12 +22,6 @@ frappe.views.Container = Class.extend({
 			var route_str = frappe.get_route_str();
 			$("body").attr("data-route", route_str);
 			$("body").attr("data-sidebar", me.has_sidebar() ? 1 : 0);
-			if ($("body").attr('data-sidebar') == 0) {
-				$("body").addClass('noSidebar')
-			}
-			else{
-				$("body").removeClass('noSidebar')
-			}
 		});
 
 		$(document).bind('rename', function(event, dt, old_name, new_name) {

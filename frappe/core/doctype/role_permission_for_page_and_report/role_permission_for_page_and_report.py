@@ -4,8 +4,6 @@
 
 from __future__ import unicode_literals
 import frappe
-from frappe import _
-import frappe.defaults
 from frappe.core.doctype.report.report import is_prepared_report_disabled
 from frappe.model.document import Document
 
@@ -46,10 +44,6 @@ class RolePermissionforPageandReport(Document):
 	def update_report_page_data(self):
 		self.update_custom_roles()
 		self.update_disable_prepared_report()
-		frappe.db.commit()
-		for u in self.roles:
-			remove_cache(self.report,u.role)
-	
 
 	def update_custom_roles(self):
 		args = self.get_args()
@@ -96,11 +90,3 @@ class RolePermissionforPageandReport(Document):
 
 	def update_status(self):
 		return frappe.render_template
-
-@frappe.whitelist()
-def remove_cache(doctype,role):
-	role_users = frappe.db.sql("SELECT DISTINCT parent FROM `tabHas Role` WHERE parenttype='user' AND ROLE=%s", (role),as_dict=True)
-	module_name = frappe.db.sql("SELECT DISTINCT module   FROM `tabBlock Module`",as_dict=True)
-	for u in role_users:
-		for m in module_name:
-			frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(m.module))

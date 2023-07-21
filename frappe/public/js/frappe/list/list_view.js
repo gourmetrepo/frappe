@@ -421,12 +421,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	render_count() {
-		if ( (frappe.session.user_email=='muhammadyasir@gourmetpakistan.com' || frappe.session.user_email=='muhammad.rauf@gourmetpakistan.com' || frappe.session.user_email=='anwar.haq@gourmetpakistan.com' || frappe.session.user_email=='khizer.shujra@gourmetpakistan.com' || frappe.session.user_email=='rizwan.ali@gourmetpakistan.com'  || frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com')) {
-			if(this.doctype!='Stock Ledger Entry' && this.doctype!='GL Entry' && this.doctype!='Batch'){
+		if (frappe.session.user_email=='muhammadyasir@gourmetpakistan.com' || frappe.session.user_email=='muhammad.rauf@gourmetpakistan.com' || frappe.session.user_email=='anwar.haq@gourmetpakistan.com' || frappe.session.user_email=='khizer.shujra@gourmetpakistan.com' || frappe.session.user_email=='rizwan.ali@gourmetpakistan.com' || frappe.session.user_email=='administrator' || frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com') {
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);
 			});
-		}}
+		}
 		else if(!this.list_view_settings.disable_count){
 			this.get_count_str().then(str => {
 				this.$result.find('.list-count').html(`<span>${str}</span>`);

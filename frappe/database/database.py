@@ -347,14 +347,11 @@ class Database(object):
 
 			if "[" in key:
 				split_key = key.split("[")
-				col_list_set = ['name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-				if(split_key[0] not in col_list_set):
-					condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
-						+ _operator + _rhs
-				else:
-					condition = "`" + key + "` " + _operator + _rhs
+				condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
+					+ _operator + _rhs
 			else:
-					condition = "`" + key + "` " + _operator + _rhs
+				condition = "`" + key + "` " + _operator + _rhs
+
 			conditions.append(condition)
 
 		if isinstance(filters, int):

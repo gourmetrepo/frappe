@@ -162,19 +162,6 @@ def build_domain_restriced_doctype_cache(*args, **kwargs):
 
 	return doctypes
 
-def build_module_cache(*args, **kwargs):
-	if (frappe.flags.in_patch
-		or frappe.flags.in_install
-		or frappe.flags.in_migrate
-		or frappe.flags.in_import
-		or frappe.flags.in_setup_wizard):
-		return
-	_cache = frappe.cache()
-	active_domains = frappe.get_active_domains()
-	doctypes = frappe.get_all("DocType", filters={'restrict_to_domain': ('IN', active_domains)})
-	doctypes = [doc.name for doc in doctypes]
-	_cache.set_value("module_", doctypes)
-
 def build_domain_restriced_page_cache(*args, **kwargs):
 	if (frappe.flags.in_patch
 		or frappe.flags.in_install

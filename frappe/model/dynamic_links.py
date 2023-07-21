@@ -42,15 +42,7 @@ def get_dynamic_link_map(for_delete=False):
 				# always check in Single DocTypes
 				dynamic_link_map.setdefault(meta.name, []).append(df)
 			else:
-				doctype_list = {'Stock Ledger Entry','GL Entry'}
-			#if not args.limit:
-				#args.limit = "limit 500 offset 0"
-				if  df.parent in doctype_list:
-					links = frappe.db.sql_list("""select distinct {options} from `tab{parent}` where {options}!='' AND posting_date > (NOW() - INTERVAL 5 DAY)
-""".format(**df))
-				else:
-					links = frappe.db.sql_list("""select distinct {options} from `tab{parent}` """.format(**df))
-	
+				links = frappe.db.sql_list("""select distinct {options} from `tab{parent}`""".format(**df))
 				for doctype in links:
 					dynamic_link_map.setdefault(doctype, []).append(df)
 

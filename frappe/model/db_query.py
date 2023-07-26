@@ -116,7 +116,11 @@ class DatabaseQuery(object):
 		if self.distinct:
 			args.fields = 'distinct ' + args.fields
 			args.order_by = '' # TODO: recheck for alternative
-
+			doctype_list = {'Stock Ledger Entry','GL Entry','Batch'}
+			#if not args.limit:
+				#args.limit = "limit 500 offset 0"
+			if not args.conditions and self.doctype in doctype_list:
+				args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s
@@ -527,10 +531,15 @@ class DatabaseQuery(object):
 				column_name=column_name, operator=f.operator,
 				value=value)
 		else:
-			condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
+			col_list_set = ['name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+			if(f.fieldname not in col_list_set):
+				condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
 				column_name=column_name, fallback=fallback, operator=f.operator,
 				value=value)
-
+			else:
+				condition = '{column_name} {operator} {value}'.format(
+				column_name=column_name, operator=f.operator,
+				value=value)
 		return condition
 
 	def build_match_conditions(self, as_condition=True):

@@ -53,7 +53,7 @@
 	</script>
 
 	<!-- Matomo -->
-	<!-- <script>
+	<script>
 		window.onhashchange = function () {
 			var userId = frappe.session.user;
 			var _paq = window._paq = window._paq || [];
@@ -66,17 +66,17 @@
 			(function () {
 				var u = "//192.168.2.129/matomo/";
 				_paq.push(['setTrackerUrl', u + 'matomo.php']);
-				_paq.push(['setSiteId', '2']);
+				_paq.push(['setSiteId', '9']);
 				var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
 				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
 			})();
 		};
-	</script> -->
+	</script>
 	<!-- End Matomo Code -->
 
 
 	<!-- Matomo -->
-	<script>
+	{% comment %} <script>
 		window.onhashchange = function () {
 			var userId = frappe.session.user;
 			var _paq = window._paq = window._paq || [];
@@ -99,7 +99,7 @@
 				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
 			})();
 		};
-	</script>
+	</script> {% endcomment %}
 	<!-- End Matomo Code -->
 	<!-- Matomo Tag Manager -->
 	<script>

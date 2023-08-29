@@ -1,11 +1,13 @@
 <!DOCTYPE html>
+
 <head>
 	<!-- Chrome, Firefox OS and Opera -->
 	<meta name="theme-color" content="#7575ff">
 	<!-- Windows Phone -->
 	<meta name="msapplication-navbutton-color" content="#7575ff">
 	<!-- iOS Safari -->
-	<meta name="apple-mobile-web-app-status-bar-style" content="#7575ff">	<meta charset="utf-8">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#7575ff">
+	<meta charset="utf-8">
 	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
 	<meta content="utf-8" http-equiv="encoding">
 	<meta name="author" content="">
@@ -15,83 +17,39 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="white">
 	<meta name="mobile-web-app-capable" content="yes">
 	<title>Frappe Desk</title>
-	<link rel="shortcut icon"
-		href="{{ favicon or "/assets/frappe/images/favicon.png" }}" type="image/x-icon">
-	<link rel="icon"
-		href="{{ favicon or "/assets/frappe/images/favicon.png" }}" type="image/x-icon">
+	<link rel="shortcut icon" href="{{ favicon or " /assets/frappe/images/favicon.png" }}" type="image/x-icon">
+	<link rel="icon" href="{{ favicon or " /assets/frappe/images/favicon.png" }}" type="image/x-icon">
 	{% for include in include_css -%}
 	<link type="text/css" rel="stylesheet" href="{{ include }}?ver={{ build_version }}">
 	{%- endfor -%}
 
-	<!-- Matomo -->
 	<script>
-		window.onhashchange =function() {
-		var userId = frappe.session.user;
-		var _paq = window._paq = window._paq || [];
-		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-		// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-		_paq.push(['setUserId', userId]);
-		_paq.push(['setCustomUrl', window.location.href]);
-		_paq.push(['trackPageView']);
-		_paq.push(['enableLinkTracking']);
-		(function () {
-			 var u="//192.168.2.129/matomo/";
-			_paq.push(['setTrackerUrl', u + 'matomo.php']);
-			_paq.push(['setSiteId', '9']);
-			var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-			g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
-		})();
-	};
-	</script>
-	<!-- End Matomo Code -->
-
-
-		<!-- Matomo -->
-		<script>
-			window.onhashchange =function() {
+		window.onhashchange = function () {
 			var userId = frappe.session.user;
 			var _paq = window._paq = window._paq || [];
-			var _mtm = window._mtm || [];
 			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
 			// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-
-			// _mtm.push({'orderTotal': 4545.45, 'orderCurrency': 'EUR'});
+			_paq.push(['setUserId', userId]);
+			_paq.push(['setCustomUrl', window.location.href]);
+			_paq.push(['trackPageView']);
+			_paq.push(['enableLinkTracking']);
 			(function () {
-				 var u="//192.168.2.129/matomo/";
+				var u = "//192.168.2.129/matomo/";
 				_paq.push(['setTrackerUrl', u + 'matomo.php']);
-				_paq.push(['setSiteId', '2']);
-				// _mtm.push({'orderTotal': 4545.45, 'orderCurrency': 'EUR'});
-				_paq.push(['setUserId', userId]);
-				_paq.push(['setCustomUrl', window.location.href]);
-				_paq.push(['trackPageView']);
-				_paq.push(['enableLinkTracking']);
-				_paq.push(['trackVisibleContentImpressions']);
+				_paq.push(['setSiteId', '10']);
 				var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
 				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
 			})();
 		};
-		</script>
-		<!-- End Matomo Code -->
-			<!-- Matomo Tag Manager -->
-		<script>
-			var _mtm = window._mtm = window._mtm || [];
-			_mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
-			(function() {
-			var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-			g.async=true; g.src='http://192.168.2.129/matomo/js/container_UW1G4P2u.js'; s.parentNode.insertBefore(g,s);
-			})();
-		</script>
-	<!-- End Matomo Tag Manager -->
-
-
-
-
+	</script>
+	<!-- End Matomo Code -->
 
 </head>
+
 <body>
 	<div class="centered splash" style="width: 100px; height: 100px;">
-        <img src="{{ splash_image or "/assets/frappe/images/frappe-framework-logo.png" }}">
-    </div>
+		<img src="{{ splash_image or " /assets/frappe/images/frappe-framework-logo.png" }}">
+	</div>
 	<div class="main-section">
 		<header></header>
 		<div id="body_div"></div>
@@ -101,28 +59,29 @@
 	<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
 
 	<script type="text/javascript">
-	window._version_number = "{{ build_version }}";
-	// browser support
-	window.app = true;
-	window.dev_server = {{ dev_server }};
+		window._version_number = "{{ build_version }}";
+		// browser support
+		window.app = true;
+		window.dev_server = {{ dev_server }};
 
-	if(!window.frappe) window.frappe = {};
+		if (!window.frappe) window.frappe = {};
 
-	frappe.boot = {{ boot }};
+		frappe.boot = {{ boot }};
 
-	frappe.csrf_token = "{{ csrf_token }}";
+		frappe.csrf_token = "{{ csrf_token }}";
 
 	</script>
 
 	{% for include in include_js %}
 	<script type="text/javascript" src="{{ include }}?ver={{ build_version }}"></script>
 	{% endfor %}
-    {% include "templates/includes/app_analytics/google_analytics.html" %}
-    {% include "templates/includes/app_analytics/mixpanel_analytics.html" %}
+	{% include "templates/includes/app_analytics/google_analytics.html" %}
+	{% include "templates/includes/app_analytics/mixpanel_analytics.html" %}
 
 	{% for sound in (sounds or []) %}
 	<audio preload="auto" id="sound-{{ sound.name }}" volume={{ sound.volume or 1 }}>
-		<source src="{{ sound.src }}"></source>
+		<source src="{{ sound.src }}">
+		</source>
 	</audio>
 	{% endfor %}
 </body>

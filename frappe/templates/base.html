@@ -50,32 +50,67 @@
 		}
 		window.dev_server = {{ dev_server }};
 		window.socketio_port = {{ (frappe.socketio_port or 'null') }};
-    </script>
-	<script>
-		window.onhashchange =function() {
-		var userId = frappe.session.user;
-		var _paq = window._paq = window._paq || [];
-		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-		// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
-		_paq.push(['setUserId', userId]);
-		_paq.push(['setCustomUrl', window.location.href]);
-		_paq.push(['trackPageView']);
-		_paq.push(['enableLinkTracking']);
-		(function () {
-		var u="//192.168.2.129/matomo/";
-		_paq.push(['setTrackerUrl', u + 'matomo.php']);
-		_paq.push(['setSiteId', '10']);
-		var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-		g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
-		})();
-		};
 	</script>
 
-</head>
-<body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}" data-path="{{ path | e }}" {%- if template and template.endswith('.md') %} frappe-content-type="markdown" {% endif -%}>
-	{%- block banner -%}
-		{% include "templates/includes/banner_extension.html" ignore missing %}
+	<!-- Matomo -->
+	<script>
+		window.onhashchange = function () {
+			var userId = frappe.session.user;
+			var _paq = window._paq = window._paq || [];
+			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+			// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
+			_paq.push(['setUserId', userId]);
+			_paq.push(['setCustomUrl', window.location.href]);
+			_paq.push(['trackPageView']);
+			_paq.push(['enableLinkTracking']);
+			(function () {
+				var u = "//192.168.2.129/matomo/";
+				_paq.push(['setTrackerUrl', u + 'matomo.php']);
+				_paq.push(['setSiteId', '9']);
+				var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+			})();
+		};
+	</script>
+	<!-- End Matomo Code -->
 
+
+	<!-- Matomo -->
+	{% comment %} <script>
+		window.onhashchange = function () {
+			var userId = frappe.session.user;
+			var _paq = window._paq = window._paq || [];
+			var _mtm = window._mtm || [];
+			/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+			// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
+
+			// _mtm.push({'orderTotal': 4545.45, 'orderCurrency': 'EUR'});
+			(function () {
+				var u = "//192.168.2.129/matomo/";
+				_paq.push(['setTrackerUrl', u + 'matomo.php']);
+				_paq.push(['setSiteId', '2']);
+				_mtm.push({ 'orderTotal': 4545.45, 'orderCurrency': 'EUR' });
+				_paq.push(['setUserId', userId]);
+				_paq.push(['setCustomUrl', window.location.href]);
+				_paq.push(['trackPageView']);
+				_paq.push(['enableLinkTracking']);
+				_paq.push(['trackVisibleContentImpressions']);
+				var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+			})();
+		};
+	</script> {% endcomment %}
+	<!-- End Matomo Code -->
+	<!-- Matomo Tag Manager -->
+	<script>
+		var _mtm = window._mtm = window._mtm || [];
+		_mtm.push({ 'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start' });
+		(function () {
+			var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+			g.async = true; g.src = 'http://192.168.2.129/matomo/js/container_UW1G4P2u.js'; s.parentNode.insertBefore(g, s);
+		})();
+	</script>
+	<!-- End Matomo Tag Manager -->
 </head>
 
 <body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}"

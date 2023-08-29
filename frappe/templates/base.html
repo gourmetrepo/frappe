@@ -53,6 +53,26 @@
 		window.dev_server = {{ dev_server }};
 		window.socketio_port = {{ (frappe.socketio_port or 'null') }};
     </script>
+	<script>
+		window.onhashchange =function() {
+		var userId = frappe.session.user;
+		var _paq = window._paq = window._paq || [];
+		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+		// _paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
+		_paq.push(['setUserId', userId]);
+		_paq.push(['setCustomUrl', window.location.href]);
+		_paq.push(['trackPageView']);
+		_paq.push(['enableLinkTracking']);
+		(function () {
+		var u="//192.168.2.129/matomo/";
+		_paq.push(['setTrackerUrl', u + 'matomo.php']);
+		_paq.push(['setSiteId', '10']);
+		var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+		g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+		})();
+		};
+	</script>
+
 </head>
 <body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}" data-path="{{ path | e }}" {%- if template and template.endswith('.md') %} frappe-content-type="markdown" {% endif -%}>
 	{%- block banner -%}

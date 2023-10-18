@@ -138,7 +138,7 @@ def json_handler(obj):
 		doc = obj.as_dict(no_nulls=True)
 		return doc
 
-	elif isinstance(obj, collections.abc.Iterable):
+	elif isinstance(obj, collections.Iterable):
 		return list(obj)
 
 	elif type(obj)==type or isinstance(obj, Exception):

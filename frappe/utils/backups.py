@@ -168,14 +168,13 @@ class BackupGenerator:
 		self.site_config_backup_path = site_config_backup_path
 
 	def take_dump(self):
-		pass
 		import frappe.utils
 
 		# escape reserved characters
 		args = dict([item[0], frappe.utils.esc(str(item[1]), '$ ')]
 			for item in self.__dict__.copy().items())
 
-		cmd_string = """mysqldump --ignore-table={"erpnextdb.tabAccess Log","erpnextdb.tabActivity Log","erpnextdb.tabNotification Log","erpnextdb.tabError Log","erpnextdb.tabNrp Integeration"} --single-transaction --quick --lock-tables=false --add-locks --skip-comments -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
+		cmd_string = """mysqldump --single-transaction --quick --lock-tables=false --add-locks --skip-comments -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
 
 		if self.db_type == 'postgres':
 			cmd_string = "pg_dump postgres://{user}:{password}@{db_host}:{db_port}/{db_name} | gzip > {backup_path_db}".format(

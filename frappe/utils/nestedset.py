@@ -70,62 +70,101 @@ def update_add_node(doc, parent, parent_field):
 	right = right or 1
 
 	# update all on the right
-	frappe.db.sql("update `tab{0}` set rgt = rgt+2, modified=%s where rgt >= %s"
-		.format(doctype), (n, right))
-	frappe.db.sql("update `tab{0}` set lft = lft+2, modified=%s where lft >= %s"
-		.format(doctype), (n, right))
+	if doctype=="Employee":
+		frappe.db.sql("update `tab{0}` set rgt = rgt+2 where rgt >= %s"
+			.format(doctype), ( right))
+		frappe.db.sql("update `tab{0}` set lft = lft+2 where lft >= %s"
+			.format(doctype), ( right))
 
-	# update index of new node
-	if frappe.db.sql("select * from `tab{0}` where lft=%s or rgt=%s".format(doctype), (right, right+1)):
-		frappe.msgprint(_("Nested set error. Please contact the Administrator."))
-		raise Exception
+		# update index of new node
+		if frappe.db.sql("select * from `tab{0}` where lft=%s or rgt=%s".format(doctype), (right, right+1)):
+			frappe.msgprint(_("Nested set error. Please contact the Administrator."))
+			raise Exception
 
-	frappe.db.sql("update `tab{0}` set lft=%s, rgt=%s, modified=%s where name=%s".format(doctype),
-		(right,right+1, n, name))
+		frappe.db.sql("update `tab{0}` set lft=%s, rgt=%s where name=%s".format(doctype),
+			(right,right+1, name))
+	else:
+		frappe.db.sql("update `tab{0}` set rgt = rgt+2, modified=%s where rgt >= %s"
+			.format(doctype), (n, right))
+		frappe.db.sql("update `tab{0}` set lft = lft+2, modified=%s where lft >= %s"
+			.format(doctype), (n, right))
+
+		# update index of new node
+		if frappe.db.sql("select * from `tab{0}` where lft=%s or rgt=%s".format(doctype), (right, right+1)):
+			frappe.msgprint(_("Nested set error. Please contact the Administrator."))
+			raise Exception
+
+		frappe.db.sql("update `tab{0}` set lft=%s, rgt=%s, modified=%s where name=%s".format(doctype),
+			(right,right+1, n, name))
 	return right
 
 
 def update_move_node(doc, parent_field):
 	n = now()
 	parent = doc.get(parent_field)
-
+	doctype = doc.doctype
 	if parent:
 		new_parent = frappe.db.sql("""select lft, rgt from `tab{0}`
 			where name = %s""".format(doc.doctype), parent, as_dict=1)[0]
 
 		validate_loop(doc.doctype, doc.name, new_parent.lft, new_parent.rgt)
+	if doctype =="Employee":
+		# move to dark side
+		frappe.db.sql("""update `tab{0}` set lft = -lft, rgt = -rgt
+			where lft >= %s and rgt <= %s""".format(doc.doctype), (doc.lft, doc.rgt))
 
-	# move to dark side
-	frappe.db.sql("""update `tab{0}` set lft = -lft, rgt = -rgt, modified=%s
-		where lft >= %s and rgt <= %s""".format(doc.doctype), (n, doc.lft, doc.rgt))
+		# shift left
+		diff = doc.rgt - doc.lft + 1
+		frappe.db.sql("""update `tab{0}` set lft = lft -%s, rgt = rgt - %s
+			where lft > %s""".format(doc.doctype), (diff, diff, doc.rgt))
 
-	# shift left
-	diff = doc.rgt - doc.lft + 1
-	frappe.db.sql("""update `tab{0}` set lft = lft -%s, rgt = rgt - %s, modified=%s
-		where lft > %s""".format(doc.doctype), (diff, diff, n, doc.rgt))
+		# shift left rgts of ancestors whose only rgts must shift
+		frappe.db.sql("""update `tab{0}` set rgt = rgt - %s
+			where lft < %s and rgt > %s""".format(doc.doctype), (diff, doc.lft, doc.rgt))
+	else:
+				# move to dark side
+		frappe.db.sql("""update `tab{0}` set lft = -lft, rgt = -rgt, modified=%s
+			where lft >= %s and rgt <= %s""".format(doc.doctype), (n, doc.lft, doc.rgt))
 
-	# shift left rgts of ancestors whose only rgts must shift
-	frappe.db.sql("""update `tab{0}` set rgt = rgt - %s, modified=%s
-		where lft < %s and rgt > %s""".format(doc.doctype), (diff, n, doc.lft, doc.rgt))
+		# shift left
+		diff = doc.rgt - doc.lft + 1
+		frappe.db.sql("""update `tab{0}` set lft = lft -%s, rgt = rgt - %s, modified=%s
+			where lft > %s""".format(doc.doctype), (diff, diff, n, doc.rgt))
+
+		# shift left rgts of ancestors whose only rgts must shift
+		frappe.db.sql("""update `tab{0}` set rgt = rgt - %s, modified=%s
+			where lft < %s and rgt > %s""".format(doc.doctype), (diff, n, doc.lft, doc.rgt))
 
 	if parent:
 		new_parent = frappe.db.sql("""select lft, rgt from `tab%s`
 			where name = %s""" % (doc.doctype, '%s'), parent, as_dict=1)[0]
 
+		if doctype =="Employee":
+			# set parent lft, rgt
+			frappe.db.sql("""update `tab{0}` set rgt = rgt + %s
+				where name = %s""".format(doc.doctype), (diff, parent))
 
-		# set parent lft, rgt
-		frappe.db.sql("""update `tab{0}` set rgt = rgt + %s, modified=%s
-			where name = %s""".format(doc.doctype), (diff, n, parent))
+			# shift right at new parent
+			frappe.db.sql("""update `tab{0}` set lft = lft + %s, rgt = rgt + %s
+				where lft > %s""".format(doc.doctype), (diff, diff, new_parent.rgt))
 
-		# shift right at new parent
-		frappe.db.sql("""update `tab{0}` set lft = lft + %s, rgt = rgt + %s, modified=%s
-			where lft > %s""".format(doc.doctype), (diff, diff, n, new_parent.rgt))
+			# shift right rgts of ancestors whose only rgts must shift
+			frappe.db.sql("""update `tab{0}` set rgt = rgt + %s
+				where lft < %s and rgt > %s""".format(doc.doctype),
+				(diff, new_parent.lft, new_parent.rgt))
+		else:
+						# set parent lft, rgt
+			frappe.db.sql("""update `tab{0}` set rgt = rgt + %s, modified=%s
+				where name = %s""".format(doc.doctype), (diff, n, parent))
 
-		# shift right rgts of ancestors whose only rgts must shift
-		frappe.db.sql("""update `tab{0}` set rgt = rgt + %s, modified=%s
-			where lft < %s and rgt > %s""".format(doc.doctype),
-			(diff, n, new_parent.lft, new_parent.rgt))
+			# shift right at new parent
+			frappe.db.sql("""update `tab{0}` set lft = lft + %s, rgt = rgt + %s, modified=%s
+				where lft > %s""".format(doc.doctype), (diff, diff, n, new_parent.rgt))
 
+			# shift right rgts of ancestors whose only rgts must shift
+			frappe.db.sql("""update `tab{0}` set rgt = rgt + %s, modified=%s
+				where lft < %s and rgt > %s""".format(doc.doctype),
+				(diff, n, new_parent.lft, new_parent.rgt))
 
 		new_diff = new_parent.rgt - doc.lft
 	else:

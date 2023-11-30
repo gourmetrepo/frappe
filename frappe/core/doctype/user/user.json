@@ -586,7 +586,7 @@
  "idx": 413,
  "image_field": "user_image",
  "max_attachments": 5,
- "modified": "2019-10-22 14:16:34.810223",
+ "modified": "2023-05-12 16:28:45.190995",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",
@@ -602,6 +602,7 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "set_user_permissions": 1,
    "share": 1,
    "write": 1
   },
@@ -610,6 +611,7 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "set_user_permissions": 1,
    "write": 1
   }
  ],

@@ -470,17 +470,20 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		console.log("this is executed")
 		let subject_html = `
 			<input class="level-item ] hidden-xs" type="checkbox" title="${__("Select All")}">
+			<span class="level-item list-liked-by-me">
+				<i class="octicon octicon-heart text-extra-muted" title="${__("Likes")}"></i>
+			</span>
 			<span class="level-item">${__(subject_field.label)}</span>
 		`;
 		const $columns = this.columns.map(col => {
 			let classes = [
-				'list-row-col-h-c list-row-col ellipsis',
+				'list-row-col ellipsis',
 				col.type == 'Subject' ? 'list-subject level' : 'hidden-xs',
 				frappe.model.is_numeric_field(col.df) ? 'text-right' : ''
 			].join(' ');
 
 			return `
-				<div class="${classes}" style="text-wrap: pretty;">
+				<div class="${classes}">
 					${col.type === 'Subject' ? subject_html : `
 					<span>${__(col.df && col.df.label || col.type)}</span>`}
 				</div>
@@ -523,16 +526,15 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	get_list_row_html_skeleton(left = '', right = '') {
-		console.log(right)
 		return `
 			<div class="list-row-container" tabindex="1">
 				<div class="level list-row small">
 					<div class="level-left ellipsis">
 						${left}
 					</div>
-					<span>
+					<div class="level-right text-muted ellipsis">
 						${right}
-					</span>
+					</div>
 				</div>
 			</div>
 		`;
@@ -641,15 +643,15 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	get_meta_html(doc) {
 		let html = '';
-		// if (!this.settings.hide_name_column && doc[this.meta.title_field || ''] !== doc.name) {
-		// 	html += `
-		// 		<div class="level-item hidden-xs hidden-sm ellipsis">
-		// 			<a class="text-muted ellipsis" href="${this.get_form_link(doc)}">
-		// 				${doc.name}
-		// 			</a>
-		// 		</div>
-		// 	`;
-		// }
+		if (!this.settings.hide_name_column && doc[this.meta.title_field || ''] !== doc.name) {
+			html += `
+				<div class="level-item hidden-xs hidden-sm ellipsis">
+					<a class="text-muted ellipsis" href="${this.get_form_link(doc)}">
+						${doc.name}
+					</a>
+				</div>
+			`;
+		}
 
 		if (this.settings.button && this.settings.button.show(doc)) {
 			html += `
@@ -665,23 +667,25 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		const modified = comment_when(doc.modified, true);
 
-		// const last_assignee = JSON.parse(doc._assign || '[]').slice(-1)[0];
-		// const assigned_to = last_assignee ?
-		// 	`<span class="filterable"
-		// 		data-filter="_assign,like,%${last_assignee}%">
-		// 		${frappe.avatar(last_assignee)}
-		// 	</span>` :
-		// 	`<span class="avatar avatar-small avatar-empty"></span>`;
+		const last_assignee = JSON.parse(doc._assign || '[]').slice(-1)[0];
+		const assigned_to = last_assignee ?
+			`<span class="filterable"
+				data-filter="_assign,like,%${last_assignee}%">
+				${frappe.avatar(last_assignee)}
+			</span>` :
+			`<span class="avatar avatar-small avatar-empty"></span>`;
 
-		// const comment_count =
-		// 	`<span class="${!doc._comment_count ? 'text-extra-muted' : ''} comment-count">
-		// 		<i class="octicon octicon-comment-discussion"></i>
-		// 		${doc._comment_count > 99 ? "99+" : doc._comment_count}
-		// 	</span>`;
+		const comment_count =
+			`<span class="${!doc._comment_count ? 'text-extra-muted' : ''} comment-count">
+				<i class="octicon octicon-comment-discussion"></i>
+				${doc._comment_count > 99 ? "99+" : doc._comment_count}
+			</span>`;
 
 		html += `
-			<div class="level-item hidden-xs list-row-activity" style ="min-width: 50px !important;">
+			<div class="level-item hidden-xs list-row-activity">
 				${modified}
+				${assigned_to}
+				${comment_count}
 			</div>
 			<div class="level-item visible-xs text-right">
 				${this.get_indicator_dot(doc)}
@@ -739,6 +743,16 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		let subject_html = `
 			<input class="level-item list-row-checkbox hidden-xs" type="checkbox" data-name="${escape(doc.name)}">
+			<span class="level-item" style="margin-bottom: 1px;">
+				<i class="octicon octicon-heart like-action ${heart_class}"
+					data-name="${doc.name}" data-doctype="${this.doctype}"
+					data-liked-by="${encodeURI(doc._liked_by) || '[]'}"
+				>
+				</i>
+				<span class="likes-count">
+					${ liked_by.length > 99 ? __("99") + '+' : __(liked_by.length || '')}
+				</span>
+			</span>
 			<span class="level-item ${seen} ellipsis" title="${escaped_subject}">
 				<a class="ellipsis" href="${this.get_form_link(doc)}" title="${escaped_subject}" data-doctype="${this.doctype}" data-name="${doc.name}">
 				${subject}

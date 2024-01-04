@@ -245,7 +245,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		this.columns = [];
 
 		const get_df = frappe.meta.get_docfield.bind(null, this.doctype);
-		console.log("this doctype "+"*****************"+this.doctype)
 
 		// 1st column: title_field or name
 		if (this.meta.title_field) {
@@ -301,14 +300,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		} else if (window.innerWidth > 1440) {
 			column_count = 8;
 		}
-		console.log(this.columns)
 		var arr_setting =frappe.utils.get_config_by_name("DOCTYPE_LIST_ARRANGMENT",{})
-		console.log(arr_setting)
-		var arr_final = arr_setting["Expense Entry"]
-		// JSON = JSON.stringify(this.columns)
-		// console.log(JSON)
+		var doctype_name=this.doctype
+		var arr_final = arr_setting[doctype_name]
+		// console.log(arr_final)
 		if (arr_final != undefined ){
-			console.log(arr_final)
 			// arr_final.forEach(function(name,index){
 			// 	i = index + 2
 			// 	this.columns[1] = {"df":{'label':name,"type":"Field"}}
@@ -321,9 +317,8 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			  });
 			
 			var arrangedArr = unchangedPart.concat(sortedPart);
-			  
+			this.columns=arrangedArr	  
 		}
-		this.columns=arrangedArr
 		this.columns = this.columns.slice(0, column_count);
 	}
 
@@ -355,7 +350,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	before_refresh() {
-		console.log("before_refresh")
 		if (frappe.route_options) {
 			this.filters = this.parse_filters_from_route_options();
 			frappe.route_options = null;
@@ -543,7 +537,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	get_list_row_html_skeleton(left = '', right = '') {
-		console.log(right)
 		return `
 			<div class="list-row-container" tabindex="1">
 				<div class="level list-row small">
@@ -1458,12 +1451,10 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	parse_filters_from_route_options() {
 		const filters = [];
-		console.log("parse_filters_from_route_options")
 		for (let field in frappe.route_options) {
 
 			let doctype = null;
 			let value = frappe.route_options[field];
-			console.log(value)
 			let value_array;
 			if ($.isArray(value) && value[0].startsWith('[') && value[0].endsWith(']')) {
 					value_array = [];
@@ -1476,14 +1467,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
 				.replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 				value = JSON.parse(value);
-				console.log('Valid JSON string');}
+				}
 				else {
-				console.log("not valid")
 				value = eval(value);
 				const fil_str = value[1].join(',');
 				
 				value[1]=fil_str;
-				console.log(value)
 				}
 				}
 

@@ -132,7 +132,7 @@
   text-wrap: pretty;
 }
 .list-subject {
-  flex: 2;
+  flex: 1;
   justify-content: start;
 }
 .list-subject .level-item {

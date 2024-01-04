@@ -245,6 +245,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		this.columns = [];
 
 		const get_df = frappe.meta.get_docfield.bind(null, this.doctype);
+		console.log("this doctype "+"*****************"+this.doctype)
 
 		// 1st column: title_field or name
 		if (this.meta.title_field) {
@@ -300,7 +301,29 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		} else if (window.innerWidth > 1440) {
 			column_count = 8;
 		}
-
+		console.log(this.columns)
+		var arr_setting =frappe.utils.get_config_by_name("DOCTYPE_LIST_ARRANGMENT",{})
+		console.log(arr_setting)
+		var arr_final = arr_setting["Expense Entry"]
+		// JSON = JSON.stringify(this.columns)
+		// console.log(JSON)
+		if (arr_final != undefined ){
+			console.log(arr_final)
+			// arr_final.forEach(function(name,index){
+			// 	i = index + 2
+			// 	this.columns[1] = {"df":{'label':name,"type":"Field"}}
+			// })
+			var unchangedPart = this.columns.slice(0, 2);
+			var sortedPart=this.columns.slice(2).sort(function(a, b) {
+				var aIndex = arr_final.indexOf(a.df.fieldname);
+				var bIndex = arr_final.indexOf(b.df.fieldname);
+				return aIndex - bIndex;
+			  });
+			
+			var arrangedArr = unchangedPart.concat(sortedPart);
+			  
+		}
+		this.columns=arrangedArr
 		this.columns = this.columns.slice(0, column_count);
 	}
 
@@ -465,9 +488,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	get_header_html() {
 		const subject_field = this.columns[0].df;
-		console.log("before")
-		console.log(this)
-		console.log("this is executed")
 		let subject_html = `
 			<input class="level-item ] hidden-xs" type="checkbox" title="${__("Select All")}">
 			<span class="level-item">${__(subject_field.label)}</span>
@@ -541,7 +561,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_column_html(col, doc) {
 		if (col.type === 'Status') {
 			return `
-				<div class="list-row-col hidden-xs ellipsis">
+				<div class="list-row-col hidden-xs ellipsis" style ="flex:1 !important;">
 					${this.get_indicator_html(doc)}
 				</div>
 			`;
@@ -665,23 +685,24 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		const modified = comment_when(doc.modified, true);
 
-		// const last_assignee = JSON.parse(doc._assign || '[]').slice(-1)[0];
-		// const assigned_to = last_assignee ?
-		// 	`<span class="filterable"
-		// 		data-filter="_assign,like,%${last_assignee}%">
-		// 		${frappe.avatar(last_assignee)}
-		// 	</span>` :
-		// 	`<span class="avatar avatar-small avatar-empty"></span>`;
+		const last_assignee = JSON.parse(doc._assign || '[]').slice(-1)[0];
+		const assigned_to = last_assignee ?
+			`<span class="filterable"
+				data-filter="_assign,like,%${last_assignee}%">
+				${frappe.avatar(last_assignee)}
+			</span>` :
+			`<span class="avatar avatar-small avatar-empty"></span>`;
 
-		// const comment_count =
-		// 	`<span class="${!doc._comment_count ? 'text-extra-muted' : ''} comment-count">
-		// 		<i class="octicon octicon-comment-discussion"></i>
-		// 		${doc._comment_count > 99 ? "99+" : doc._comment_count}
-		// 	</span>`;
+		const comment_count =
+			`<span class="${!doc._comment_count ? 'text-extra-muted' : ''} comment-count">
+				<i class="octicon octicon-comment-discussion"></i>
+				${doc._comment_count > 99 ? "99+" : doc._comment_count}
+			</span>`;
 
 		html += `
-			<div class="level-item hidden-xs list-row-activity" style ="min-width: 50px !important;">
+			<div class="level-item hidden-xs list-row-activity" style ="min-width: 65px !important;">
 				${modified}
+				${comment_count}
 			</div>
 			<div class="level-item visible-xs text-right">
 				${this.get_indicator_dot(doc)}

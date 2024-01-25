@@ -929,17 +929,17 @@ class Database(object):
 	def get_descendants(self, doctype, name):
 		'''Return descendants of the current record'''
 		if doctype =="Employee":
-			if frappe.db.exists('Employee', {'name': name}):
-				return self.sql_list(f"select name from `tabEmployee` where reports_to ='{name}'")
+			# if frappe.db.exists('Employee', {'name': name}):
+			# 	return self.sql_list(f"select name from `tabEmployee` where reports_to ='{name}'")
+			# else:
+			node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
+			if node_location_indexes:
+				lft, rgt = node_location_indexes
+				return self.sql_list('''select name from `tab{doctype}`
+				where lft > {lft} and rgt < {rgt}'''.format(doctype=doctype, lft=lft, rgt=rgt), debug =True)
 			else:
-				node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
-				if node_location_indexes:
-					lft, rgt = node_location_indexes
-					return self.sql_list('''select name from `tab{doctype}`
-					where lft > {lft} and rgt < {rgt}'''.format(doctype=doctype, lft=lft, rgt=rgt), debug =True)
-				else:
-				# when document does not exist
-					return []
+			# when document does not exist
+				return []
 		else:
 			node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
 			if node_location_indexes:

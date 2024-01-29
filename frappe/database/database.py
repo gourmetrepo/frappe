@@ -930,7 +930,19 @@ class Database(object):
 		'''Return descendants of the current record'''
 		if doctype =="Employee":
 			if frappe.db.exists('Employee', {'name': name}):
-				return self.sql_list(f"select name from `tabEmployee` where reports_to ='{name}'")
+				return self.sql_list(f"""WITH RECURSIVE decendants AS (
+										  SELECT NAME
+										  FROM `tabEmployee`
+										  WHERE reports_to = '{name}'
+										
+										  UNION ALL
+										
+										  SELECT c.name
+										  FROM `tabEmployee` c
+										  JOIN decendants cc ON cc.name = c.reports_to
+										)
+										SELECT name
+										FROM decendants """)
 			else:
 				node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
 				if node_location_indexes:

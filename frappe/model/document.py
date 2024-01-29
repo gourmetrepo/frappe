@@ -1277,4 +1277,16 @@ def execute_action(doctype, name, action, **kwargs):
 			msg = '<pre><code>' + frappe.get_traceback() + '</pre></code>'
 
 		doc.add_comment('Comment', _('Action Failed') + '<br><br>' + msg)
+		if doctype == 'Payment Advice':
+			frappe.db.sql("UPDATE `tabPayment Advice` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
+			frappe.db.commit()
+		if doctype == 'Expense Entry':
+			frappe.db.sql("UPDATE `tabExpense Entry` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
+			frappe.db.commit()
+		if doctype == 'Sales Invoice':
+			frappe.db.sql("UPDATE `tabSales Invoice` SET queue_status='Failed' WHERE `name`='{docname}';".format(docname=name))
+			frappe.db.commit()
+		if doctype == 'Payment Order':
+			frappe.db.sql("UPDATE `tabPayment Order` SET queue_status='Failed' WHERE name='{docname}';".format(docname=name))
+			frappe.db.commit()
 		doc.notify_update()

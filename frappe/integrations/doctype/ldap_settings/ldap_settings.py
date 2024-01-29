@@ -145,8 +145,8 @@ class LDAPSettings(Document):
 
 	def authenticate(self, username, password):
 
-		if not self.enabled:
-			frappe.throw(_("LDAP is not enabled."))
+		# if not self.enabled:
+		# 	frappe.throw(_("LDAP is not enabled."))
 
 		user_filter = self.ldap_search_string.format(username)
 		ldap_attributes = self.get_ldap_attributes()

@@ -188,22 +188,23 @@ scheduler_events = {
 		"frappe.desk.notifications.clear_notifications",
 		#"frappe.core.doctype.error_log.error_log.set_old_logs_as_seen",
 		"frappe.desk.doctype.event.event.send_event_digest",
-		"frappe.sessions.clear_expired_sessions",
+		
 		"frappe.email.doctype.notification.notification.trigger_daily_alerts",
-		"frappe.realtime.remove_old_task_logs",
+		#"frappe.realtime.remove_old_task_logs",
 		"frappe.utils.scheduler.restrict_scheduler_events_if_dormant",
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
-		"frappe.core.doctype.activity_log.activity_log.clear_authentication_logs",
-		"frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.remove_unverified_record",
+		#"frappe.email.doctype.auto_email_report.auto_email_report.send_daily",
+		#"frappe.core.doctype.activity_log.activity_log.clear_authentication_logs",
+		#"frappe.website.doctype.personal_data_deletion_request.personal_data_deletion_request.remove_unverified_record",
 		#"frappe.desk.form.document_follow.send_daily_updates",
-		"frappe.social.doctype.energy_point_settings.energy_point_settings.allocate_review_points",
+		#"frappe.social.doctype.energy_point_settings.energy_point_settings.allocate_review_points",
 		#"frappe.integrations.doctype.google_contacts.google_contacts.sync",
-		"frappe.automation.doctype.auto_repeat.auto_repeat.make_auto_repeat_entry",
-		"frappe.automation.doctype.auto_repeat.auto_repeat.set_auto_repeat_as_completed",
-		"frappe.email.doctype.unhandled_email.unhandled_email.remove_old_unhandled_emails",
-		"frappe.core.doctype.prepared_report.prepared_report.delete_expired_prepared_reports"
+		#"frappe.automation.doctype.auto_repeat.auto_repeat.make_auto_repeat_entry",
+		#"frappe.automation.doctype.auto_repeat.auto_repeat.set_auto_repeat_as_completed",
+		#"frappe.email.doctype.unhandled_email.unhandled_email.remove_old_unhandled_emails",
+		#"frappe.core.doctype.prepared_report.prepared_report.delete_expired_prepared_reports"
 	],
 	"daily_long": [
+		 "frappe.sessions.clear_expired_sessions",
 		#"frappe.integrations.doctype.dropbox_settings.dropbox_settings.take_backups_daily",
 		#"frappe.utils.change_log.check_for_update",
 		#"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_daily",
@@ -217,15 +218,23 @@ scheduler_events = {
 		#"frappe.desk.form.document_follow.send_weekly_updates",
 		#"frappe.social.doctype.energy_point_log.energy_point_log.send_weekly_summary",
 		#"frappe.integrations.doctype.google_drive.google_drive.weekly_backup",
-        "frappe.core.doctype.error_log.error_log.set_old_logs_as_seen", # shift from daily to weekly long
+        #"frappe.core.doctype.error_log.error_log.set_old_logs_as_seen", # shift from daily to weekly long
 	],
 	"monthly": [
-		"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly",
-		"frappe.social.doctype.energy_point_log.energy_point_log.send_monthly_summary"
+		#"frappe.email.doctype.auto_email_report.auto_email_report.send_monthly",
+		#"frappe.social.doctype.energy_point_log.energy_point_log.send_monthly_summary"
 	],
 	"monthly_long": [
 		#"frappe.integrations.doctype.s3_backup_settings.s3_backup_settings.take_backups_monthly"
-	]
+	],
+ "cron" : {
+     "0 02 * * *" : [
+    	"frappe.desk.page.backups.backups.delete_downloadable_backups",
+      "frappe.core.doctype.prepared_report.prepared_report.delete_expired_prepared_reports"
+	 ]
+     }
+
+ 
 }
 
 get_translated_dict = {

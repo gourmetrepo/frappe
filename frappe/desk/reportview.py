@@ -15,15 +15,20 @@ from frappe.utils import cstr
 
 # # Umair added code for report builder logs
 # ### Start ###
-# def report_builder_log():
-# 	data = frappe._dict(frappe.local.form_dict)
-# 	is_report = data.get('view') == 'Report'
-# 	if is_report:
-# 		# from frappe.utils import get_fullname
-# 		user = frappe.session.user
-# 		# fullname = get_fullname(user)
-# 		message = "Report is opened by ther user '{}' for doctype '{}' with fields={} and filters={}".format(user,data['doctype'],data['fields'],data['filters'])   
-# 		frappe.log_error(message=message, title="Report Builder Log")
+def report_builder_log():
+	try:
+		data = frappe._dict(frappe.local.form_dict)
+		is_report = data.get('view') == 'Report'
+		if is_report:
+			company = ''
+			user = frappe.session.user
+			if frappe.session.data.company:
+				company = frappe.session.data.company
+			message = {'fields':data['fields'], 'filters':data['filters']}   
+			frappe.log_error(message=message, title="Report Builder | {0} | {1} | {2}".format(user,company,data['doctype']))
+	
+	except Exception as e:
+		frappe.error_log(message=e,title="Error while creating report builder log")
 # ### End ###
 
 @frappe.whitelist()
@@ -31,7 +36,7 @@ from frappe.utils import cstr
 def get():
 	args = get_form_params()
 
-	#report_builder_log()
+	report_builder_log()
 
 	data = compress(execute(**args), args = args)
 

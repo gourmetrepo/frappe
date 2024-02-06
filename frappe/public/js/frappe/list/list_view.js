@@ -483,7 +483,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_header_html() {
 		const subject_field = this.columns[0].df;
 		let subject_html = `
-			<input class="level-item ] hidden-xs" type="checkbox" title="${__("Select All")}">
+			<input class="level-item list-check-all hidden-xs" type="checkbox" title="${__("Select All")}">
 			<span class="level-item">${__(subject_field.label)}</span>
 		`;
 		const $columns = this.columns.map(col => {

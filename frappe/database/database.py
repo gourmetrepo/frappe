@@ -114,9 +114,10 @@ class Database(object):
 				{"name": "a%", "owner":"test@example.com"})
 
 		"""
-		if re.search(r'ifnull\(', query, flags=re.IGNORECASE):
+		#samad 
+		#if re.search(r'ifnull\(', query, flags=re.IGNORECASE):
 			# replaces ifnull in query with coalesce
-			query = re.sub(r'ifnull\(', 'coalesce(', query, flags=re.IGNORECASE)
+			#query = re.sub(r'ifnull\(', 'coalesce(', query, flags=re.IGNORECASE)
 
 		if not self._conn:
 			self.connect()
@@ -344,7 +345,7 @@ class Database(object):
 
 			if _operator not in ["=", "!=", ">", ">=", "<", "<=", "like", "in", "not in", "not like"]:
 				_operator = "="
-
+			#samad
 			if "[" in key:
 				split_key = key.split("[")
 				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']

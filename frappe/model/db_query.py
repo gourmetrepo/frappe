@@ -116,11 +116,15 @@ class DatabaseQuery(object):
 		if self.distinct:
 			args.fields = 'distinct ' + args.fields
 			args.order_by = '' # TODO: recheck for alternative
-			doctype_list = {'Stock Ledger Entry','GL Entry','Batch'}
+			#samad
+			#doctype_list = {'Stock Ledger Entry','GL Entry','Batch'}
 			#if not args.limit:
 				#args.limit = "limit 500 offset 0"
-			if not args.conditions and self.doctype in doctype_list:
-				args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
+			#samad
+			# if not args.conditions and self.doctype in doctype_list:
+			# 	args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
+			if not args.conditions:
+				args.conditions = "where date(creation) >= CURDATE() - INTERVAL 30 DAY"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s
@@ -480,8 +484,9 @@ class DatabaseQuery(object):
 				value = ""
 				fallback = "''"
 				can_be_null = True
-
-				if 'ifnull' not in column_name:
+    			#samad
+				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+				if 'ifnull' not in column_name and column_name not in col_list_set:
 					column_name = 'ifnull({}, {})'.format(column_name, fallback)
 
 			elif df and df.fieldtype=="Date":

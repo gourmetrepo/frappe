@@ -532,7 +532,11 @@ def whitelist(allow_guest=False, xss_safe=False, methods=None):
 def read_only():
 	def innfn(fn):
 		def wrapper_fn(*args, **kwargs):
-			if conf.read_from_replica:
+			import frappe
+			data = frappe._dict(frappe.local.form_dict)
+			is_report = data.get('view') == 'Report'
+
+			if is_report == True and conf.read_from_replica:
 				connect_replica()
 
 			try:

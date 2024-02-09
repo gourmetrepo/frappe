@@ -816,7 +816,7 @@ class Database(object):
 			#samad
 			# count = self.sql("""select count(*)
 			# 	from `tab%s`""" % (dt,))[0][0]
-			count=0
+			count=1
 
 			if cache:
 				frappe.cache().set_value('doctype:count:{}'.format(dt), count, expires_in_sec = 86400)

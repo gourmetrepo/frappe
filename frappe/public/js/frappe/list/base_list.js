@@ -56,8 +56,7 @@ frappe.views.BaseList = class BaseList {
 		this.primary_action = null;
 		this.secondary_action = {
 			label: __('Refresh'),
-			action: () => this.refresh()
-		};
+			action: () => {localStorage.setItem('docname_report',""),this.refresh()}		};
 
 		this.menu_items = [{
 			label: __('Refresh'),
@@ -370,8 +369,30 @@ frappe.views.BaseList = class BaseList {
 	refresh() {
 		this.freeze(true);
 		// fetch data from server
+		console.log(this.view);
+
+		var docname_report = localStorage.getItem('docname_report')
+		
+		var status  =localStorage.getItem('status')
+		if(this.view!="Report"){
 		return frappe.call(this.get_call_args()).then(r => {
 			// render
+			console.log('Lsit',r)
+			this.prepare_data(r);
+			this.toggle_result_area();
+			this.before_render();
+			this.render();
+			this.after_render();
+			this.freeze(false);
+			if (this.settings.refresh) {
+				this.settings.refresh(this);
+			}
+		});
+	}else if (this.view==="Report" && docname_report  != this.doctype){
+		localStorage.setItem('docname_report',this.doctype)
+		return frappe.call(this.get_call_args()).then(r => {
+			// render
+			console.log('Lsit',r)
 			this.prepare_data(r);
 			this.toggle_result_area();
 			this.before_render();
@@ -383,6 +404,7 @@ frappe.views.BaseList = class BaseList {
 			}
 		});
 	}
+}
 
 	prepare_data(r) {
 		let data = r.message || {};

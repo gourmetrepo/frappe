@@ -532,7 +532,14 @@ def whitelist(allow_guest=False, xss_safe=False, methods=None):
 def read_only():
 	def innfn(fn):
 		def wrapper_fn(*args, **kwargs):
-			if conf.read_from_replica:
+			import frappe
+			data = frappe._dict(frappe.local.form_dict)
+			is_report = data.get('view') == 'Report'
+			email = frappe.session.user
+			my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com", "anwar.haq@gourmetpakistan.com", "khizer.shujra@gourmetpakistan.com", "rizwan.ali@gourmetpakistan.com","zubair@gourmetpakistan.com"]
+			if email in my_array:
+				is_report = False
+			if is_report == True and conf.read_from_replica:
 				connect_replica()
 
 			try:

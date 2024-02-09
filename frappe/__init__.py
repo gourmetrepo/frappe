@@ -535,6 +535,8 @@ def read_only():
 			import frappe
 			data = frappe._dict(frappe.local.form_dict)
 			is_report = data.get('view') == 'Report'
+			if is_report == False:
+				is_report = data.get('cmd') == 'frappe.desk.query_report.run'
 			email = frappe.session.user
 			my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com", "anwar.haq@gourmetpakistan.com", "khizer.shujra@gourmetpakistan.com", "rizwan.ali@gourmetpakistan.com","zubair@gourmetpakistan.com"]
 			if email in my_array:

@@ -484,7 +484,7 @@ class DatabaseQuery(object):
 				value = ""
 				fallback = "''"
 				can_be_null = True
-    			#samad
+    			#samad close if null
 				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
 				if 'ifnull' not in column_name and column_name not in col_list_set:
 					column_name = 'ifnull({}, {})'.format(column_name, fallback)
@@ -536,8 +536,8 @@ class DatabaseQuery(object):
 				column_name=column_name, operator=f.operator,
 				value=value)
 		else:
-			col_list_set = ['name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-			if(f.fieldname not in col_list_set):
+			col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+			if(column_name not in col_list_set):
 				condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
 				column_name=column_name, fallback=fallback, operator=f.operator,
 				value=value)
@@ -629,10 +629,13 @@ class DatabaseQuery(object):
 				if frappe.get_system_settings("apply_strict_user_permissions"):
 					condition = ""
 				else:
-					empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
-						doctype=self.doctype, fieldname=df.get('fieldname')
-					)
-					condition = empty_value_condition + " or "
+					#samad ifnull 
+					col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+					if(df.get('fieldname') not in col_list_set):
+						empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
+							doctype=self.doctype, fieldname=df.get('fieldname')
+						)
+						condition = empty_value_condition + " or "
 
 				for permission in user_permission_values:
 					if not permission.get('applicable_for'):

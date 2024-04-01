@@ -630,8 +630,8 @@ class DatabaseQuery(object):
 					condition = ""
 				else:
 					#samad ifnull 
-					col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-					if(df.get('fieldname') not in col_list_set):
+					#col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+					#if(df.get('fieldname') not in col_list_set):
 						empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
 							doctype=self.doctype, fieldname=df.get('fieldname')
 						)

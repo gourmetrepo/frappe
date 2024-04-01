@@ -630,13 +630,15 @@ class DatabaseQuery(object):
 					condition = ""
 				else:
 					#samad ifnull
-					empty_value_condition=''
+					#empty_value_condition=''
 					col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
 					if(df.get('fieldname') not in col_list_set):
 						empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
 							doctype=self.doctype, fieldname=df.get('fieldname')
 						)
-					condition = empty_value_condition + " or "
+						condition = empty_value_condition + " or "
+					else:
+						condition = ""
 
 				for permission in user_permission_values:
 					if not permission.get('applicable_for'):

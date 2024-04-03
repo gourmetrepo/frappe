@@ -537,7 +537,7 @@ class DatabaseQuery(object):
 				value=value)
 		else:
 			col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-			if(column_name not in col_list_set):
+			if(column_name.split('.')[-1] not in col_list_set):
 				condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
 				column_name=column_name, fallback=fallback, operator=f.operator,
 				value=value)

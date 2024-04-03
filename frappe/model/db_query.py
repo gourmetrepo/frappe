@@ -485,8 +485,9 @@ class DatabaseQuery(object):
 				fallback = "''"
 				can_be_null = True
     			#samad close if null
+				fcolumn_name=column_name.split('.')[-1]
 				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-				if 'ifnull' not in column_name and column_name not in col_list_set:
+				if 'ifnull' not in column_name and fcolumn_name not in col_list_set:
 					column_name = 'ifnull({}, {})'.format(column_name, fallback)
 
 			elif df and df.fieldtype=="Date":

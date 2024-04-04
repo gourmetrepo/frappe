@@ -123,8 +123,8 @@ class DatabaseQuery(object):
 			#samad
 			# if not args.conditions and self.doctype in doctype_list:
 			# 	args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
-			if not args.conditions:
-				args.conditions = "where date(creation) >= CURDATE() - INTERVAL 30 DAY"
+		if not args.conditions:
+			args.conditions = "where date(creation) >= CURDATE() - INTERVAL 30 DAY"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s

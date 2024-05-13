@@ -490,8 +490,12 @@ frappe.ui.form.Form = class FrappeForm {
 			this.toolbar.refresh();
 		}
 
-		this.dashboard.refresh();
-
+		let today = frappe.datetime.nowdate();
+		let creationTimeStamp = this.doc.creation
+		let creationDate = creationTimeStamp ? creationTimeStamp.split(' ')[0] : null;
+		if (!(this.doc.doctype === "Item Tax Template" && creationDate !== null && today === creationDate)) {
+			this.dashboard.refresh();
+		}
 		this.show_submit_message();
 		this.clear_custom_buttons();
 		this.show_web_link();

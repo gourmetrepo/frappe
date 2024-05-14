@@ -3,6 +3,7 @@
 
 frappe.ui.form.on('Deleted Document', {
 	refresh: function(frm) {
+		frm.page.clear_menu();
 		if(frm.doc.restored) {
 			frm.add_custom_button(__('Open'), function() {
 				frappe.set_route('Form', frm.doc.deleted_doctype, frm.doc.new_name);

@@ -7,7 +7,7 @@
 	<meta name="generator" content="frappe">
 
 	{% block meta_block %}
-		{% include "templates/includes/meta_block.html" %}
+	{% include "templates/includes/meta_block.html" %}
 	{% endblock %}
 
 	<title>{% block title %}{{ title | striptags }}{% endblock %}</title>
@@ -23,23 +23,23 @@
 	<link rel="canonical" href="{{ canonical }}">
 
 	{%- block head -%}
-		{% if head_html is defined -%}
-		{{ head_html or "" }}
-		{%- endif %}
+	{% if head_html is defined -%}
+	{{ head_html or "" }}
+	{%- endif %}
 
-		{% if theme.theme_url %}
-		<link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
-		{% else %}
-		<link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css">
+	{% if theme.theme_url %}
+	<link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
+	{% else %}
+	<link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css">
 
-		{%- for link in web_include_css %}
-		<link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">
-		{%- endfor -%}
-		{% endif %}
+	{%- for link in web_include_css %}
+	<link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">
+	{%- endfor -%}
+	{% endif %}
 	{%- endblock -%}
 
 	{%- block head_include %}
-		{{ head_include or "" }}
+	{{ head_include or "" }}
 	{% endblock -%}
 
 	{%- block style %}{%- endblock -%}
@@ -52,27 +52,49 @@
 		}
 		window.dev_server = {{ dev_server }};
 		window.socketio_port = {{ (frappe.socketio_port or 'null') }};
-    </script>
+	</script>
+	<script>
+		window.onhashchange = function () {
+			var userId = frappe.session.user;
+			var _paq = window._paq = window._paq || [];
+			_paq.push(['setCustomUrl', '/' + window.location.hash.substr(1)]);
+			_paq.push(['setUserId', userId]);
+			_paq.push(['setDocumentTitle', window.cur_frm.get_title()]);
+			_paq.push(['trackPageView']);
+			_paq.push(['enableLinkTracking']);
+			(function () {
+				var u = "//matomo.gourmetpakistan.com/matomo/";
+				_paq.push(['setTrackerUrl', u + 'matomo.php']);
+				_paq.push(['setSiteId', '14']);
+
+
+				var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+				g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
+			})();
+		};
+	</script>
+
+
 </head>
 <body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}" data-path="{{ path | e }}" {%- if template and template.endswith('.md') %} frappe-content-type="markdown" {% endif -%}>
 	{%- block banner -%}
-		{% include "templates/includes/banner_extension.html" ignore missing %}
+	{% include "templates/includes/banner_extension.html" ignore missing %}
 
-		{% if banner_html -%}
-		{{ banner_html or "" }}
-		{%- endif %}
+	{% if banner_html -%}
+	{{ banner_html or "" }}
+	{%- endif %}
 	{%- endblock -%}
 
 	{%- block navbar -%}
-		{% include "templates/includes/navbar/navbar.html" %}
+	{% include "templates/includes/navbar/navbar.html" %}
 	{%- endblock -%}
 
 	{% block content %}
-		{{ content }}
+	{{ content }}
 	{% endblock %}
 
 	{%- block footer -%}
-		{% include "templates/includes/footer/footer.html" %}
+	{% include "templates/includes/footer/footer.html" %}
 	{%- endblock -%}
 
 	{% block base_scripts %}

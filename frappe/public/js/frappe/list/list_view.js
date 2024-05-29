@@ -122,6 +122,11 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	set_actions_menu_items() {
 		this.actions_menu_items = this.get_actions_menu_items();
+		if (this.doctype === "Deleted Document") {
+			this.actions_menu_items = this.actions_menu_items.filter(function(item) {
+				return item.label !== "Delete";
+			});
+		}
 		this.workflow_action_menu_items = this.get_workflow_action_menu_items();
 		this.workflow_action_items = {};
 

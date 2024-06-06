@@ -23,6 +23,133 @@
 	<link type="text/css" rel="stylesheet" href="{{ include }}?ver={{ build_version }}">
 	{%- endfor -%}
 
+	<script type="text/javascript">
+		// Utility function to check if an object is empty
+		function isEmpty(obj) {
+			return obj && Object.keys(obj).length === 0 && obj.constructor === Object;
+		}
+
+		async function logCrudToMatomo(operationType, documentData, responseUrl) {
+			const SITE_ID = '13';
+			const MATOMO_URL = 'https://matomo.gourmetpakistan.com/matomo/matomo.php';
+			const TOKEN_AUTH = 'b8504e7900cc62e160b32dd6409e6be6'; // Auth tokens = Log CRUD operations
+			const DOC_DATA_CUSTOM_DIMENSION_ID = 1;
+
+			const trackingData = {
+				idsite: SITE_ID,
+				rec: 1,
+				apiv: 1,
+				url: responseUrl,
+				action_name: `API CALL: CRUD - ${operationType} - ${documentData.doctype} - ${documentData.name}`,
+				rand: Math.random(),
+				token_auth: TOKEN_AUTH,
+				uid: frappe.session.user,
+				// Comment e_* keys to log CRUD as Page View instead of Event
+				e_c: `API CALL: CRUD`,
+				e_a: `${operationType}`,
+				e_n: `${documentData.doctype} - ${documentData.name}`,
+				[`dimension${DOC_DATA_CUSTOM_DIMENSION_ID}`]: JSON.stringify(documentData)
+			};
+
+			const queryString = Object.entries(trackingData)
+				.map(([key, value]) =>
+					`${key}=${encodeURIComponent(value)}`
+				).join('&');
+
+			const trackingUrl = `${MATOMO_URL}?${queryString}`;
+
+			try {
+				await fetch(trackingUrl, { method: 'GET', mode: 'no-cors' });
+				console.log(`Log to Matomo: API CALL: CRUD - ${operationType} - ${documentData.doctype} - ${documentData.name}`)
+			} catch (error) {
+				console.error('Error logging to Matomo:', error, trackingData);
+			}
+
+			return;
+		}
+
+		// Intercept XMLHttpRequest
+		(function (open) {
+			XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+				this.addEventListener('readystatechange', function () {
+					if (this.readyState === 4) {
+
+						const apiRequestsToExclude = [
+							'socket.io'
+						];
+						const excludeApi = apiRequestsToExclude.some(apiRequest =>
+							this.responseURL.includes(apiRequest)
+						);
+
+						try {
+							if (!excludeApi) {
+								// Validate response and parse JSON
+								const validResponseJson = this.response !== "" ? this.response : null
+								let documentData;
+								if (validResponseJson) {
+									const parsedResponse = JSON.parse(this.response);
+									documentData = parsedResponse?.docs?.[0] ?? {};
+									if (isEmpty(documentData)) {
+										documentData = parsedResponse?.message ?? {};
+									}
+								}
+
+								if (!isEmpty(documentData)) {
+									let docLocalNameExists = false;
+									if (documentData?.localname) {
+										docLocalNameExists = true;
+									}
+
+									// Filter CRUD operations
+									let isCrudOperation;
+									if (this.responseURL.includes('client.insert') ||
+										(this.responseURL.includes('save.savedocs') &&
+											docLocalNameExists)
+									) {
+										isCrudOperation = 'CREATE';
+									} else if (this.responseURL.includes('load.getdoc?')) {
+										isCrudOperation = 'READ';
+									} else if (
+										this.responseURL.includes('save.savedocs') ||
+										this.responseURL.includes('save.cancel') ||
+										this.responseURL.includes('workflow.apply_workflow')
+									) {
+										isCrudOperation = 'UPDATE';
+									}
+									else if (this.responseURL.includes('client.delete')) {
+										isCrudOperation = 'DELETE';
+
+										const windowUrl = window.location.href;
+										const requiredDocumentData = windowUrl.substring(
+											windowUrl.indexOf('#Form/') + '#Form/'.length,
+											windowUrl.length
+										).split('/');
+
+										documentData = {
+											'doctype': requiredDocumentData[0],
+											'name': requiredDocumentData[1]
+										}
+									}
+
+									const excludeLogDoctype = ['Notification Settings'];
+
+									if (isCrudOperation && !(documentData.doctype == null)) {
+										if (!excludeLogDoctype.includes(documentData.doctype)) {
+											logCrudToMatomo(isCrudOperation, documentData, this.responseURL);
+										}
+									}
+								}
+							}
+						} catch (error) {
+							console.error('Matomo - Error while capturing CRUD XMLHttpRequest', error);
+						}
+					}
+				}, false);
+				open.call(this, method, url, async, user, pass);
+			};
+		})(XMLHttpRequest.prototype.open);
+	</script>
+
 	<!-- Matomo -->
 	<script>
 		window.onhashchange = function () {

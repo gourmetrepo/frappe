@@ -38,7 +38,8 @@ queue_timeout = {
 	'rms_push_queue':1500,
 	'so_primary':300,
 	'so_secondary':300,
-	'hr_primary':500
+	'hr_primary':500,
+	'hr_secondary':500,
 }
 
 redis_connection = None

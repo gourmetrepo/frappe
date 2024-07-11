@@ -137,8 +137,8 @@ class LoginManager:
 				return False
 		self.post_login()
 		# check is user is allowed
-		from nerp.apis.login import checkUserAllow
-		checkUserAllow(self.user)
+		# from nerp.apis.login import checkUserAllow
+		# checkUserAllow(self.user)
 
 
 	def post_login(self):

@@ -535,10 +535,11 @@ def read_only():
 			import frappe
 			data = frappe._dict(frappe.local.form_dict)
 			is_report = data.get('view') == 'Report'
-			if is_report == False:
-				is_report = data.get('cmd') == 'frappe.desk.query_report.run'
+			# if is_report == False:
+			# 	is_report = 'query_report' in data.get('cmd')
 			email = frappe.session.user
-			my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com", "anwar.haq@gourmetpakistan.com", "khizer.shujra@gourmetpakistan.com", "rizwan.ali@gourmetpakistan.com","zubair@gourmetpakistan.com"]
+			# my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com", "anwar.haq@gourmetpakistan.com", "khizer.shujra@gourmetpakistan.com", "rizwan.ali@gourmetpakistan.com","zubair@gourmetpakistan.com"]
+			my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com","zubair@gourmetpakistan.com"]
 			if email in my_array:
 				is_report = False
 			if is_report == True and conf.read_from_replica:

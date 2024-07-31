@@ -816,7 +816,7 @@ class Database(object):
 			#samad
 			# count = self.sql("""select count(*)
 			# 	from `tab%s`""" % (dt,))[0][0]
-			count=0
+			count=1
 
 			if cache:
 				frappe.cache().set_value('doctype:count:{}'.format(dt), count, expires_in_sec = 86400)
@@ -937,13 +937,13 @@ class Database(object):
 										  FROM `tabEmployee`
 										  WHERE reports_to = '{name}'
 										
-										  UNION ALL
+										  UNION
 										
 										  SELECT c.name
 										  FROM `tabEmployee` c
 										  JOIN decendants cc ON cc.name = c.reports_to
 										)
-										SELECT name
+										SELECT  DISTINCT NAME
 										FROM decendants """)
 			else:
 				node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))

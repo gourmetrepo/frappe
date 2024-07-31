@@ -123,8 +123,8 @@ class DatabaseQuery(object):
 			#samad
 			# if not args.conditions and self.doctype in doctype_list:
 			# 	args.conditions = "where creation < (NOW() - INTERVAL 10 DAY)"
-			if not args.conditions:
-				args.conditions = "where date(creation) >= CURDATE() - INTERVAL 30 DAY"
+		# if not args.conditions:
+		# 	args.conditions = "where date(creation) >= CURDATE() - INTERVAL 30 DAY"
 		query = """select %(fields)s
 			from %(tables)s
 			%(conditions)s
@@ -484,9 +484,10 @@ class DatabaseQuery(object):
 				value = ""
 				fallback = "''"
 				can_be_null = True
-    			#samad
+    			#samad close if null
+				fcolumn_name=column_name.split('.')[-1]
 				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-				if 'ifnull' not in column_name and column_name not in col_list_set:
+				if 'ifnull' not in column_name and fcolumn_name not in col_list_set:
 					column_name = 'ifnull({}, {})'.format(column_name, fallback)
 
 			elif df and df.fieldtype=="Date":
@@ -536,8 +537,9 @@ class DatabaseQuery(object):
 				column_name=column_name, operator=f.operator,
 				value=value)
 		else:
-			col_list_set = ['name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-			if(f.fieldname not in col_list_set):
+			fcolumn_name=column_name.split('.')[-1]
+			col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+			if(fcolumn_name not in col_list_set):
 				condition = 'ifnull({column_name}, {fallback}) {operator} {value}'.format(
 				column_name=column_name, fallback=fallback, operator=f.operator,
 				value=value)
@@ -629,10 +631,16 @@ class DatabaseQuery(object):
 				if frappe.get_system_settings("apply_strict_user_permissions"):
 					condition = ""
 				else:
-					empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
-						doctype=self.doctype, fieldname=df.get('fieldname')
-					)
-					condition = empty_value_condition + " or "
+					#samad ifnull
+					#empty_value_condition=''
+					col_list_set = ['company','name','posting_time','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
+					if(df.get('fieldname') not in col_list_set):
+						empty_value_condition = "ifnull(`tab{doctype}`.`{fieldname}`, '')=''".format(
+							doctype=self.doctype, fieldname=df.get('fieldname')
+						)
+						condition = empty_value_condition + " or "
+					else:
+						condition = ""
 
 				for permission in user_permission_values:
 					if not permission.get('applicable_for'):

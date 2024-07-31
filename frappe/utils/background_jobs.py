@@ -30,6 +30,7 @@ queue_timeout = {
 	'se_secondary': 300,
 	'se_tertiary': 300,
 	'se_quaternary': 300,
+	'se_rms':1000000,
 	'return':300,
 	'slu_primary':300,
 	'slu_secondary':300,

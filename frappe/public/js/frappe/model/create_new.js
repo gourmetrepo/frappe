@@ -250,6 +250,16 @@ $.extend(frappe.model, {
 
 	copy_doc: function(doc, from_amend, parent_doc, parentfield) {
 		var no_copy_list = ['name','amended_from','amendment_date','cancel_reason'];
+		// Moeiz Code for setting cost center to none for listed documents
+		var cost_center_document_list = ["Sales Order"]
+		var cost_center_flag = false
+		if (cost_center_document_list.includes(doc.doctype)){
+			if ('cost_center' in doc){
+				no_copy_list.push("cost_center")
+			}
+			cost_center_flag = true
+		}
+
 		var newdoc = frappe.model.get_new_doc(doc.doctype, parent_doc, parentfield);
 
 		for(var key in doc) {
@@ -264,6 +274,11 @@ $.extend(frappe.model, {
 				if (frappe.model.table_fields.includes(df.fieldtype)) {
 					for (var i = 0, j = value.length; i < j; i++) {
 						var d = value[i];
+
+						// Moeiz Code for setting cost center to none for listed documents in child table as well
+						if ('cost_center' in d && cost_center_flag){
+							d.cost_center = null
+						}
 						frappe.model.copy_doc(d, from_amend, newdoc, df.fieldname);
 					}
 				} else {

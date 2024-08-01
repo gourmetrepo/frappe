@@ -251,14 +251,11 @@ $.extend(frappe.model, {
 	copy_doc: function(doc, from_amend, parent_doc, parentfield) {
 		var no_copy_list = ['name','amended_from','amendment_date','cancel_reason'];
 		// Moeiz Code for setting cost center to none for listed documents
-		var cost_center_document_list = ["Sales Order"]
-		var cost_center_flag = false
-		if (cost_center_document_list.includes(doc.doctype)){
-			if ('cost_center' in doc){
-				no_copy_list.push("cost_center")
-			}
-			cost_center_flag = true
+		var cost_center_flag = true
+		if ('cost_center' in doc){
+			no_copy_list.push("cost_center")
 		}
+
 
 		var newdoc = frappe.model.get_new_doc(doc.doctype, parent_doc, parentfield);
 

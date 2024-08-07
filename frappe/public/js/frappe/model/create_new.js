@@ -249,7 +249,6 @@ $.extend(frappe.model, {
 	},
 
 	copy_doc: function(doc, from_amend, parent_doc, parentfield) {
-		debugger;
 		var no_copy_list = ['name','amended_from','amendment_date','cancel_reason'];
 		// Moeiz Code for setting cost center to none for listed documents
 

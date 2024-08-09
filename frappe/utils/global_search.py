@@ -358,9 +358,11 @@ def sync_global_search():
 	:param flags:
 	:return:
 	"""
-	while frappe.cache().llen('global_search_queue') > 0:
-		value = json.loads(frappe.cache().lpop('global_search_queue').decode('utf-8'))
-		sync_value(value)
+	# Disable by Moeiz to disable global search
+	# while frappe.cache().llen('global_search_queue') > 0:
+	# 	value = json.loads(frappe.cache().lpop('global_search_queue').decode('utf-8'))
+	# 	sync_value(value)
+	pass
 
 def sync_value_in_queue(value):
 	try:

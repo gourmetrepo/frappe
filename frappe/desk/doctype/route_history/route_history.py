@@ -41,3 +41,9 @@ def flush_old_route_records():
 			"modified": last_record_to_keep[0].modified,
 			"user": user
 		})
+        
+queue_prefix = 'insert_queue_for_'
+@frappe.whitelist()
+def deferred_insert():
+	pass
+    #frappe.cache().rpush(queue_prefix + doctype, records)

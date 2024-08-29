@@ -263,7 +263,8 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 
 				latest_report_data = {
 					"columns": columns,
-					"result": data
+					"result": data.get('result'),
+					"chart": data.get('chart')
 				}
 		except Exception:
 			frappe.log_error(frappe.get_traceback())

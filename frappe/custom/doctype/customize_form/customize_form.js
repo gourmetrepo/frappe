@@ -106,7 +106,7 @@ frappe.ui.form.on("Customize Form", {
 							{fieldtype:'Check', fieldname:'sync_on_migrate',
 								label: __('Sync on Migrate'), 'default': 1},
 							{fieldtype:'Check', fieldname:'with_permissions',
-								label: __('Export Custom Permissions'), 'default': 1},
+								label: __('Export Custom Permissions'), 'default': 0, 'read_only': 1},
 						],
 						function(data) {
 							frappe.call({

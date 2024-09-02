@@ -787,6 +787,19 @@ Object.assign(frappe.utils, {
 		});
 
 		return $el;
+	},
+
+	icon(icon_name, size="sm", icon_class="", icon_style="", svg_class="") {
+		let size_class = "";
+
+		if (typeof size == "object") {
+			icon_style += ` width: ${size.width}; height: ${size.height}`;
+		} else {
+			size_class = `icon-${size}`;
+		}
+		return `<svg class="icon ${svg_class} ${size_class}" style="${icon_style}">
+			<use class="${icon_class}" href="#icon-${icon_name}"></use>
+		</svg>`;
 	}
 });
 

@@ -47,12 +47,11 @@ export default class GridRowForm {
 						${ __("Editing Row") } #<span class="grid-form-row-index"></span></span>
 					<span class="row-actions">
 						<button class="btn btn-secondary btn-sm pull-right grid-collapse-row">
-							<i class="fa fa-arrow-left xs"></i>
+							<i class="octicon octicon-triangle-up"></i>
 						</button>
 						<button class="btn btn-secondary btn-sm pull-right grid-move-row hidden-xs">
 							${ __("Move") }</button>
 						<button class="btn btn-secondary btn-sm pull-right grid-duplicate-row hidden-xs">
-							<i class="fa fa-arrow-left xs"></i>
 							${ __("Duplicate") }
 						</button>
 						<button class="btn btn-secondary btn-sm pull-right grid-insert-row hidden-xs">
@@ -60,7 +59,7 @@ export default class GridRowForm {
 						<button class="btn btn-secondary btn-sm pull-right grid-insert-row-below hidden-xs">
 							${ __("Insert Below") }</button>
 						<button class="btn btn-danger btn-sm pull-right grid-delete-row">
-							<i class="fa fa-delete xs"></i>
+							<i class="octicon octicon-trashcan" style="padding-bottom: 2px; margin-top: 1px;"></i>
 						</button>
 					</span>
 				</div>

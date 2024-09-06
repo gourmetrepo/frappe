@@ -40,7 +40,7 @@ frappe.views.BaseList = class BaseList {
 		this.user_settings = frappe.get_user_settings(this.doctype);
 
 		this.start = 0;
-		this.page_length = 20;
+		this.page_length = 50;
 		this.data = [];
 		this.method = 'frappe.desk.reportview.get';
 
@@ -56,8 +56,7 @@ frappe.views.BaseList = class BaseList {
 		this.primary_action = null;
 		this.secondary_action = {
 			label: __('Refresh'),
-			action: () => this.refresh()
-		};
+			action: () => {localStorage.setItem('docname_report',""),this.refresh()}		};
 
 		this.menu_items = [{
 			label: __('Refresh'),
@@ -278,7 +277,7 @@ frappe.views.BaseList = class BaseList {
 	}
 
 	setup_paging_area() {
-		const paging_values = [20, 100, 500];
+		const paging_values = [50, 100, 500];
 		this.$paging_area = $(
 			`<div class="list-paging-area level">
 				<div class="level-left">
@@ -370,8 +369,17 @@ frappe.views.BaseList = class BaseList {
 	refresh() {
 		this.freeze(true);
 		// fetch data from server
-		return frappe.call(this.get_call_args()).then(r => {
+		//console.log(this.view);
+
+		var docname_report = localStorage.getItem('docname_report')
+		
+		var status  =localStorage.getItem('status');
+		//samad
+		if((frappe.session.user_email=="admin@example.com"|| frappe.session.user_email=='muhammadyasir@gourmetpakistan.com' || frappe.session.user_email=='muhammad.rauf@gourmetpakistan.com' || frappe.session.user_email=='anwar.haq@gourmetpakistan.com' || frappe.session.user_email=='khizer.shujra@gourmetpakistan.com' || frappe.session.user_email=='rizwan.ali@gourmetpakistan.com'  || frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com'))
+		{
+			return frappe.call(this.get_call_args()).then(r => {
 			// render
+			//console.log('Lsit',r)
 			this.prepare_data(r);
 			this.toggle_result_area();
 			this.before_render();
@@ -382,6 +390,40 @@ frappe.views.BaseList = class BaseList {
 				this.settings.refresh(this);
 			}
 		});
+		}
+		else 
+		{
+		if(this.view!="Report"){
+			return frappe.call(this.get_call_args()).then(r => {
+			// render
+			//console.log('Lsit',r)
+			this.prepare_data(r);
+			this.toggle_result_area();
+			this.before_render();
+			this.render();
+			this.after_render();
+			this.freeze(false);
+			if (this.settings.refresh) {
+				this.settings.refresh(this);
+			}
+		});
+	}else if (this.view==="Report" && docname_report  != this.doctype){
+		localStorage.setItem('docname_report',this.doctype)
+		return frappe.call(this.get_call_args()).then(r => {
+			// render
+			console.log('Lsit',r)
+			this.prepare_data(r);
+			this.toggle_result_area();
+			this.before_render();
+			this.render();
+			this.after_render();
+			this.freeze(false);
+			if (this.settings.refresh) {
+				this.settings.refresh(this);
+			}
+		});
+	}
+	}
 	}
 
 	prepare_data(r) {

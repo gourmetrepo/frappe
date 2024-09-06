@@ -44,10 +44,7 @@ def run_background(prepared_report):
 			filters=instance.filters,
 			user=instance.owner
 		)
-		data = {}
-		data['result'] = result['result']
-		data['chart'] = result['chart']
-		create_json_gz_file( data ,"Prepared Report", instance.name)
+		create_json_gz_file(result["result"], "Prepared Report", instance.name)
 
 		instance.status = "Completed"
 		instance.columns = json.dumps(result["columns"])

@@ -5,9 +5,6 @@ from __future__ import unicode_literals
 import frappe
 
 def get_notification_config():
-	from datetime import datetime, date, timedelta
-	today = date.today()
-	ten_days = today - timedelta(days=10)
 	return {
 		"for_doctype": {
 			"Error Log": {"seen": 0},
@@ -15,7 +12,7 @@ def get_notification_config():
 			"ToDo": "frappe.core.notifications.get_things_todo",
 			"Event": "frappe.core.notifications.get_todays_events",
 			"Error Snapshot": {"seen": 0, "parent_error_snapshot": None},
-			"Workflow Action": {"status": 'Open',"user":frappe.session.user,"reference_doctype":["in",['Payment Order','Employee','Purchase Order','Expense Entry','Customer','Supplier','Item Daily Rate','Payment Entry','Journal Entry','Payment Advice','BOM']],"creation":["Between",[ten_days,today]]}
+			"Workflow Action": {"status": 'Open'}
 		},
 	}
 

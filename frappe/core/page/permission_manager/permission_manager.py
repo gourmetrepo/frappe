@@ -72,10 +72,6 @@ def get_permissions(doctype=None, role=None):
 
 @frappe.whitelist()
 def add(parent, role, permlevel):
-	user = frappe.session.user
-	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,parent,role,permlevel,"add new role",None))
-	frappe.db.commit()
-	remove_cache(parent,role)
 	frappe.only_for("System Manager")
 	add_permission(parent, role, permlevel)
 
@@ -93,21 +89,12 @@ def update(doctype, role, permlevel, ptype, value=None):
 	Returns:
 	    str: Refresh flag is permission is updated successfully
 	"""
-	#code to save logs for permission change by any user
-	user = frappe.session.user
-	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,doctype,role,permlevel,ptype,value))
-	frappe.db.commit()
-	remove_cache(doctype,role)
 	frappe.only_for("System Manager")
 	out = update_permission_property(doctype, role, permlevel, ptype, value)
 	return 'refresh' if out else None
 
 @frappe.whitelist()
 def remove(doctype, role, permlevel):
-	user = frappe.session.user
-	frappe.db.sql("INSERT INTO `user_permission_log` (`user`, `doctype`,`role`,`permission_level`,`permission_type`,`value`) VALUES (%s,%s,%s,%s,%s,%s)", (user,doctype,role,permlevel,"Role deleted",None))
-	frappe.db.commit()
-	remove_cache(doctype,role)
 	frappe.only_for("System Manager")
 	setup_custom_perms(doctype)
 
@@ -118,16 +105,6 @@ def remove(doctype, role, permlevel):
 		frappe.throw(_('There must be atleast one permission rule.'), title=_('Cannot Remove'))
 
 	validate_permissions_for_doctype(doctype, for_remove=True, alert=True)
-
-
-@frappe.whitelist()
-def remove_cache(doctype,role):
-	role_users = frappe.db.sql("SELECT DISTINCT parent FROM `tabHas Role` WHERE parenttype='user' AND ROLE=%s", (role),as_dict=True)
-	module_name = frappe.db.sql("SELECT DISTINCT module   FROM `tabBlock Module`",as_dict=True)
-	for u in role_users:
-		for m in module_name:
-			frappe.cache().delete_value(frappe.scrub(u.parent)+'_module_'+frappe.scrub(m.module))
-
 
 @frappe.whitelist()
 def reset(doctype):

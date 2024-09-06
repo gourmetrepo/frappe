@@ -114,10 +114,9 @@ class Database(object):
 				{"name": "a%", "owner":"test@example.com"})
 
 		"""
-		#samad
-		# if re.search(r'ifnull\(', query, flags=re.IGNORECASE):
-		# 	# replaces ifnull in query with coalesce
-		# 	query = re.sub(r'ifnull\(', 'coalesce(', query, flags=re.IGNORECASE)
+		if re.search(r'ifnull\(', query, flags=re.IGNORECASE):
+			# replaces ifnull in query with coalesce
+			query = re.sub(r'ifnull\(', 'coalesce(', query, flags=re.IGNORECASE)
 
 		if not self._conn:
 			self.connect()
@@ -346,17 +345,13 @@ class Database(object):
 			if _operator not in ["=", "!=", ">", ">=", "<", "<=", "like", "in", "not in", "not like"]:
 				_operator = "="
 
-			#samad
 			if "[" in key:
 				split_key = key.split("[")
-				col_list_set = ['name','posting_time','company','posting_date','transaction_date','name', 'creation', 'modified', 'modified_by', 'owner', 'docstatus', 'parent','parentfield', 'parenttype', 'idx','_user_tags']
-				if(split_key[0] not in col_list_set):
-					condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
-						+ _operator + _rhs
-				else:
-					condition = "`" + key + "` " + _operator + _rhs
+				condition = "coalesce(`" + split_key[0] + "`, " + split_key[1][:-1] + ") " \
+					+ _operator + _rhs
 			else:
-					condition = "`" + key + "` " + _operator + _rhs
+				condition = "`" + key + "` " + _operator + _rhs
+
 			conditions.append(condition)
 
 		if isinstance(filters, int):
@@ -590,10 +585,10 @@ class Database(object):
 
 		conditions, values = self.build_conditions(filters)
 
-		#samad
 		order_by = ("order by " + order_by) if order_by else ""
+
 		r = self.sql("select {0} from `tab{1}` {2} {3} {4}"
-			.format(fl, doctype, "where" if conditions else "where date(creation)>=CURDATE() - INTERVAL 30 DAY", conditions, order_by), values,
+			.format(fl, doctype, "where" if conditions else "", conditions, order_by), values,
 			as_dict=as_dict, debug=debug, update=update)
 
 		return r
@@ -816,10 +811,8 @@ class Database(object):
 				from `tab%s` where %s""" % (dt, conditions), filters, debug=debug)[0][0]
 			return count
 		else:
-			#samad
-			# count = self.sql("""select count(*)
-			# 	from `tab%s`""" % (dt,))[0][0]
-			count=1
+			count = self.sql("""select count(*)
+				from `tab%s`""" % (dt,))[0][0]
 
 			if cache:
 				frappe.cache().set_value('doctype:count:{}'.format(dt), count, expires_in_sec = 86400)

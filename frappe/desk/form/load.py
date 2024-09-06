@@ -48,7 +48,8 @@ def getdoc(doctype, name, user=None):
 		frappe.errprint(frappe.utils.get_traceback())
 		raise
 
-	doc.add_seen()
+	#optimization point 
+	#doc.add_seen()
 
 	frappe.response.docs.append(doc)
 
@@ -97,13 +98,22 @@ def get_docinfo(doc=None, doctype=None, name=None):
 		'versions': get_versions(doc),
 		"assignments": get_assignments(doc.doctype, doc.name),
 		"permissions": get_doc_permissions(doc),
-		"shared": frappe.share.get_users(doc.doctype, doc.name),
-		"views": get_view_logs(doc.doctype, doc.name),
-		"energy_point_logs": get_point_logs(doc.doctype, doc.name),
-		"milestones": get_milestones(doc.doctype, doc.name),
-		"is_document_followed": is_document_followed(doc.doctype, doc.name, frappe.session.user),
-		"tags": get_tags(doc.doctype, doc.name),
-		"document_email": get_document_email(doc.doctype, doc.name)
+		#optimization point 
+		# "shared": frappe.share.get_users(doc.doctype, doc.name),
+		"shared":[],
+		#optimization point 
+		# "views": get_view_logs(doc.doctype, doc.name),
+  		"views":[],
+		# "energy_point_logs": get_point_logs(doc.doctype, doc.name),
+  		"energy_point_logs":[],
+		# "milestones": get_milestones(doc.doctype, doc.name),
+		"milestones":[],
+		# "is_document_followed": is_document_followed(doc.doctype, doc.name, frappe.session.user),
+		"is_document_followed":0,
+		# "tags": get_tags(doc.doctype, doc.name),
+		# "document_email": get_document_email(doc.doctype, doc.name)
+		"tags":[],
+		"document_email":""
 	}
 
 def get_milestones(doctype, name):

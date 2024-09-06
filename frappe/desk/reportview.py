@@ -14,11 +14,29 @@ from frappe.core.doctype.access_log.access_log import make_access_log
 from frappe.utils import cstr
 
 
+# # Moeiz added code for report builder logs
+# ### Start ###
+def report_builder_log():
+	try:
+		data = frappe._dict(frappe.local.form_dict)
+		is_report = data.get('view') == 'Report'
+		if is_report:
+			company = ''
+			user = frappe.session.user
+			if frappe.session.data.company:
+				company = frappe.session.data.company
+			message = {'fields':data['fields'], 'filters':data['filters']}   
+			frappe.log_error(message=message, title="Report Builder | {0} | {1} | {2}".format(user,company,data['doctype']))
+
+	except Exception as e:
+		frappe.error_log(message=e,title="Error while creating report builder log")
+# ### End ###
+
 @frappe.whitelist()
 @frappe.read_only()
 def get():
 	args = get_form_params()
-
+	report_builder_log()
 	data = compress(execute(**args), args = args)
 
 	return data
@@ -280,24 +298,28 @@ def get_stats(stats, doctype, filters=[]):
 		filters = json.loads(filters)
 	stats = {}
 
-	try:
-		columns = frappe.db.get_table_columns(doctype)
-	except frappe.db.InternalError:
-		# raised when _user_tags column is added on the fly
-		columns = []
+	# try:
+	# 	columns = frappe.db.get_table_columns(doctype)
+	# except frappe.db.InternalError:
+	# 	# raised when _user_tags column is added on the fly
+	# 	columns = []
+	columns = []
 
 	for tag in tags:
 		if not tag in columns: continue
 		try:
-			tagcount = frappe.get_list(doctype, fields=[tag, "count(*)"],
-				#filters=["ifnull(`%s`,'')!=''" % tag], group_by=tag, as_list=True)
-				filters = filters + ["ifnull(`%s`,'')!=''" % tag], group_by = tag, as_list = True)
+			tagcount = 0
+			# tagcount = frappe.get_list(doctype, fields=[tag, "count(*)"],
+			# 	#filters=["ifnull(`%s`,'')!=''" % tag], group_by=tag, as_list=True)
+			# 	filters = filters + ["ifnull(`%s`,'')!=''" % tag], group_by = tag, as_list = True)
+
 
 			if tag=='_user_tags':
-				stats[tag] = scrub_user_tags(tagcount)
-				stats[tag].append([_("No Tags"), frappe.get_list(doctype,
-					fields=[tag, "count(*)"],
-					filters=filters +["({0} = ',' or {0} = '' or {0} is null)".format(tag)], as_list=True)[0][1]])
+				stats[tag].append([_("No Tags"),0])
+				# stats[tag] = scrub_user_tags(tagcount)
+				# stats[tag].append([_("No Tags"), frappe.get_list(doctype,
+				# 	fields=[tag, "count(*)"],
+				# 	filters=filters +["({0} = ',' or {0} = '' or {0} is null)".format(tag)], as_list=True)[0][1]])
 			else:
 				stats[tag] = tagcount
 

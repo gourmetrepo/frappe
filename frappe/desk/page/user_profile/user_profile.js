@@ -52,7 +52,7 @@ class UserProfile {
 		this.rank = 0;
 		this.month_rank = 0;
 		this.render_user_details();
-		// this.render_points_and_rank();
+		this.render_points_and_rank();
 		this.render_heatmap();
 		this.render_line_chart();
 		this.render_percentage_chart('type', 'Type Distribution');

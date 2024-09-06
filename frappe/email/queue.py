@@ -379,7 +379,7 @@ def send_one(email, smtpserver=None, auto_commit=True, now=False, from_test=Fals
 			`tabEmail Queue`
 		where
 			name=%s
-		''', email, as_dict=True)[0] # for update remove
+		for update''', email, as_dict=True)[0]
 
 	recipients_list = frappe.db.sql('''select name, recipient, status from
 		`tabEmail Queue Recipient` where parent=%s''', email.name, as_dict=1)

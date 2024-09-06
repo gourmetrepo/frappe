@@ -15,7 +15,7 @@ def save_to_db():
 		record_count = 0
 		queue_key = get_key_name(key)
 		doctype = get_doctype_name(key)
-		while frappe.cache().llen(queue_key) > 0 and record_count <= 3600:
+		while frappe.cache().llen(queue_key) > 0 and record_count <= 500:
 			records = frappe.cache().lpop(queue_key)
 			records = json.loads(records.decode('utf-8'))
 			if isinstance(records, dict):

@@ -163,7 +163,7 @@ def update_autoname_field(doctype, new, meta):
 
 def validate_rename(doctype, new, meta, merge, force, ignore_permissions):
 	# using for update so that it gets locked and someone else cannot edit it while this rename is going on!
-	exists = frappe.db.sql("select name from `tab{doctype}` where name=%s".format(doctype=doctype), new) # for update remove
+	exists = frappe.db.sql("select name from `tab{doctype}` where name=%s for update".format(doctype=doctype), new)
 	exists = exists[0][0] if exists else None
 
 	if merge and not exists:

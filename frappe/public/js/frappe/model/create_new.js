@@ -251,11 +251,6 @@ $.extend(frappe.model, {
 	copy_doc: function(doc, from_amend, parent_doc, parentfield) {
 		var no_copy_list = ['name','amended_from','amendment_date','cancel_reason'];
 		var newdoc = frappe.model.get_new_doc(doc.doctype, parent_doc, parentfield);
-		
-		// Moeiz Code for setting cost center to none for listed documents	
-		if ('cost_center' in doc){
-			no_copy_list.push("cost_center")
-		}
 
 		for(var key in doc) {
 			// dont copy name and blank fields
@@ -285,9 +280,7 @@ $.extend(frappe.model, {
 		newdoc.creation = '';
 		newdoc.modified_by = user;
 		newdoc.modified = '';
-		if ('cost_center' in newdoc){
-			newdoc.cost_center = '';
-		}
+
 		return newdoc;
 	},
 

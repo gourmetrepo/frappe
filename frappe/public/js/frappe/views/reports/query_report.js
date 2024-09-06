@@ -307,8 +307,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					report_name: this.report_name,
 					filters: filters,
 				},
-				freeze:true,
-				freeze_message: "Please Wait Till Completed",
 				callback: resolve,
 				always: () => this.page.btn_secondary.prop('disabled', false)
 			});
@@ -316,18 +314,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			let data = r.message;
 			this.hide_status();
 			clearInterval(this.interval);
-			let custom_message = ''
+
 			this.execution_time = data.execution_time || 0.1;
-			custom_message = data.message
-			if(custom_message !== '' && custom_message !== undefined && custom_message !== null){
-				let page_form_inner = this.page.main.find('.form-inner-toolbar');
-				this.$status = $(`<div class="custom_message" style='    display: block;
-				font-size: 13px;				
-				padding: 5px;
-				text-align: justify;
-			'><b style='color: red'>Note:: </b> ${custom_message}</div>`)
-				.show().insertBefore(page_form_inner);
-			}
+
 			if (data.prepared_report) {
 				this.prepared_report = true;
 				// If query_string contains prepared_report_name then set filters
@@ -515,8 +504,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					report_name: this.report_name,
 					filters: filters
 				},
-				freeze:true,
-				freeze_message: "Please Wait Till Completed",
 				callback: resolve
 			})).then(r => {
 				const data = r.message;
@@ -1377,16 +1364,14 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	setup_report_wrapper() {
-		let report_class_name = this.page_name.split("/");
-		report_class_name = report_class_name[1].toLowerCase()
-             .replace(/[^\w ]+/g, '')
-             .replace(/ +/g, '-');
+		if (this.$report) return;
+
 		let page_form = this.page.main.find('.page-form');
 		this.$status = $(`<div class="form-message text-muted small"></div>`)
-			.show().insertAfter(page_form);
-		
+			.hide().insertAfter(page_form);
+
 		this.$chart = $('<div class="chart-wrapper">').hide().appendTo(this.page.main);
-		this.$report = $(`<div class="report-wrapper ${report_class_name}">`).appendTo(this.page.main);
+		this.$report = $('<div class="report-wrapper">').appendTo(this.page.main);
 		this.$message = $(this.message_div('')).hide().appendTo(this.page.main);
 	}
 

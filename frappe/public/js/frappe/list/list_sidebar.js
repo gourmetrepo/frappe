@@ -356,7 +356,7 @@ frappe.views.ListSidebar = class ListSidebar {
 	reload_stats() {
 		this.sidebar.find(".stat-link").remove();
 		this.sidebar.find(".stat-no-records").remove();
-		// this.get_stats();
+		this.get_stats();
 	}
 
 	get_divider() {

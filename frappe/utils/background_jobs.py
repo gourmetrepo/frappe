@@ -24,6 +24,7 @@ queue_timeout = {
 	'si_tertiary': 500,
     'gl': 3500,
     'dn_primary': 300,
+	'fg_mithae': 300,
 	'dn_secondary': 300,
 	'dn_tertiary': 300,
 	'se_primary': 300,

@@ -306,7 +306,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					filters: filters,
 				},
 				freeze:true,
-				freeze_message: "Please Wait Till Completed",
+				freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`,
 				callback: resolve,
 				always: () => this.page.btn_secondary.prop('disabled', false)
 			});
@@ -516,7 +516,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					filters: filters
 				},
 				freeze:true,
-				freeze_message: "Please Wait Till Completed",
+				freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`,
 				callback: resolve
 			})).then(r => {
 				const data = r.message;

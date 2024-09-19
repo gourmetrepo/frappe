@@ -30,6 +30,52 @@ frappe.Application = Class.extend({
 	},
 
 	startup: function() {
+	let script = document.createElement('script');
+	script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js';
+	script.onload = () => {
+		let tl = gsap.timeline();
+
+		tl.to(".app-logo", { duration: 1, scale: 1.5, ease: "power1.inOut" })
+		.to(".app-logo", { duration: 2, rotation: 720, ease: "power1.inOut" })
+		.to(".app-logo", { duration: 1, scale: 1, ease: "power1.inOut" })
+		.to(".app-logo", { duration: 1, x: 0, y: 0, rotation: 0 })
+        
+		gsap.to(".notifications-icon", { 
+			duration: 0.1, 
+			x: -5, 
+			scale: 1.5,
+			repeat: -1,
+			yoyo: true,
+			ease: "power1.inOut"
+		});
+
+		gsap.from(".title-text", {
+			duration: 1.5,
+			delay: 1,
+			opacity: 0,
+			stagger: 0.02,
+			y: 30,
+			ease:"power1.out"
+		  });
+
+		  gsap.from("button", {
+			duration: 0.6,
+			opacity: 1,
+			y: 20,
+			stagger: 0.1,
+			ease: "power1.out"
+		});
+
+		gsap.from(".module-box", {
+            duration: 1,         
+            opacity: 0,
+            y: 50,
+            stagger: 0.2,        
+            ease: "power1.out"
+        });
+
+	};
+	document.head.appendChild(script);
 		frappe.socketio.init();
 		frappe.model.init();
 

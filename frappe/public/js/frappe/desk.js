@@ -49,15 +49,6 @@ frappe.Application = Class.extend({
 			ease: "power1.inOut"
 		});
 
-		gsap.from(".title-text", {
-			duration: 1.5,
-			delay: 1,
-			opacity: 0,
-			stagger: 0.02,
-			y: 30,
-			ease:"power1.out"
-		  });
-
 		  gsap.from("button", {
 			duration: 0.6,
 			opacity: 1,

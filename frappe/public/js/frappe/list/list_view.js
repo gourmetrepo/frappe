@@ -19,6 +19,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	constructor(opts) {
 		super(opts);
+		this.is_rendered = false; 
 		this.show();
 	}
 
@@ -422,6 +423,13 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	render() {
+		if (!this.is_rendered ) {
+			this.load_gsap();
+			this.is_rendered = true;
+		}
+		else {
+			this.is_rendered = false;
+		}		
 		this.render_list();
 		this.on_row_checked();
 		this.render_count();

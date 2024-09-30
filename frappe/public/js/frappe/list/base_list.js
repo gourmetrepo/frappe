@@ -226,39 +226,6 @@ frappe.views.BaseList = class BaseList {
 	}
 
 
-	load_gsap(){
-		console.log("load gsap")
-		let script = document.createElement('script');
-			script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.0/gsap.min.js';
-			script.onload = () => {
-				gsap.from(".title-text", {
-					duration: 1.5,
-					delay: 1,
-					stagger: 0.02,
-					y: -30,
-					ease: "power1.out"
-				});
-		
-				gsap.from(".list-row-container", {
-					opacity: 0,
-					y: 50,
-					stagger: 0.1,
-					duration: 0.6,
-					ease: "power1.out"
-				});
-		
-				document.querySelectorAll(".list-row-container").forEach(row => {
-					row.addEventListener("mouseenter", () => {
-						gsap.to(row, { scale: 1.02, backgroundColor: "#e0f7fa", duration: 0.3 });
-					});
-					row.addEventListener("mouseleave", () => {
-						gsap.to(row, { scale: 1, backgroundColor: "#ffffff", duration: 0.3 });
-					});
-				});
-			}
-			document.head.appendChild(script);
-	}
-
 	setup_list_wrapper() {
 		this.$frappe_list = $('<div class="frappe-list">').appendTo(this.page.main);
 	}

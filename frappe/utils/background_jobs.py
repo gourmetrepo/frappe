@@ -42,6 +42,7 @@ queue_timeout = {
 	'so_secondary':300,
 	'hr_primary':500,
 	'hr_secondary':500,
+	'hr_tertiary':500
 }
 
 redis_connection = None

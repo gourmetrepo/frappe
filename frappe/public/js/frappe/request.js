@@ -96,7 +96,7 @@ frappe.call = function(opts) {
 		always: opts.always,
 		btn: opts.btn,
 		freeze: opts.freeze,
-		freeze_message: opts.freeze_message,
+		freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`,
 		headers: opts.headers || {},
 		error_handlers: opts.error_handlers || {},
 		// show_spinner: !opts.no_spinner,

@@ -313,7 +313,7 @@ $.extend(frappe.model, {
 				selected_children: opts.frm ? opts.frm.get_selected() : null
 			},
 			freeze: true,
-			freeze_message: opts.freeze_message || '',
+			freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`,
 			callback: function(r) {
 				if(!r.exc) {
 					frappe.model.sync(r.message);

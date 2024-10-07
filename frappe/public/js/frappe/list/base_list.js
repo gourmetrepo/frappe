@@ -358,7 +358,7 @@ frappe.views.BaseList = class BaseList {
 			method: this.method,
 			args: args,
 			freeze: this.freeze_on_refresh || false,
-			freeze_message: this.freeze_message || (__('Loading') + '...')
+			freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`
 		};
 	}
 

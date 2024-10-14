@@ -2,6 +2,7 @@
 # MIT License. See license.txt
 
 from __future__ import unicode_literals
+import datetime
 import frappe
 import sys
 from six.moves import html_parser as HTMLParser
@@ -457,7 +458,7 @@ def send_one(email, smtpserver=None, auto_commit=True, now=False, from_test=Fals
 			smtplib.SMTPHeloError,
 			smtplib.SMTPAuthenticationError,
 			smtplib.SMTPRecipientsRefused,
-			JobTimeoutException):
+			JobTimeoutException) as error:
 
 		# bad connection/timeout, retry later
 
@@ -470,6 +471,10 @@ def send_one(email, smtpserver=None, auto_commit=True, now=False, from_test=Fals
 
 		if email.communication:
 			frappe.get_doc('Communication', email.communication).set_delivery_status(commit=auto_commit)
+
+		email_queue_doc = frappe.get_doc('Email Queue', email.name)
+		email_queue_doc.add_comment("Comment",str(error.args[0]))
+		email_queue_doc.save()
 
 		# no need to attempt further
 		return

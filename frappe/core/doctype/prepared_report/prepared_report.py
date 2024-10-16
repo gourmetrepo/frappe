@@ -56,20 +56,12 @@ def run_background(prepared_report):
 		instance.columns = json.dumps(result["columns"])
 		instance.report_end_time = frappe.utils.now()
 		instance.save(ignore_permissions=True)
-		from frappe import connect
-		connect()
-		instance.save(ignore_permissions=True)
-
 
 	except Exception:
 		frappe.log_error(frappe.get_traceback())
 		instance = frappe.get_doc("Prepared Report", prepared_report)
 		instance.status = "Error"
 		instance.error_message = frappe.get_traceback()
-		instance.save(ignore_permissions=True)
-		instance.save(ignore_permissions=True)
-		from frappe import connect
-		connect()
 		instance.save(ignore_permissions=True)
 
 	frappe.publish_realtime(

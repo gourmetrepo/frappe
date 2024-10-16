@@ -190,6 +190,10 @@ def connect(site=None, db_name=None, set_admin_as_user=True):
 	local.db = get_db(user=db_name or local.conf.db_name)
 	if set_admin_as_user:
 		set_user("Administrator")
+def connect_live():
+	if local and hasattr(local, 'primary_db'):
+		local.db.close()
+		local.db = local.primary_db
 
 def connect_replica():
 	from frappe.database import get_db

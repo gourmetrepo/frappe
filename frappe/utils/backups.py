@@ -319,7 +319,7 @@ def is_file_old(db_file_name, older_than=24):
 
 def get_backup_path():
 	backup_path = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
-	backup_path = "/datatmp/frappe_nrp_live_backup/"
+	backup_path = "/datatmp/frappe_nrp_live_backup"
 	return backup_path
 
 def backup(with_files=False, backup_path_db=None, backup_path_files=None, quiet=False):

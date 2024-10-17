@@ -22,11 +22,11 @@ class PreparedReport(Document):
 		self.report_start_time = frappe.utils.now()
 
 	def enqueue_report(self):
-		enqueue(run_background, prepared_report=self.name, timeout=6000)
-		# run_background(prepared_report=self.name)
+		# enqueue(run_background, prepared_report=self.name, timeout=6000)
+		run_background(prepared_report=self.name)
 
 
-
+@frappe.read_only()
 def run_background(prepared_report):
 	instance = frappe.get_doc("Prepared Report", prepared_report)
 	report = frappe.get_doc("Report", instance.ref_report_doctype)

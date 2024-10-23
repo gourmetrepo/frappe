@@ -71,9 +71,41 @@
 		// Intercept XMLHttpRequest
 		(function (open) {
 			XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+				
 				this.addEventListener('readystatechange', function () {
-					if (this.readyState === 4) {
+					if (this.readyState === 1) { // Before sending the request
+						// Code by Moeiz
+						// Fetch to check IP mismatch
+						fetch('/api/method/nerp.utils.check_ip_mismatch', {
+							method: 'GET',
+							credentials: 'include',
+							headers: {
+								'Content-Type': 'application/json'
+							}
+						})
+						.then(response => response.json())
+						.then(data => {
+							if (data.mismatch) {
+								// IP mismatch, log out user
+								fetch('/api/method/frappe.core.doctype.user.user.logout', {
+									method: 'POST',
+									credentials: 'include',
+									headers: {
+										'Content-Type': 'application/json'
+									}
+								}).then(() => {
+									// Redirect to login after logout
+									window.location.href = '/login';
+								});
+							}
+						})
+						.catch(error => {
+							console.error('Error while checking IP mismatch:', error);
+						});
+					}
 
+					// Proceed with original ready state changes
+					if (this.readyState === 4) {
 						const apiRequestsToExclude = [
 							'socket.io'
 						];
@@ -84,7 +116,7 @@
 						try {
 							if (!excludeApi) {
 								// Validate response and parse JSON
-								const validResponseJson = this.response !== "" ? this.response : null
+								const validResponseJson = this.response !== "" ? this.response : null;
 								let documentData;
 								if (validResponseJson) {
 									const parsedResponse = JSON.parse(this.response);
@@ -103,9 +135,7 @@
 									// Filter CRUD operations
 									let isCrudOperation;
 									if (this.responseURL.includes('client.insert') ||
-										(this.responseURL.includes('save.savedocs') &&
-											docLocalNameExists)
-									) {
+										(this.responseURL.includes('save.savedocs') && docLocalNameExists)) {
 										isCrudOperation = 'CREATE';
 									} else if (this.responseURL.includes('load.getdoc?')) {
 										isCrudOperation = 'READ';
@@ -145,6 +175,7 @@
 						}
 					}
 				}, false);
+
 				open.call(this, method, url, async, user, pass);
 			};
 		})(XMLHttpRequest.prototype.open);

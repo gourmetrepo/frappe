@@ -75,12 +75,11 @@
 				this.addEventListener('readystatechange', function () {
 					if (this.readyState === 1) { // Before sending the request
                 // Code by Moeiz - Check for IP mismatch before proceeding
-					fetch('/api/method/nerp.utils.check_ip_mismatch', {
+					fetch('/api/method/nerp.apis.login.check_ip_mismatch', {
 						method: 'GET',
 						credentials: 'include',
 						headers: {
-							'Content-Type': 'application/json',
-							'X-Frappe-CSRF-Token': frappe.csrf_token  // Ensure CSRF token is included
+							'Content-Type': 'application/json'
 						}
 					})
 					.then(response => {
@@ -96,8 +95,7 @@
 								method: 'POST',
 								credentials: 'include',
 								headers: {
-									'Content-Type': 'application/json',
-									'X-Frappe-CSRF-Token': frappe.csrf_token
+									'Content-Type': 'application/json'
 								}
 							}).then(() => {
 								// Redirect to login after successful logout

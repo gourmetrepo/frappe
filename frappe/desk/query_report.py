@@ -138,10 +138,10 @@ def background_enqueue_run(report_name, filters=None, user=None):
 		})
 	track_instance.insert(ignore_permissions=True)
 	frappe.db.commit()
-	# from frappe import connect_replica
-	# connect_replica()
-	# track_instance.insert(ignore_permissions=True)
-	# frappe.db.commit()
+	from frappe import connect_replica
+	connect_replica()
+	track_instance.insert(ignore_permissions=True)
+	frappe.db.commit()
 	track_instance.enqueue_report()
 
 	return {

@@ -190,6 +190,7 @@ def connect(site=None, db_name=None, set_admin_as_user=True):
 	local.db = get_db(user=db_name or local.conf.db_name)
 	if set_admin_as_user:
 		set_user("Administrator")
+
 def connect_live():
 	if local and hasattr(local, 'primary_db'):
 		local.db.close()
@@ -207,8 +208,9 @@ def connect_replica():
 	local.replica_db = get_db(host=local.conf.replica_host, user=user, password=password)
 
 	# swap db connections
-	local.primary_db = local.db
-	local.db = local.replica_db
+	if local.db.host == local.conf.db_host:
+		local.primary_db = local.db
+		local.db = local.replica_db
 
 def get_site_config(sites_path=None, site_path=None):
 	"""Returns `site_config.json` combined with `sites/common_site_config.json`.

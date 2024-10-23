@@ -22,8 +22,8 @@ class PreparedReport(Document):
 		self.report_start_time = frappe.utils.now()
 
 	def enqueue_report(self):
-		enqueue(run_background, prepared_report=self.name, timeout=6000)
-		# run_background(prepared_report=self.name)
+		# enqueue(run_background, prepared_report=self.name, timeout=6000)
+		run_background(prepared_report=self.name)
 
 
 def run_background(prepared_report):
@@ -50,26 +50,38 @@ def run_background(prepared_report):
 		data = {}
 		data['result'] = result['result']
 		data['chart'] = result['chart']
-		create_json_gz_file( data ,"Prepared Report", instance.name)
+		file_doc = create_json_gz_file( data ,"Prepared Report", instance.name)
 
 		instance.status = "Completed"
 		instance.columns = json.dumps(result["columns"])
 		instance.report_end_time = frappe.utils.now()
 		instance.save(ignore_permissions=True)
-		# from frappe import connect_live
-		# connect_live()
-		# instance.save(ignore_permissions=True)
+		frappe.db.commit()
+		from frappe import connect_live
+		connect_live()
+		instance = frappe.get_doc("Prepared Report", prepared_report)
+		instance.status = "Completed"
+		instance.columns = json.dumps(result["columns"])
+		instance.report_end_time = frappe.utils.now()
+		instance.save(ignore_permissions=True)
+		_file = frappe.get_doc(file_doc)
+		_file.save(ignore_permissions=True)
 
-
+		frappe.db.commit()
 	except Exception:
 		frappe.log_error(frappe.get_traceback())
 		instance = frappe.get_doc("Prepared Report", prepared_report)
 		instance.status = "Error"
 		instance.error_message = frappe.get_traceback()
 		instance.save(ignore_permissions=True)
-		# from frappe import connect_live
-		# connect_live()
-		# instance.save(ignore_permissions=True)
+		frappe.db.commit()
+		from frappe import connect_live
+		connect_live()
+		instance = frappe.get_doc("Prepared Report", prepared_report)
+		instance.status = "Error"
+		instance.error_message = frappe.get_traceback()
+		instance.save(ignore_permissions=True)
+		frappe.db.commit()
 
 	frappe.publish_realtime(
 		"report_generated",
@@ -123,16 +135,17 @@ def create_json_gz_file(data, dt, dn):
 	compressed_content = gzip_compress(encoded_content)
 
 	# Call save() file function to upload and attach the file
-	_file = frappe.get_doc({
+	file_doc = {
 		"doctype": "File",
 		"file_name": json_filename,
 		"attached_to_doctype": dt,
 		"attached_to_name": dn,
 		"content": compressed_content,
 		"is_private": 1
-	})
+	}
+	_file = frappe.get_doc(file_doc)
 	_file.save(ignore_permissions=True)
-
+	return file_doc
 
 @frappe.whitelist()
 def download_attachment(dn):

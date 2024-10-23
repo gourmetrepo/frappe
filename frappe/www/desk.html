@@ -82,26 +82,8 @@
 							'Content-Type': 'application/json'
 						}
 					})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error(`HTTP error! status: ${response.status}`);
-						}
-						return response.json();
-					})
 					.then(data => {
-						if (data.mismatch) {
-							// If there's an IP mismatch, log out the user
-							fetch('/api/method/frappe.core.doctype.user.user.logout', {
-								method: 'POST',
-								credentials: 'include',
-								headers: {
-									'Content-Type': 'application/json'
-								}
-							}).then(() => {
-								// Redirect to login after successful logout
-								window.location.href = '/login';
-							});
-						}
+						console.log("Logged out: ", data);
 					})
 					.catch(error => {
 						console.error('Error while checking IP mismatch:', error);

@@ -22,8 +22,8 @@ class PreparedReport(Document):
 		self.report_start_time = frappe.utils.now()
 
 	def enqueue_report(self):
-		# enqueue(run_background, prepared_report=self.name, timeout=6000)
-		run_background(prepared_report=self.name)
+		enqueue(run_background, prepared_report=self.name, timeout=6000)
+		# run_background(prepared_report=self.name)
 
 
 def run_background(prepared_report):

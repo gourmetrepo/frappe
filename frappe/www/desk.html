@@ -74,35 +74,41 @@
 				
 				this.addEventListener('readystatechange', function () {
 					if (this.readyState === 1) { // Before sending the request
-						// Code by Moeiz
-						// Fetch to check IP mismatch
-						fetch('/api/method/nerp.utils.check_ip_mismatch', {
-							method: 'GET',
-							credentials: 'include',
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						})
-						.then(response => response.json())
-						.then(data => {
-							if (data.mismatch) {
-								// IP mismatch, log out user
-								fetch('/api/method/frappe.core.doctype.user.user.logout', {
-									method: 'POST',
-									credentials: 'include',
-									headers: {
-										'Content-Type': 'application/json'
-									}
-								}).then(() => {
-									// Redirect to login after logout
-									window.location.href = '/login';
-								});
-							}
-						})
-						.catch(error => {
-							console.error('Error while checking IP mismatch:', error);
-						});
-					}
+                // Code by Moeiz - Check for IP mismatch before proceeding
+					fetch('/api/method/nerp.utils.check_ip_mismatch', {
+						method: 'GET',
+						credentials: 'include',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-Frappe-CSRF-Token': frappe.csrf_token  // Ensure CSRF token is included
+						}
+					})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP error! status: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.mismatch) {
+							// If there's an IP mismatch, log out the user
+							fetch('/api/method/frappe.core.doctype.user.user.logout', {
+								method: 'POST',
+								credentials: 'include',
+								headers: {
+									'Content-Type': 'application/json',
+									'X-Frappe-CSRF-Token': frappe.csrf_token
+								}
+							}).then(() => {
+								// Redirect to login after successful logout
+								window.location.href = '/login';
+							});
+						}
+					})
+					.catch(error => {
+						console.error('Error while checking IP mismatch:', error);
+					});
+				}
 
 					// Proceed with original ready state changes
 					if (this.readyState === 4) {

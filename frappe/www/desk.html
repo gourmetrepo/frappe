@@ -23,6 +23,36 @@
 	<link type="text/css" rel="stylesheet" href="{{ include }}?ver={{ build_version }}">
 	{%- endfor -%}
 
+
+	<script>
+		// Intercept XMLHttpRequest
+		(function (open) {
+			XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
+				
+				this.addEventListener('readystatechange', function () {
+					if (this.readyState === 1) { // Before sending the request
+                // Code by Moeiz - Check for IP mismatch before proceeding
+					fetch('/api/method/nerp.apis.login.check_ip_mismatch', {
+						method: 'GET',
+						credentials: 'include',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					})
+					.then(data => {
+						console.log("Logged out: ", data);
+					})
+					.catch(error => {
+						console.error('Error while checking IP mismatch:', error);
+					});
+				}
+				}, false);
+
+				open.call(this, method, url, async, user, pass);
+			};
+		})(XMLHttpRequest.prototype.open);
+	</script>
+
 	<!-- Matomo -->
 	<script>
 		window.onhashchange = function () {

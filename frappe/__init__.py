@@ -197,7 +197,7 @@ def connect_live():
 		local.db = local.primary_db
 
 def connect_replica():
-	if local.conf.read_from_replica:
+	if local.conf.read_from_replica == 1:
 		from frappe.database import get_db
 		user = local.conf.db_name
 		password = local.conf.db_password

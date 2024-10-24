@@ -197,20 +197,21 @@ def connect_live():
 		local.db = local.primary_db
 
 def connect_replica():
-	from frappe.database import get_db
-	user = local.conf.db_name
-	password = local.conf.db_password
+	if local.conf.read_from_replica:
+		from frappe.database import get_db
+		user = local.conf.db_name
+		password = local.conf.db_password
 
-	if local.conf.different_credentials_for_replica:
-		user = local.conf.replica_db_name
-		password = local.conf.replica_db_password
+		if local.conf.different_credentials_for_replica:
+			user = local.conf.replica_db_name
+			password = local.conf.replica_db_password
 
-	local.replica_db = get_db(host=local.conf.replica_host, user=user, password=password)
+		local.replica_db = get_db(host=local.conf.replica_host, user=user, password=password)
 
-	# swap db connections
-	if local.db.host == local.conf.db_host:
-		local.primary_db = local.db
-		local.db = local.replica_db
+		# swap db connections
+		if local.db.host == local.conf.db_host:
+			local.primary_db = local.db
+			local.db = local.replica_db
 
 def get_site_config(sites_path=None, site_path=None):
 	"""Returns `site_config.json` combined with `sites/common_site_config.json`.

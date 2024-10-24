@@ -27,8 +27,8 @@ class PreparedReport(Document):
 
 
 def run_background(prepared_report):
-	from frappe import connect_replica
-	connect_replica()
+	# from frappe import connect_replica
+	# connect_replica()
 
 	instance = frappe.get_doc("Prepared Report", prepared_report)
 	report = frappe.get_doc("Report", instance.ref_report_doctype)

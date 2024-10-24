@@ -192,9 +192,10 @@ def connect(site=None, db_name=None, set_admin_as_user=True):
 		set_user("Administrator")
 
 def connect_live():
-	if local and hasattr(local, 'primary_db'):
-		local.db.close()
-		local.db = local.primary_db
+	if local.conf.read_from_replica == 1:
+		if local and hasattr(local, 'primary_db'):
+			local.db.close()
+			local.db = local.primary_db
 
 def connect_replica():
 	if local.conf.read_from_replica == 1:

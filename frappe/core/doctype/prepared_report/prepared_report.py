@@ -57,17 +57,17 @@ def run_background(prepared_report):
 		instance.report_end_time = frappe.utils.now()
 		instance.save(ignore_permissions=True)
 		frappe.db.commit()
-		from frappe import connect_live
-		connect_live()
-		instance = frappe.get_doc("Prepared Report", prepared_report)
-		instance.status = "Completed"
-		instance.columns = json.dumps(result["columns"])
-		instance.report_end_time = frappe.utils.now()
-		instance.save(ignore_permissions=True)
-		_file = frappe.get_doc(file_doc)
-		_file.save(ignore_permissions=True)
+		# from frappe import connect_live
+		# connect_live()
+		# instance = frappe.get_doc("Prepared Report", prepared_report)
+		# instance.status = "Completed"
+		# instance.columns = json.dumps(result["columns"])
+		# instance.report_end_time = frappe.utils.now()
+		# instance.save(ignore_permissions=True)
+		# _file = frappe.get_doc(file_doc)
+		# _file.save(ignore_permissions=True)
 
-		frappe.db.commit()
+		# frappe.db.commit()
 	except Exception:
 		frappe.log_error(frappe.get_traceback())
 		instance = frappe.get_doc("Prepared Report", prepared_report)
@@ -75,13 +75,13 @@ def run_background(prepared_report):
 		instance.error_message = frappe.get_traceback()
 		instance.save(ignore_permissions=True)
 		frappe.db.commit()
-		from frappe import connect_live
-		connect_live()
-		instance = frappe.get_doc("Prepared Report", prepared_report)
-		instance.status = "Error"
-		instance.error_message = frappe.get_traceback()
-		instance.save(ignore_permissions=True)
-		frappe.db.commit()
+		# from frappe import connect_live
+		# connect_live()
+		# instance = frappe.get_doc("Prepared Report", prepared_report)
+		# instance.status = "Error"
+		# instance.error_message = frappe.get_traceback()
+		# instance.save(ignore_permissions=True)
+		# frappe.db.commit()
 
 	frappe.publish_realtime(
 		"report_generated",

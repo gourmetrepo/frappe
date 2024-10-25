@@ -476,6 +476,9 @@ def send_one(email, smtpserver=None, auto_commit=True, now=False, from_test=Fals
 		email_queue_doc.add_comment("Comment",str(error.args[0]))
 		email_queue_doc.save()
 
+		frappe.db.sql("""update `tabEmail Queue Recipient` set status='Error', modified=%s where name=%s""",
+				(now_datetime(), recipient.name), auto_commit=auto_commit)
+
 		# no need to attempt further
 		return
 

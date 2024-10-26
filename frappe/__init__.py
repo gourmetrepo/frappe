@@ -542,7 +542,7 @@ def read_only():
 		def wrapper_fn(*args, **kwargs):
 			import frappe
 			data = frappe._dict(frappe.local.form_dict)
-			is_report = data.get('view') == 'Report'
+			is_report = data.get('view') != 'List'
 			if is_report == False:
 				is_report = 'query_report.run' in data.get('cmd')
 			email = frappe.session.user

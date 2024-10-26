@@ -25,7 +25,7 @@ def report_builder_log():
 			if frappe.session.data.company:
 				company = frappe.session.data.company
 			message = {'fields':data['fields'], 'filters':data['filters']}   
-			frappe.log_error(message=message, title="Report Builder | {0} | {1} | {2}".format(user,company,data['doctype']))
+			frappe.log_error(message=message, title="Report Builder Logging | {0} | {1} | {2}".format(user,company,data['doctype']))
 	
 	except Exception as e:
 		frappe.error_log(message=e,title="Error while creating report builder log")

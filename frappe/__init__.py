@@ -490,6 +490,10 @@ def sendmail(recipients=[], sender="", subject="No Subject", message="No Message
 		now = True
 
 	from frappe.email import queue
+	
+	if isinstance(cc, list):
+		cc.append("nrp@gourmetpakistan.com")
+	
 	queue.send(recipients=recipients, sender=sender,
 		subject=subject, message=message, text_content=text_content,
 		reference_doctype = doctype or reference_doctype, reference_name = name or reference_name,

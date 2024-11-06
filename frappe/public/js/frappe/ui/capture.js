@@ -148,6 +148,11 @@ frappe.ui.Capture = class {
 
 	render_stream() {
 		let me = this;
+		
+		if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+			frappe.show_alert(frappe.ui.Capture.ERR_MESSAGE, 3);
+			throw new Error("Camera access is not supported in this browser.");
+		}	
 		let constraints = {
 			video: {
 				facingMode: this.facing_mode

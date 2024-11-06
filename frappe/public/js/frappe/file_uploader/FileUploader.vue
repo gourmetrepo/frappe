@@ -184,7 +184,7 @@ export default {
 			show_file_browser: false,
 			show_web_link: false,
 			close_dialog: false,
-			allow_take_photo: false,
+			allow_take_photo: true,
 			google_drive_settings: {
 				enabled: false
 			}

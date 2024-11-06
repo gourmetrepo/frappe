@@ -156,9 +156,18 @@ frappe.ui.Capture = class {
 	
 		return navigator.mediaDevices.getUserMedia(constraints).then(stream => {
 			me.stream = stream;
+			me.dialog.custom_actions.empty();
+			me.dialog.get_primary_btn().off('click');
 			me.setup_take_photo_action();
+			me.setup_preview_action();
+			//me.setup_toggle_camera();
+			me.$template.find('.fc-stream-container').show();
+			me.$template.find('.fc-preview-container').hide();
+
+
 			me.video = me.$template.find('video')[0];
 			me.video.srcObject = me.stream;
+			me.video.load();
 			me.video.play();
 		}).catch(err => {
 			frappe.show_alert("Unable to access the camera: " + err.message, 5);
@@ -228,32 +237,34 @@ frappe.ui.Capture = class {
 
 	setup_remove_action() {
 		let me = this;
-		let elements = this.$template[0].getElementsByClassName("capture-remove-btn");
-
+		let elements = Array.from(this.$template[0].getElementsByClassName("capture-remove-btn"));
 		elements.forEach(el => {
 			el.onclick = () => {
 				let idx = parseInt(el.getAttribute("data-idx"));
-
+	
 				me.images.splice(idx, 1);
 				me.render_preview();
 			};
 		});
-	}
+	}	
 
 	update_count() {
 		let field = this.dialog.get_field("total_count");
-		let msg = `${__("Total Images")}: <b>${this.images.length}`;
-
+		let msg = `${__("Total Images")}: <b>${this.images.length}</b>`;
+	
 		if (this.images.length === 0) {
 			msg = __("No Images");
 		}
-
+	
 		$(field.wrapper).html(`
-			<div class="row mt-2">
-				<div class="offset-4 col-4 d-flex justify-content-center">${msg}</b></div>
+			<div class="row mt-2 d-flex justify-content-center">
+				<div class="col-12 text-center">
+					${msg}
+				</div>
 			</div>
 		`);
 	}
+	
 
 	setup_toggle_camera() {
 		let me = this;

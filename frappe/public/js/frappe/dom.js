@@ -300,10 +300,10 @@ frappe.get_modal = function(title, content) {
 					</div>
 					<div class="modal-actions">
 						<button class="btn btn-modal-minimize btn-link hide">
-							${frappe.utils.icon('collapse')}
+							<i class="fa fa-minus"></i>
 						</button>
 						<button class="btn btn-modal-close btn-link" data-dismiss="modal">
-							${frappe.utils.icon('close-alt', 'sm', 'close-alt')}
+							<i class="fa fa-times"></i>
 						</button>
 					</div>
 				</div>

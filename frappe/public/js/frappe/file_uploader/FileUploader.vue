@@ -55,7 +55,7 @@
 						</svg>
 						<div class="mt-1">{{ __('Link') }}</div>
 					</button>
-					<button v-if="allow_take_photo" class="btn btn-file-upload" @click="capture_image">
+					<button class="btn btn-file-upload" @click="capture_image">
 						<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<circle cx="15" cy="15" r="15" fill="#CE315B"/>
 							<path d="M11.5 10.5H9.5C8.67157 10.5 8 11.1716 8 12V20C8 20.8284 8.67157 21.5 9.5 21.5H20.5C21.3284 21.5 22 20.8284 22 20V12C22 11.1716 21.3284 10.5 20.5 10.5H18.5L17.3 8.9C17.1111 8.64819 16.8148 8.5 16.5 8.5H13.5C13.1852 8.5 12.8889 8.64819 12.7 8.9L11.5 10.5Z" stroke="white" stroke-linejoin="round"/>

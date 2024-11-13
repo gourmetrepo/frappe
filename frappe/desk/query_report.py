@@ -273,7 +273,7 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 				}
 		except Exception:
 			frappe.log_error(frappe.get_traceback())
-			frappe.delete_doc("Prepared Report", doc.name)
+			frappe.delete_doc("Prepared Report", doc.name,ignore_permissions=True)
 			frappe.db.commit()
 			doc = None
 

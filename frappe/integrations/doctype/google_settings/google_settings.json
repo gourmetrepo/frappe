@@ -8,7 +8,8 @@
   "client_id",
   "client_secret",
   "sb_01",
-  "api_key"
+  "api_key",
+  "google_drive_picker_enabled"
  ],
  "fields": [
   {
@@ -46,10 +47,17 @@
    "fieldname": "sb_01",
    "fieldtype": "Section Break",
    "label": "API Key"
+  },
+  {
+   "default": "0",
+   "fieldname": "google_drive_picker_enabled",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Google Drive Picker Enabled"
   }
  ],
  "issingle": 1,
- "modified": "2019-08-06 22:37:41.699703",
+ "modified": "2024-11-15 19:20:04.098032",
  "modified_by": "Administrator",
  "module": "Integrations",
  "name": "Google Settings",

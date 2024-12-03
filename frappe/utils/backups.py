@@ -166,27 +166,38 @@ class BackupGenerator:
 			f.write(json.dumps(site_config, indent=2))
 			f.flush()
 		self.site_config_backup_path = site_config_backup_path
-
+	
 	def take_dump(self):
 		import frappe.utils
 
 		# escape reserved characters
 		args = dict([item[0], frappe.utils.esc(str(item[1]), '$ ')]
 			for item in self.__dict__.copy().items())
+		# new backup tablewise with threading
+		tables = frappe.db.sql(f"""SHOW TABLES""")
+		backup_path = get_backup_path()
+		from frappe.utils import today
+		today = today()
+		path = f"{backup_path}{today}"
+		cmd = f"mkdir {path}"
+		err, out = frappe.utils.execute_in_shell(cmd)
+		for t in tables:
+			cmd = f"""nohup mysqldump --single-transaction --quick --lock-tables=false --master-data=2 --add-locks --skip-comments --compress=true -u"{args['user']}" -p"{args['password']}" -h"{args['db_host']}" -P"{args['db_port']}" "{args['db_name']}" "{t[0]}" | gzip > "{path}/{t[0]}.sql.gz" &"""
+			err, out = frappe.utils.execute_in_shell(cmd)
+		
+		# cmd_string = """mysqldump --add-locks --skip-comments -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
 
-		cmd_string = """mysqldump --ignore-table={"erpnextdb.tabPrepared Report","erpnextdb.__Auth","erpnextdb.__global_search","erpnextdb.tabAbout Us Team Member","erpnextdb.tabAcademic Term","erpnextdb.tabAcademic Year","erpnextdb.tabAccess Log","erpnextdb.tabActivity Cost","erpnextdb.tabAgriculture Analysis Criteria","erpnextdb.tabAgriculture Task","erpnextdb.tabAntibiotic","erpnextdb.tabAppointment Booking Slots","erpnextdb.tabAppointment Type","erpnextdb.tabAppointment","erpnextdb.tabBlog Category","erpnextdb.tabBlog Post","erpnextdb.tabBlogger","erpnextdb.tabCall Log","erpnextdb.tabChat Message","erpnextdb.tabChat Profile","erpnextdb.tabChat Room User","erpnextdb.tabChat Room","erpnextdb.tabChat Token","erpnextdb.tabComment","erpnextdb.tabEmail Group","erpnextdb.tabEmail Queue Recipient","erpnextdb.tabEmail Queue","erpnextdb.tabEnergy Point Log","erpnextdb.tabError Log","erpnextdb.tabEvent Participants","erpnextdb.tabFee Category","erpnextdb.tabFee Component","erpnextdb.tabFee Schedule Program","erpnextdb.tabFee Schedule Student Group","erpnextdb.tabFee Schedule","erpnextdb.tabFee Structure","erpnextdb.tabFee Validity","erpnextdb.tabFees","erpnextdb.tabGuardian Interest","erpnextdb.tabGuardian Student","erpnextdb.tabGuardian","erpnextdb.tabHelp Article","erpnextdb.tabHelp Category","erpnextdb.tabMember","erpnextdb.tabMembership Type","erpnextdb.tabMembership","erpnextdb.tabNote","erpnextdb.tabNotification Log","erpnextdb.tabNotification Recipient","erpnextdb.tabNotification Settings","erpnextdb.tabProgram Enrollment","erpnextdb.tabProgram Fee","erpnextdb.tabProgram","erpnextdb.tabQuestion","erpnextdb.tabQuiz Activity","erpnextdb.tabQuiz Question","erpnextdb.tabQuiz Result","erpnextdb.tabQuiz","erpnextdb.tabStudent Admission Program","erpnextdb.tabStudent Admission","erpnextdb.tabStudent Applicant","erpnextdb.tabStudent Attendance","erpnextdb.tabStudent Batch Name","erpnextdb.tabStudent Category","erpnextdb.tabStudent Group Creation Tool Course","erpnextdb.tabStudent Group Instructor","erpnextdb.tabStudent Group Student","erpnextdb.tabStudent Group","erpnextdb.tabStudent Guardian","erpnextdb.tabStudent Language","erpnextdb.tabStudent Leave Application","erpnextdb.tabStudent Log","erpnextdb.tabStudent Sibling","erpnextdb.tabStudent Siblings","erpnextdb.tabStudent","erpnextdb.tabToDo","erpnextdb.tabNrp Integration","erpnextdb.tabActivity Log","erpnextdb.tabNotification Log","erpnextdb.tabError Log"} --single-transaction --quick --lock-tables=false --master-data=2 --add-locks --skip-comments -u %(user)s -p%(password)s %(db_name)s -h %(db_host)s -P %(db_port)s | gzip > %(backup_path_db)s """ % args
+		# if self.db_type == 'postgres':
+		# 	cmd_string = "pg_dump postgres://{user}:{password}@{db_host}:{db_port}/{db_name} | gzip > {backup_path_db}".format(
+		# 		user=args.get('user'),
+		# 		password=args.get('password'),
+		# 		db_host=args.get('db_host'),
+		# 		db_port=args.get('db_port'),
+		# 		db_name=args.get('db_name'),
+		# 		backup_path_db=args.get('backup_path_db')
+		# 	)
 
-		if self.db_type == 'postgres':
-			cmd_string = "pg_dump postgres://{user}:{password}@{db_host}:{db_port}/{db_name} | gzip > {backup_path_db}".format(
-				user=args.get('user'),
-				password=args.get('password'),
-				db_host=args.get('db_host'),
-				db_port=args.get('db_port'),
-				db_name=args.get('db_name'),
-				backup_path_db=args.get('backup_path_db')
-			)
-
-		err, out = frappe.utils.execute_in_shell(cmd_string)
+		# err, out = frappe.utils.execute_in_shell(cmd_string)
 
 	def send_email(self):
 		"""
@@ -217,6 +228,13 @@ download only after 24 hours.""" % {
 		frappe.sendmail(recipients=recipient_list, msg=msg, subject=subject)
 		return recipient_list
 
+@frappe.whitelist()
+def take_bakup_postman():
+	odb = BackupGenerator(frappe.conf.db_name, frappe.conf.db_name,\
+						  frappe.conf.db_password, db_host = frappe.db.host,\
+							db_type=frappe.conf.db_type, db_port=frappe.conf.db_port)
+	odb.take_dump()
+	pass
 
 @frappe.whitelist()
 def get_backup():
@@ -279,18 +297,22 @@ def new_backup(older_than=6, ignore_files=False, backup_path_db=None, backup_pat
 						  verbose=verbose)
 	odb.get_backup(older_than, ignore_files, force=force)
 	return odb
-
+@frappe.whitelist()
 def delete_temp_backups(older_than=24):
 	"""
 		Cleans up the backup_link_path directory by deleting files older than 24 hours
 	"""
 	backup_path = get_backup_path()
+	from datetime import date, timedelta
+	today = date.today()
+	yesterday = today - timedelta(days=1)
+	backup_path = f"{backup_path}{yesterday}"
 	if os.path.exists(backup_path):
-		file_list = os.listdir(get_backup_path())
+		file_list = os.listdir(backup_path)
 		for this_file in file_list:
-			this_file_path = os.path.join(get_backup_path(), this_file)
-			if is_file_old(this_file_path, older_than):
-				os.remove(this_file_path)
+			this_file_path = os.path.join(backup_path, this_file)
+			os.remove(this_file_path)
+		os.removedirs(backup_path)
 
 def is_file_old(db_file_name, older_than=24):
 		"""
@@ -319,7 +341,7 @@ def is_file_old(db_file_name, older_than=24):
 
 def get_backup_path():
 	backup_path = frappe.utils.get_site_path(conf.get("backup_path", "private/backups"))
-	backup_path = "/datatmp/frappe_nrp_live_backup"
+	# backup_path = "/datatmp/frappe_nrp_live_backup"
 	return backup_path
 
 def backup(with_files=False, backup_path_db=None, backup_path_files=None, quiet=False):

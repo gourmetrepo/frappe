@@ -10,7 +10,7 @@ def execute():
 			(reference_doctype is not null and reference_doctype != '')
 			and (reference_name is not null and reference_name != '')
 			and (reference_owner is null or reference_owner = '')
-		for update"""):
+		"""):
 
 		owner = frappe.db.get_value(doctype, name, "owner")
 

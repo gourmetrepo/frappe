@@ -34,7 +34,9 @@ def has_permission(doc, user):
 
 def process_workflow_actions(doc, state):
 
-	if not frappe.flags.ignore_workflow and doc.get('doctype') not in frappe.flags.ignore_workflow_doctypes:
+	if not frappe.flags.ignore_workflow and( not frappe.flags.ignore_workflow_doctypes or doc.get('doctype') not in frappe.flags.ignore_workflow_doctypes):
+		if doc.get('doctype') == "Payment Request":
+			frappe.log_error(message=f"Payment Request: {doc.get('name')}, {doc.get('workflow_state')}", title=f"Workflow Payment Request: {doc.get('name')}")
 		workflow = get_workflow_name(doc.get('doctype'))
 		if not workflow: return
 

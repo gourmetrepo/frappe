@@ -34,7 +34,7 @@ def has_permission(doc, user):
 
 def process_workflow_actions(doc, state):
 
-	if not frappe.flags.ignore_workflow:
+	if not frappe.flags.ignore_workflow and doc.get('doctype') not in frappe.flags.ignore_workflow_doctypes:
 		workflow = get_workflow_name(doc.get('doctype'))
 		if not workflow: return
 

@@ -33,33 +33,31 @@ def has_permission(doc, user):
 		return False
 
 def process_workflow_actions(doc, state):
+	workflow = get_workflow_name(doc.get('doctype'))
+	if not workflow: return
 
-	if not frappe.flags.ignore_workflow:
-		workflow = get_workflow_name(doc.get('doctype'))
-		if not workflow: return
+	if state == "on_trash":
+		clear_workflow_actions(doc.get('doctype'), doc.get('name'))
+		return
 
-		if state == "on_trash":
-			clear_workflow_actions(doc.get('doctype'), doc.get('name'))
-			return
+	if is_workflow_action_already_created(doc): return
 
-		if is_workflow_action_already_created(doc): return
+	clear_old_workflow_actions(doc)
+	update_completed_workflow_actions(doc)
+	clear_doctype_notifications('Workflow Action')
 
-		clear_old_workflow_actions(doc)
-		update_completed_workflow_actions(doc)
-		clear_doctype_notifications('Workflow Action')
+	next_possible_transitions = get_next_possible_transitions(workflow, get_doc_workflow_state(doc), doc)
 
-		next_possible_transitions = get_next_possible_transitions(workflow, get_doc_workflow_state(doc), doc)
+	if not next_possible_transitions: return
 
-		if not next_possible_transitions: return
+	user_data_map = get_users_next_action_data(next_possible_transitions, doc)
 
-		user_data_map = get_users_next_action_data(next_possible_transitions, doc)
+	if not user_data_map: return
 
-		if not user_data_map: return
+	create_workflow_actions_for_users(user_data_map.keys(), doc)
 
-		create_workflow_actions_for_users(user_data_map.keys(), doc)
-
-		if send_email_alert(workflow):
-			enqueue(send_workflow_action_email, queue='short', users_data=list(user_data_map.values()), doc=doc)
+	if send_email_alert(workflow):
+		enqueue(send_workflow_action_email, queue='short', users_data=list(user_data_map.values()), doc=doc)
 
 @frappe.whitelist(allow_guest=True)
 def apply_action(action, doctype, docname, current_state, user=None, last_modified=None):
@@ -185,18 +183,15 @@ def get_users_next_action_data(transitions, doc):
 
 
 def create_workflow_actions_for_users(users, doc):
-	if frappe.flags.ignore_workflow:
-		pass
-	else:
-		for user in users:
-			frappe.get_doc({
-				'doctype': 'Workflow Action',
-				'reference_doctype': doc.get('doctype'),
-				'reference_name': doc.get('name'),
-				'workflow_state': get_doc_workflow_state(doc),
-				'status': 'Open',
-				'user': user
-			}).insert(ignore_permissions=True)
+	for user in users:
+		frappe.get_doc({
+			'doctype': 'Workflow Action',
+			'reference_doctype': doc.get('doctype'),
+			'reference_name': doc.get('name'),
+			'workflow_state': get_doc_workflow_state(doc),
+			'status': 'Open',
+			'user': user
+		}).insert(ignore_permissions=True)
 
 def send_workflow_action_email(users_data, doc):
 	common_args = get_common_email_args(doc)

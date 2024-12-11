@@ -18,7 +18,10 @@ queue_timeout = {
 	'background': 2500,
 	'long': 5000,
 	'default': 300,
-	'short': 300
+	'short': 300,
+	'rms_push_queue':1500,
+	'hr_secondary':500,
+	'hr_tertiary':500
 }
 
 redis_connection = None

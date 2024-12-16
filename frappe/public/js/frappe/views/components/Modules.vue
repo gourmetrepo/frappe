@@ -170,7 +170,7 @@ h4 {
 
 .chart-container {
     max-width: 100%;
-    height: 800px;
+    height: 1200px;
     margin-bottom: 20px;
 }
 </style>

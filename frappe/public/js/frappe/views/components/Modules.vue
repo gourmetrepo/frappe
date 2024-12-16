@@ -69,7 +69,7 @@ export default {
 
                 if (!frappe.modules.home) {
                     setTimeout(() => {
-                        frappe.modules.home.page.set_title(titkhile);
+                        frappe.modules.home.page.set_title(title);
                     }, 200);
                 }
 

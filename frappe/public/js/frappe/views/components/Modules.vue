@@ -91,14 +91,15 @@ export default {
                         module: module_name,
                     },
                     callback: (r) => {
+                        var m = frappe.get_module(module_name)
+                        this.current_module_sections = r.message.data
+                        this.process_data(module_name, this.current_module_sections)
+                        this.modules_data_cache[module_name] = this.current_module_sections                        
                         this.chart = r.message.chart['chart_urls'];
                         this.superset_ip_address = r.message.chart['superset_ip_address'];
                         this.superset_api = r.message.chart['superset_api'];
                         this.filter = r.message.chart["filter"];
                         this.allow_user = r.message.allow_user;
-                        this.current_module_sections = r.message.data;
-                        this.process_data(module_name, this.current_module_sections);
-                        this.modules_data_cache[module_name] = this.current_module_sections;
                     },
                     freeze: true,
                 })

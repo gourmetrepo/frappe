@@ -582,15 +582,16 @@ def check_frappe_user_role(module):
 	if user.name == "Administrator":
 		company = default_company
 	else:
-		employee = frappe.get_doc("Employee", user.username)
-		company = employee.company
+		employee = frappe.get_list( "Employee", filters={"user_id": user.email}, fields="*" )
+		company = employee[0]["company"]
 
 	query = """
 	SELECT 
 		GROUP_CONCAT(DISTINCT sci.chart_url) AS chart_url,
 		GROUP_CONCAT(DISTINCT sci.superset_ip_address) AS superset_ip_address,
 		GROUP_CONCAT(DISTINCT sci.superset_api) AS superset_api,
-		GROUP_CONCAT(DISTINCT smr.role) AS roles
+		GROUP_CONCAT(DISTINCT smr.role) AS roles,
+        sci.chart_id as chart_id
 	FROM 
 		`tabSuperSet Chart Integration` sci
 	JOIN
@@ -611,9 +612,11 @@ def check_frappe_user_role(module):
 	superset_ip_address = result[0].get('superset_ip_address', '') if result else ''
 	superset_api = result[0].get('superset_api', '') if result else ''
 	roles = result[0].get('roles', '').split(',') if result else []
+	chart_id=result[0].get('chart_id')
+    
 
 	user_roles = {role.role for role in user.roles}
-	filter = add_filter(superset_ip_address, superset_api, user, company)
+	filter = add_filter(superset_ip_address, superset_api, user, company, chart_id)
 	for row in result:
 		module_roles = set(row.get("roles", "").split(","))
 		if user_roles & module_roles:
@@ -631,15 +634,15 @@ def check_frappe_user_role(module):
 	})
 
 
-def add_filter(superset_ip_address, superset_api, user, company):
+def add_filter(superset_ip_address, superset_api, user, company, chart_id):
 	import requests
 	import json
 
 	url = f"{superset_ip_address+superset_api}"
 	payload = json.dumps({
 		"value": json.dumps({
-			"NATIVE_FILTER-cyhktZtjsxJ_so_z0KGiU": {
-				"id": "NATIVE_FILTER-cyhktZtjsxJ_so_z0KGiU",
+			f"NATIVE_FILTER-{chart_id}": {
+				"id": f"NATIVE_FILTER-{chart_id}",
 				"extraFormData": {
 					"filters": [
 						{

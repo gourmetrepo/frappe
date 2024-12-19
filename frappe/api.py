@@ -235,3 +235,20 @@ def validate_api_key_secret(api_key, api_secret):
 	if api_secret == user_secret:
 		frappe.set_user(user)
 		frappe.local.form_dict = form_dict
+	return user
+
+
+@frappe.whitelist(allow_guest=True)
+def login_via_token(api_key,api_secret,redirect_to):
+	user = validate_api_key_secret(api_key,api_secret)
+	frappe.local.login_manager.user = user
+	frappe.local.login_manager.post_login()
+	# because of a GET request!
+	frappe.db.commit()
+	frappe.local.response["type"] = "redirect"
+	frappe.local.response["location"] = redirect_to
+
+	# redirect_post_login(
+	# 	desk_user=frappe.local.response.get('message') == 'Logged In',
+	# 	redirect_to=redirect_to,
+	# )

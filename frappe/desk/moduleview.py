@@ -14,18 +14,18 @@ def get(module):
 	"""Returns data (sections, list of reports, counts) to render module view in desk:
 	`/desk/#Module/[name]`."""
 
-	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
-	if not data:
-		data = get_data(module)
-		if (frappe.flags.in_patch
-			or frappe.flags.in_install
-			or frappe.flags.in_migrate
-			or frappe.flags.in_import
-			or frappe.flags.in_setup_wizard):
-			return
-		_cache = frappe.cache()
-		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
-	
+	# data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
+	# if not data:
+		# data = get_data(module)
+		# if (frappe.flags.in_patch
+		# 	or frappe.flags.in_install
+		# 	or frappe.flags.in_migrate
+		# 	or frappe.flags.in_import
+		# 	or frappe.flags.in_setup_wizard):
+		# 	return
+		# _cache = frappe.cache()
+		# _cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
+	data = get_data(module)
 	out = {
 		"data": data
 	}
@@ -125,7 +125,7 @@ def filter_by_restrict_to_domain(data):
 			item_type = item.get("type")
 			item_name = item.get("name")
 
-			if (item_name in pages) or (item_name in doctypes) or item_type == 'report':
+			if (item_name in pages) or (item_name in doctypes) or item_type == 'report' or item_type == 'external_link':
 				_items.append(item)
 
 		d.update({ "items": _items })
@@ -221,7 +221,8 @@ def apply_permissions(data):
 			if ((item.type=="doctype" and item.name in user.can_read)
 				or (item.type=="page" and item.name in allowed_pages)
 				or (item.type=="report" and item.name in allowed_reports)
-				or item.type=="help"):
+				or item.type=="help"
+				or item.type=="external_link"):
 
 				new_items.append(item)
 

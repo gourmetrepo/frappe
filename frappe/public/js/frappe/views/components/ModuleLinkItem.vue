@@ -24,7 +24,7 @@
 <script>
 export default {
 	props: ['label', 'name', 'dependencies', 'incomplete_dependencies',
-		'onboard', 'count', 'route', 'doctype', 'open_count', 'youtube_id'],
+		'onboard', 'count', 'route', 'doctype', 'open_count', 'youtube_id','external_link'],
 	data() {
 		return {
 			hover: false,
@@ -65,6 +65,8 @@ export default {
 		handle_click(e) {
 			if (this.youtube_id) {
 				frappe.help.show_video(this.youtube_id);
+			} else if (this.external_link){
+				window.open(this.route,'_blank');
 			} else {
 				frappe.set_route(this.route);
 			}

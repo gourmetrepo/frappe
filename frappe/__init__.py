@@ -551,7 +551,7 @@ def read_only():
 				is_report = 'query_report.run' in data.get('cmd')
 			email = frappe.session.user
 			# my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com", "anwar.haq@gourmetpakistan.com", "khizer.shujra@gourmetpakistan.com", "rizwan.ali@gourmetpakistan.com","zubair@gourmetpakistan.com"]
-			my_array = ["zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com","zubair@gourmetpakistan.com","muhammadyasir@gourmetpakistan.com","abdul.samad@gourmetpakistan.com","shoaib.rehmat@gourmetpakistan.com","waqas.malik@gourmetpakistan.com"]
+			my_array = ["000001","zulqarnain","zulqarnain@gourmetpakistan.com","shaharyar@gourmetpakistan.com","zubair@gourmetpakistan.com","muhammadyasir@gourmetpakistan.com","abdul.samad@gourmetpakistan.com","shoaib.rehmat@gourmetpakistan.com","waqas.malik@gourmetpakistan.com"]
 			if email in my_array:
 				is_report = False
 			if is_report == True and conf.read_from_replica:

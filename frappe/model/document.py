@@ -1216,7 +1216,7 @@ class Document(BaseDocument):
 			
 
 		self.lock()
-		enqueue('frappe.model.document.execute_action', doctype=self.doctype, name=self.name,queue=queue_name,
+		enqueue('frappe.model.document.execute_action', doctype=self.doctype, name=self.name,queue=queue,
 			action=action, **kwargs)
 
 	def lock(self, timeout=None):

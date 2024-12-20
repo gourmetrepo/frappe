@@ -1199,7 +1199,7 @@ class Document(BaseDocument):
 
 		return self.get('__onload')[key]
 
-	def queue_action(self, action, queue_name="default", **kwargs):
+	def queue_action(self, action, queue="default", **kwargs):
 		'''Run an action in background. If the action has an inner function,
 		like _submit for submit, it will call that instead'''
 		# call _submit instead of submit, so you can override submit to call

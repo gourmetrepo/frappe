@@ -14,18 +14,17 @@ def get(module):
 	"""Returns data (sections, list of reports, counts) to render module view in desk:
 	`/desk/#Module/[name]`."""
 
-	# data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
-	# if not data:
-		# data = get_data(module)
-		# if (frappe.flags.in_patch
-		# 	or frappe.flags.in_install
-		# 	or frappe.flags.in_migrate
-		# 	or frappe.flags.in_import
-		# 	or frappe.flags.in_setup_wizard):
-		# 	return
-		# _cache = frappe.cache()
-		# _cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
-	data = get_data(module)
+	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
+	if not data:
+		data = get_data(module)
+		if (frappe.flags.in_patch
+			or frappe.flags.in_install
+			or frappe.flags.in_migrate
+			or frappe.flags.in_import
+			or frappe.flags.in_setup_wizard):
+			return
+		_cache = frappe.cache()
+		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
 	out = {
 		"data": data
 	}

@@ -104,6 +104,9 @@ frappe.views.GanttView = class GanttView extends frappe.views.ListView {
 			},
 			on_date_change: (task, start, end) => {
 				if (!me.can_write) return;
+				// disallow timeline change in gantt charts
+				frappe.msgprint(__('You are not allowed to change the timeline of a Task. Refresh the page to reset the Gantt Chart.'));
+				return;
 				frappe.db.set_value(task.doctype, task.id, {
 					[field_map.start]: moment(start).format(date_format),
 					[field_map.end]: moment(end).format(date_format)

@@ -70,8 +70,13 @@ def has_permission(doctype, ptype="read", doc=None, verbose=False, user=None, ra
 		if ptype=="import" and not cint(meta.allow_import):
 			push_perm_check_log(_("Document Type is not importable"))
 			return False
+		
+		is_report=False
 
-		role_permissions = get_role_permissions(meta, user=user)
+		# Code by Moeiz and Samad to allow access to all, use case for My Pending Document
+		if ptype=="report" and doctype=="DocType":
+			is_report=True
+		role_permissions = get_role_permissions(meta, user=user, is_report=is_report)
 		perm = role_permissions.get(ptype)
 		if not perm:
 			push_perm_check_log(_('User {0} does not have doctype access via role permission for document {1}').format(frappe.bold(user), frappe.bold(doctype)))
@@ -142,7 +147,7 @@ def get_doc_permissions(doc, user=None, ptype=None):
 
 	return permissions
 
-def get_role_permissions(doctype_meta, user=None):
+def get_role_permissions(doctype_meta, user=None, is_report=False):
 	"""
 	Returns dict of evaluated role permissions like
 		{
@@ -164,6 +169,8 @@ def get_role_permissions(doctype_meta, user=None):
 	cache_key = (doctype_meta.name, user)
 
 	if user == 'Administrator':
+		return allow_everything()
+	elif is_report: # Code by Moeiz and Samad to allow access to all, use case for My Pending Document
 		return allow_everything()
 
 	if not frappe.local.role_permissions.get(cache_key):

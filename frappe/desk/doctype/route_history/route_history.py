@@ -43,6 +43,5 @@ def flush_old_route_records():
 		})
 
 @frappe.whitelist()
-def deferred_insert(records, doctype):
-    # Example implementation
-    frappe.db.bulk_insert(doctype, records)
+def deferred_insert():
+    return

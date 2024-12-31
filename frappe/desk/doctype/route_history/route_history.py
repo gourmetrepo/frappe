@@ -45,4 +45,4 @@ def flush_old_route_records():
 queue_prefix = 'insert_queue_for_'
 @frappe.whitelist()
 def deferred_insert(doctype, records):
-	frappe.cache().rpush(queue_prefix + doctype, records)
+	return frappe.cache().rpush(queue_prefix + doctype, records)

@@ -51,7 +51,7 @@ frappe.views.ListSidebar = class ListSidebar {
 
 		if (frappe.views.calendar[this.doctype]) {
 			this.sidebar.find('.list-link[data-view="Calendar"]').removeClass("hide");
-			this.sidebar.find('.list-link[data-view="Gantt"]').removeClass('hide');
+			// this.sidebar.find('.list-link[data-view="Gantt"]').removeClass('hide');
 			show_list_link = true;
 		}
 		//show link for kanban view

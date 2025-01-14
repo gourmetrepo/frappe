@@ -33,7 +33,7 @@ frappe.ui.form.save = function (frm, action, callback, btn) {
 					callback(r);
 				},
 				btn: btn,
-				freeze_message: freeze_message
+				freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`,
 			});
 		} else {
 			$(btn).prop("disabled", false);
@@ -106,7 +106,7 @@ frappe.ui.form.save = function (frm, action, callback, btn) {
 				callback(r);
 			},
 			btn: btn,
-			freeze_message: freeze_message
+			freeze_message: `<img src="/assets/frappe/images/output-onlinegiftools.gif" style="width: 150px; height: 150px;" />`
 		});
 	};
 

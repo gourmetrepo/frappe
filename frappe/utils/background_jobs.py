@@ -21,7 +21,10 @@ queue_timeout = {
 	'short': 300,
     'sales':1500,
     'se_gl_queue': 1500,
-    'dn_queue': 300
+    'dn_queue': 300,
+	'rms_push_queue':1500,
+	'hr_secondary':500,
+	'hr_tertiary':500
 }
 
 redis_connection = None

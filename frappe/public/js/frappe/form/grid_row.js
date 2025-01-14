@@ -4,9 +4,14 @@ export default class GridRow {
 	constructor(opts) {
 		this.on_grid_fields_dict = {};
 		this.on_grid_fields = [];
+		$.extend(this, opts);
+		if (this.doc && this.parent_df.options) {
+			frappe.meta.make_docfield_copy_for(this.parent_df.options, this.doc.name, this.docfields);
+			const docfields = frappe.meta.get_docfields(this.parent_df.options, this.doc.name);
+			this.docfields = docfields.length ? docfields : opts.docfields;
+		}
 		this.columns = {};
 		this.columns_list = [];
-		$.extend(this, opts);
 		this.row_check_html = '<input type="checkbox" class="grid-row-check pull-left">';
 		this.make();
 	}
@@ -153,7 +158,7 @@ export default class GridRow {
 			this.render_row(true);
 		}
 
-		// refersh form fields
+		// refresh form fields
 		if(this.grid_form) {
 			this.grid_form.layout && this.grid_form.layout.refresh(this.doc);
 		}
@@ -161,21 +166,20 @@ export default class GridRow {
 	render_template() {
 		this.set_row_index();
 
-		if(this.row_display) {
+		if (this.row_display) {
 			this.row_display.remove();
 		}
 
 		// row index
-		if(this.doc) {
-			if(!this.row_index) {
-				this.row_index = $('<div style="float: left; margin-left: 15px; margin-top: 8px; \
-					margin-right: -20px;">'+this.row_check_html+' <span></span></div>').appendTo(this.row);
-			}
+		if (!this.row_index) {
+			this.row_index = $(`<div class="template-row-index">${this.row_check_html}<span></span></div>`).appendTo(this.row);
+		}
+
+		if (this.doc) {
 			this.row_index.find('span').html(this.doc.idx);
 		}
 
-		this.row_display = $('<div class="row-data sortable-handle template-row">'+
-			+'</div>').appendTo(this.row)
+		this.row_display = $('<div class="row-data sortable-handle template-row"></div>').appendTo(this.row)
 			.html(frappe.render(this.grid.template, {
 				doc: this.doc ? frappe.get_format_helper(this.doc) : null,
 				frm: this.frm,
@@ -188,7 +192,8 @@ export default class GridRow {
 
 		// index (1, 2, 3 etc)
 		if(!this.row_index) {
-			var txt = (this.doc ? this.doc.idx : "&nbsp;");
+			// REDESIGN-TODO: Make translation contextual, this No is Number
+			var txt = (this.doc ? this.doc.idx : __("No."));
 			this.row_index = $(
 				`<div class="row-index sortable-handle col col-xs-1">
 					${this.row_check_html}
@@ -205,6 +210,7 @@ export default class GridRow {
 
 		this.setup_columns();
 		this.add_open_form_button();
+		this.add_column_configure_button();
 		this.refresh_check();
 
 		if(this.frm && this.doc) {
@@ -224,13 +230,23 @@ export default class GridRow {
 		var me = this;
 		if(this.doc && !this.grid.df.in_place_edit) {
 			// remove row
-			if(!this.open_form_button) {
-				this.open_form_button = $('<a class="close btn-open-row">\
-					<span class="octicon octicon-triangle-down"></span></a>')
-					.appendTo($('<div class="col col-xs-1"></div>').appendTo(this.row))
-					.on('click', function() { me.toggle_view(); return false; });
+			if (!this.open_form_button) {
+				this.open_form_button = $('<div class="col col-xs-1"></div>').appendTo(this.row);
 
-				if(this.is_too_small()) {
+				if (!this.configure_columns) {
+					this.open_form_button = $(`
+						<div class="btn-open-row">
+							<a>${frappe.utils.icon('edit', 'xs')}</a>
+							<div class="hidden-xs edit-grid-row"><span class="octicon octicon-triangle-down"></span></div>
+						</div>
+					`)
+						.appendTo(this.open_form_button)
+						.on('click', function() {
+							me.toggle_view(); return false;
+						});
+				}
+
+				if (this.is_too_small()) {
 					// narrow
 					this.open_form_button.css({'margin-right': '-2px'});
 				}
@@ -238,40 +254,377 @@ export default class GridRow {
 		}
 	}
 
-	setup_columns() {
-		this.focus_set = false;
+	add_column_configure_button() {
+		if (this.grid.df.in_place_edit && !this.frm) return;
+
+		if (this.configure_columns && this.frm) {
+			this.configure_columns_button = $(`
+				<div class="col grid-static-col col-xs-1 d-flex justify-content-center" style="cursor: pointer;">
+					<a>${frappe.utils.icon('setting-gear', 'sm', '', 'filter: opacity(0.5)')}</a>
+				</div>
+			`)
+				.appendTo(this.row)
+				.on('click', () => {
+					this.configure_dialog_for_columns_selector();
+				});
+		} else if (this.configure_columns && !this.frm) {
+			this.configure_columns_button = $(`
+				<div class="col grid-static-col col-xs-1"></div>
+			`).appendTo(this.row);
+		}
+	}
+
+	configure_dialog_for_columns_selector() {
+		this.grid_settings_dialog = new frappe.ui.Dialog({
+			title: __("Configure Columns"),
+			fields: [{
+				'fieldtype': 'HTML',
+				'fieldname': 'fields_html'
+			}]
+		});
+
 		this.grid.setup_visible_columns();
+		this.setup_columns_for_dialog();
+		this.prepare_wrapper_for_columns();
+		this.render_selected_columns();
+		this.grid_settings_dialog.show();
 
-		for(var ci in this.grid.visible_columns) {
-			var df = this.grid.visible_columns[ci][0],
-				colsize = this.grid.visible_columns[ci][1],
-				txt = this.doc ?
-					frappe.format(this.doc[df.fieldname], df, null, this.doc) :
-					__(df.label);
+		$(this.fields_html_wrapper).find('.add-new-fields').click(() => {
+			this.column_selector_for_dialog();
+		});
 
-			if(this.doc && df.fieldtype === "Select") {
-				txt = __(txt);
+		this.grid_settings_dialog.set_primary_action(__('Update'), () => {
+			this.validate_columns_width();
+			this.columns = {};
+			this.update_user_settings_for_grid();
+			this.grid_settings_dialog.hide();
+		});
+
+		this.grid_settings_dialog.set_secondary_action_label(__("Reset to default"));
+		this.grid_settings_dialog.set_secondary_action(() => {
+			this.reset_user_settings_for_grid();
+			this.grid_settings_dialog.hide();
+		});
+	}
+
+	setup_columns_for_dialog() {
+		this.selected_columns_for_grid = [];
+		this.grid.visible_columns.forEach(row => {
+			this.selected_columns_for_grid.push({
+				fieldname: row[0].fieldname,
+				columns: row[0].columns || row[0].colsize
+			});
+		});
+	}
+
+	prepare_wrapper_for_columns() {
+		this.fields_html_wrapper = this.grid_settings_dialog.get_field("fields_html").$wrapper[0];
+
+		$(`
+			<div class='form-group'>
+				<div class='row' style='margin:0px; margin-bottom:10px'>
+					<div class='col-md-8'>
+						${__('Fieldname').bold()}
+					</div>
+					<div class='col-md-4' style='padding-left:5px;'>
+						${__('Column Width').bold()}
+					</div>
+				</div>
+				<div class='control-input-wrapper selected-fields'>
+				</div>
+				<p class='help-box small text-muted hidden-xs'>
+					<a class='add-new-fields text-muted'>
+						+ ${__('Add / Remove Columns')}
+					</a>
+				</p>
+			</div>
+		`).appendTo(this.fields_html_wrapper);
+	}
+
+	column_selector_for_dialog() {
+		let docfields = this.prepare_columns_for_dialog(this.selected_columns_for_grid.map(field => field.fieldname));
+
+		let d = new frappe.ui.Dialog({
+			title: __("{0} Fields", [__(this.grid.doctype)]),
+			fields: [
+				{
+					label: __("Select Fields"),
+					fieldtype: "MultiCheck",
+					fieldname: "fields",
+					options: docfields,
+					columns: 2
+				}
+			]
+		});
+
+		d.set_primary_action(__('Add'), () => {
+			let selected_fields = d.get_values().fields;
+			this.selected_columns_for_grid = [];
+			if (selected_fields) {
+				selected_fields.forEach(selected_column => {
+					let docfield = frappe.meta.get_docfield(this.grid.doctype, selected_column);
+					this.grid.update_default_colsize(docfield);
+
+					this.selected_columns_for_grid.push({
+						fieldname: selected_column,
+						columns: docfield.columns || docfield.colsize
+					});
+				});
+
+				this.render_selected_columns();
+				d.hide();
+			}
+		});
+
+		d.show();
+	}
+
+	prepare_columns_for_dialog(selected_fields) {
+		let fields = [];
+
+		const blocked_fields = frappe.model.no_value_type;
+		const always_allow = ["Button"];
+
+		const show_field = (f) => always_allow.includes(f) || !blocked_fields.includes(f);
+
+		this.docfields.forEach(column => {
+			if (!column.hidden && show_field(column.fieldtype)) {
+				fields.push({
+					label: column.label,
+					value: column.fieldname,
+					checked: selected_fields ? in_list(selected_fields, column.fieldname) : false
+				});
+			}
+		});
+
+		return fields;
+	}
+
+	render_selected_columns() {
+		let fields = '';
+		if (this.selected_columns_for_grid) {
+			this.selected_columns_for_grid.forEach(d => {
+				let docfield = frappe.meta.get_docfield(this.grid.doctype, d.fieldname);
+
+				fields += `
+					<div class='control-input flex align-center form-control fields_order sortable-handle sortable'
+						style='display: block; margin-bottom: 5px; cursor: pointer;' data-fieldname='${docfield.fieldname}'
+						data-label='${docfield.label}' data-type='${docfield.fieldtype}'>
+
+						<div class='row'>
+							<div class='col-md-1'>
+								<a style='cursor: grabbing;'>${frappe.utils.icon('drag', 'xs')}</a>
+							</div>
+							<div class='col-md-7' style='padding-left:0px;'>
+								${__(docfield.label)}
+							</div>
+							<div class='col-md-3' style='padding-left:0px;margin-top:-2px;' title='${__('Columns')}'>
+								<input class='form-control column-width input-xs text-right'
+									value='${docfield.columns || cint(d.columns)}'
+									data-fieldname='${docfield.fieldname}' style='background-color: var(--modal-bg); display: inline'>
+							</div>
+							<div class='col-md-1'>
+								<a class='text-muted remove-field' data-fieldname='${docfield.fieldname}'>
+									<i class='fa fa-trash-o' aria-hidden='true'></i>
+								</a>
+							</div>
+						</div>
+					</div>`;
+			});
+		}
+
+		$(this.fields_html_wrapper).find('.selected-fields').html(fields);
+
+		this.prepare_handler_for_sort();
+		this.select_on_focus();
+		this.update_column_width();
+		this.remove_selected_column();
+	}
+
+	prepare_handler_for_sort() {
+		new Sortable($(this.fields_html_wrapper).find('.selected-fields')[0], {
+			handle: '.sortable-handle',
+			draggable: '.sortable',
+			onUpdate: () => {
+				this.sort_columns();
+			}
+		});
+	}
+
+	sort_columns() {
+		this.selected_columns_for_grid = [];
+
+		let columns = $(this.fields_html_wrapper).find('.fields_order') || [];
+		columns.each(idx => {
+			this.selected_columns_for_grid.push({
+				fieldname: $(columns[idx]).attr('data-fieldname'),
+				columns: cint($(columns[idx]).find('.column-width').attr('value'))
+			});
+		});
+	}
+
+	select_on_focus() {
+		$(this.fields_html_wrapper).find('.column-width').click((event) => {
+			$(event.target).select();
+		});
+	}
+
+	update_column_width() {
+		$(this.fields_html_wrapper).find('.column-width').change((event) => {
+			if (cint(event.target.value) === 0) {
+				event.target.value = cint(event.target.defaultValue);
+				frappe.throw(__('Column width cannot be zero.'));
 			}
 
-			if(!this.columns[df.fieldname]) {
-				var column = this.make_column(df, colsize, txt, ci);
+			this.selected_columns_for_grid.forEach(row => {
+				if (row.fieldname === event.target.dataset.fieldname) {
+					row.columns = cint(event.target.value);
+					event.target.defaultValue = cint(event.target.value);
+				}
+			});
+		});
+	}
+
+	validate_columns_width() {
+		let total_column_width = 0.0;
+
+		this.selected_columns_for_grid.forEach(row => {
+			if (row.columns && row.columns > 0) {
+				total_column_width += cint(row.columns);
+			}
+		});
+
+		if (total_column_width && total_column_width > 10) {
+			frappe.throw(__('The total column width cannot be more than 10.'));
+		}
+	}
+
+	remove_selected_column() {
+		$(this.fields_html_wrapper).find('.remove-field').click((event) => {
+			let fieldname = event.currentTarget.dataset.fieldname;
+			let selected_columns_for_grid = this.selected_columns_for_grid.filter(row => {
+				return (row.fieldname !== fieldname);
+			});
+
+			if (selected_columns_for_grid && selected_columns_for_grid.length === 0) {
+				frappe.throw(__('At least one column is required to show in the grid.'));
+			}
+
+			this.selected_columns_for_grid = selected_columns_for_grid;
+			$(this.fields_html_wrapper).find(`[data-fieldname="${fieldname}"]`).remove();
+		});
+	}
+
+	update_user_settings_for_grid() {
+		if (!this.selected_columns_for_grid || !this.frm) {
+			return;
+		}
+
+		let value = {};
+		value[this.grid.doctype] = this.selected_columns_for_grid;
+		frappe.model.user_settings.save(this.frm.doctype, 'GridView', value)
+			.then((r) => {
+				frappe.model.user_settings[this.frm.doctype] = r.message || r;
+				this.grid.reset_grid();
+			});
+	}
+
+	reset_user_settings_for_grid() {
+		frappe.model.user_settings.save(this.frm.doctype, 'GridView', null)
+			.then((r) => {
+				frappe.model.user_settings[this.frm.doctype] = r.message || r;
+				this.grid.reset_grid();
+			});
+	}
+
+	setup_columns() {
+		this.focus_set = false;
+
+		this.grid.setup_visible_columns();
+		this.grid.visible_columns.forEach((col, ci) => {
+			// to get update df for the row
+			let df = this.docfields.find(field => field.fieldname === col[0].fieldname);
+
+			this.set_dependant_property(df);
+
+			let colsize = col[1];
+			let txt = this.doc ?
+				frappe.format(this.doc[df.fieldname], df, null, this.doc) :
+				__(df.label);
+
+			if (this.doc && df.fieldtype === "Select") {
+				txt = __(txt);
+			}
+			let column;
+			if (!this.columns[df.fieldname]) {
+				column = this.make_column(df, colsize, txt, ci);
 			} else {
-				var column = this.columns[df.fieldname];
+				column = this.columns[df.fieldname];
 				this.refresh_field(df.fieldname, txt);
 			}
 
-			// background color for cellz
-			if(this.doc) {
-				if(df.reqd && !txt) {
+			// background color for cell
+			if (this.doc) {
+				if (df.reqd && !txt) {
 					column.addClass('error');
 				}
 				if (column.is_invalid) {
 					column.addClass('invalid');
-				} else if ((df.reqd || df.bold)) {
+				} else if (df.reqd || df.bold) {
 					column.addClass('bold');
 				}
 			}
+		});
+	}
+
+	set_dependant_property(df) {
+		if (!df.reqd && df.mandatory_depends_on &&
+			this.evaluate_depends_on_value(df.mandatory_depends_on)) {
+			df.reqd = 1;
 		}
+
+		if (!df.read_only && df.read_only_depends_on &&
+			this.evaluate_depends_on_value(df.read_only_depends_on)) {
+			df.read_only = 1;
+		}
+	}
+
+	evaluate_depends_on_value(expression) {
+		let out = null;
+		let doc = this.doc;
+
+		if (!doc) return;
+
+		let parent = this.frm ? this.frm.doc : this.doc || null;
+
+		if (typeof (expression) === 'boolean') {
+			out = expression;
+
+		} else if (typeof (expression) === 'function') {
+			out = expression(doc);
+
+		} else if (expression.substr(0, 5)=='eval:') {
+			try {
+				out = frappe.utils.eval(expression.substr(5), { doc, parent });
+				if (parent && parent.istable && expression.includes('is_submittable')) {
+					out = true;
+				}
+			} catch (e) {
+				frappe.throw(__('Invalid "depends_on" expression'));
+			}
+
+		} else if (expression.substr(0, 3)=='fn:' && this.frm) {
+			out = this.frm.script_manager.trigger(expression.substr(3), this.doctype, this.docname);
+		} else {
+			var value = doc[expression];
+			if ($.isArray(value)) {
+				out = !!value.length;
+			} else {
+				out = !!value;
+			}
+		}
+
+		return out;
 	}
 
 	make_column(df, colsize, txt, ci) {
@@ -302,6 +655,12 @@ export default class GridRow {
 
 		$col.field_area = $('<div class="field-area"></div>').appendTo($col).toggle(false);
 		$col.static_area = $('<div class="static-area ellipsis"></div>').appendTo($col).html(txt);
+
+		// set title attribute to see full label for columns in the heading row
+		if (!this.doc) {
+			$col.attr("title", txt);
+		}
+
 		$col.df = df;
 		$col.column_index = ci;
 
@@ -394,17 +753,22 @@ export default class GridRow {
 		// sync get_query
 		field.get_query = this.grid.get_field(df.fieldname).get_query;
 
-		var field_on_change_function = field.df.onchange;
-		field.df.onchange = function(e) {
-			field_on_change_function && field_on_change_function(e);
-			me.grid.grid_rows[field.doc.idx - 1].refresh_field(field.df.fieldname);
-		};
+		if (!field.df.onchange_modified) {
+			var field_on_change_function = field.df.onchange;
+			field.df.onchange = (e) => {
+				field_on_change_function && field_on_change_function(e);
+				this.refresh_field(field.df.fieldname);
+			};
+
+			field.df.onchange_modified = true;
+		}
+
 		field.refresh();
 		if(field.$input) {
 			field.$input
 				.addClass('input-sm')
 				.attr('data-col-idx', column.column_index)
-				.attr('placeholder', __(df.label));
+				.attr('placeholder', __(df.placeholder || df.label));
 			// flag list input
 			if (this.columns_list && this.columns_list.slice(-1)[0]===column) {
 				field.$input.attr('data-last-input', 1);
@@ -420,6 +784,7 @@ export default class GridRow {
 
 	set_arrow_keys(field) {
 		var me = this;
+		let ignore_fieldtypes = ['Text', 'Small Text', 'Code', 'Text Editor', 'HTML Editor'];
 		if (field.$input) {
 			field.$input.on('keydown', function(e) {
 				var { TAB, UP: UP_ARROW, DOWN: DOWN_ARROW } = frappe.ui.keyCode;
@@ -431,8 +796,20 @@ export default class GridRow {
 				var fieldname = $(this).attr('data-fieldname');
 				var fieldtype = $(this).attr('data-fieldtype');
 
+				let ctrl_key = e.metaKey || e.ctrlKey;
+				if (!in_list(ignore_fieldtypes, fieldtype)
+					&& ctrl_key && e.which !== TAB) {
+					me.add_new_row_using_keys(e);
+					return;
+				}
+
+				if (e.shiftKey && e.altKey && DOWN_ARROW === e.which) {
+					me.duplicate_row_using_keys();
+					return;
+				}
+
 				var move_up_down = function(base) {
-					if (in_list(['Text', 'Small Text', 'Code', 'Text Editor', 'HTML Editor'], fieldtype) && !e.altKey) {
+					if (in_list(ignore_fieldtypes, fieldtype) && !e.altKey) {
 						return false;
 					}
 					if (field.autocomplete_open) {
@@ -487,6 +864,40 @@ export default class GridRow {
 		}
 	}
 
+	duplicate_row_using_keys() {
+		setTimeout(() => {
+			this.insert(false, true, true);
+			this.grid.grid_rows[this.doc.idx].toggle_editable_row();
+			this.grid.set_focus_on_row(this.doc.idx);
+		}, 100);
+	}
+
+	add_new_row_using_keys(e) {
+		let idx = '';
+
+		let ctrl_key = e.metaKey || e.ctrlKey;
+		let is_down_arrow_key_press = (e.which === 40);
+
+		// Add new row at the end or start of the table
+		if (ctrl_key && e.shiftKey)  {
+			idx = is_down_arrow_key_press ? null : 1;
+			this.grid.add_new_row(idx, null, is_down_arrow_key_press,
+				false, is_down_arrow_key_press, !is_down_arrow_key_press);
+			idx = is_down_arrow_key_press ? (cint(this.grid.grid_rows.length) - 1) : 0;
+
+		} else if (ctrl_key) {
+			idx = is_down_arrow_key_press ? this.doc.idx : (this.doc.idx - 1);
+			this.insert(false, is_down_arrow_key_press);
+		}
+
+		if (idx !== '') {
+			setTimeout(() => {
+				this.grid.grid_rows[idx].toggle_editable_row();
+				this.grid.set_focus_on_row(idx);
+			}, 100);
+		}
+	}
+
 	get_open_form() {
 		return frappe.ui.form.get_open_grid_form();
 	}
@@ -504,7 +915,7 @@ export default class GridRow {
 		// hide other
 		var open_row = this.get_open_form();
 
-		if (show===undefined) show = !!!open_row;
+		if (show === undefined) show = !open_row;
 
 		// call blur
 		document.activeElement && document.activeElement.blur();
@@ -530,7 +941,7 @@ export default class GridRow {
 		return this;
 	}
 	show_form() {
-		if(!this.grid_form) {
+		if (!this.grid_form) {
 			this.grid_form = new GridRowForm({
 				row: this
 			});
@@ -544,14 +955,19 @@ export default class GridRow {
 			.find('.grid-insert-row-below, .grid-insert-row, .grid-duplicate-row, .grid-append-row')
 			.toggle(!cannot_add_rows);
 
+		this.wrapper.find('.grid-delete-row')
+			.toggle(!(this.grid.df && this.grid.df.cannot_delete_rows));
+
 		frappe.dom.freeze("", "dark");
-		if(cur_frm) cur_frm.cur_grid = this;
+		if (cur_frm) cur_frm.cur_grid = this;
 		this.wrapper.addClass("grid-row-open");
-		if(!frappe.dom.is_element_in_viewport(this.wrapper)) {
-			frappe.utils.scroll_to(this.wrapper, true, 15);
+		if (!frappe.dom.is_element_in_viewport(this.wrapper)
+			&& !frappe.dom.is_element_in_modal(this.wrapper)) {
+			// -15 offset to make form look visually centered
+			frappe.utils.scroll_to(this.wrapper, true, -15);
 		}
 
-		if(this.frm) {
+		if (this.frm) {
 			this.frm.script_manager.trigger(this.doc.parentfield + "_on_form_rendered");
 			this.frm.script_manager.trigger("form_render", this.doc.doctype, this.doc.name);
 		}
@@ -559,59 +975,82 @@ export default class GridRow {
 	hide_form() {
 		frappe.dom.unfreeze();
 		this.row.toggle(true);
+		if (!frappe.dom.is_element_in_modal(this.row)) {
+			frappe.utils.scroll_to(this.row, true, 15);
+		}
 		this.refresh();
 		if(cur_frm) cur_frm.cur_grid = null;
 		this.wrapper.removeClass("grid-row-open");
 	}
 	open_prev() {
-		if(this.grid.grid_rows[this.doc.idx-2]) {
-			this.grid.grid_rows[this.doc.idx-2].toggle_view(true);
-		}
+		if (!this.doc) return;
+		this.open_row_at_index(this.doc.idx - 2);
 	}
 	open_next() {
-		if(this.grid.grid_rows[this.doc.idx]) {
-			this.grid.grid_rows[this.doc.idx].toggle_view(true);
-		} else {
+		if (!this.doc) return;
+
+		if (!this.open_row_at_index(this.doc.idx)) {
 			this.grid.add_new_row(null, null, true);
 		}
 	}
-	refresh_field(fieldname, txt) {
-		var df = this.grid.get_docfield(fieldname) || undefined;
+	open_row_at_index(row_index) {
+		if (!this.grid.data[row_index]) return;
 
-		// format values if no frm
-		if(!df) {
-			df = this.grid.visible_columns.find((col) => {
-				return col[0].fieldname === fieldname;
-			});
-			if(df && this.doc) {
-				var txt = frappe.format(this.doc[fieldname], df[0],
-					null, this.doc);
-			}
+		this.change_page_if_reqd(row_index);
+		this.grid.grid_rows[row_index].toggle_view(true);
+		return true;
+	}
+	change_page_if_reqd(row_index) {
+		const {
+			page_index,
+			page_length
+		} = this.grid.grid_pagination;
+
+		row_index++;
+		let new_page;
+
+		if (row_index <= (page_index - 1) * page_length) {
+			new_page = page_index - 1;
+		} else if (row_index > page_index * page_length) {
+			new_page = page_index + 1;
 		}
 
-		if(txt===undefined && this.frm) {
-			var txt = frappe.format(this.doc[fieldname], df,
-				null, this.frm.doc);
+		if (new_page) {
+			this.grid.grid_pagination.go_to_page(new_page);
+		}
+	}
+	refresh_field(fieldname, txt) {
+		let df = this.docfields.find(col => {
+			return col.fieldname === fieldname;
+		});
+
+		// format values if no frm
+		if (df && this.doc) {
+			txt = frappe.format(this.doc[fieldname], df, null, this.doc);
+		}
+
+		if (!txt && this.frm) {
+			txt = frappe.format(this.doc[fieldname], df, null, this.frm.doc);
 		}
 
 		// reset static value
-		var column = this.columns[fieldname];
-		if(column) {
+		let column = this.columns[fieldname];
+		if (column) {
 			column.static_area.html(txt || "");
-			if(df && df.reqd) {
-				column.toggleClass('error', !!(txt===null || txt===''));
+			if (df && df.reqd) {
+				column.toggleClass('error', !!(txt === null || txt === ''));
 			}
 		}
 
+		let field = this.on_grid_fields_dict[fieldname];
 		// reset field value
-		var field = this.on_grid_fields_dict[fieldname];
-		if(field) {
+		if (field) {
 			field.docname = this.doc.name;
 			field.refresh();
 		}
 
 		// in form
-		if(this.grid_form) {
+		if (this.grid_form) {
 			this.grid_form.refresh_field(fieldname);
 		}
 	}

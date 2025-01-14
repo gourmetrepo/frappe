@@ -75,11 +75,11 @@ img {
 }
 
 .hidden {
-	@extend .d-none;
+	@extend .d-none !optional;
 }
 
 .hide-control {
-    @extend .d-none;
+    @extend .d-none !optional;
 }
 
 .text-underline {
@@ -138,7 +138,7 @@ h5.modal-title {
 .btn-xs { @extend .btn-sm; }
 
 .hidden-xs {
-	@extend .d-none;
+	@extend .d-none !optional;
 	@extend .d-sm-block;
 }
 

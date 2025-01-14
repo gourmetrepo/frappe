@@ -317,9 +317,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			this.hide_status();
 			clearInterval(this.interval);
 
-			let custom_message = ''
+			let custom_message = '';
 			this.execution_time = data.execution_time || 0.1;
-			custom_message = data.message
+			custom_message = data.message;
 			if(custom_message !== '' && custom_message !== undefined && custom_message !== null){
 				let page_form_inner = this.page.main.find('.form-inner-toolbar');
 				this.$status = $(`<div class="custom_message" style='    display: block;

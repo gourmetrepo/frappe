@@ -36,6 +36,7 @@ queue_timeout = {
 	'slu_primary':300,
 	'slu_secondary':300,
 	'slu_tertiary':300,
+	'slu_quaternary': 300,
 	'sync':2500,
 	'rms_push_queue':1500,
 	'so_primary':300,

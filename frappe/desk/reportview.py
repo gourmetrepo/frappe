@@ -37,7 +37,13 @@ def get():
 	args = get_form_params()
 
 	report_builder_log()
-
+	if args.doctype == 'Gate Pass':
+		from nrp_manufacturing.utils import  get_config_by_name		
+		user = frappe.session.user
+		gate_pass_config_user = get_config_by_name('gate_pass_restricted_user')
+		if user in gate_pass_config_user:
+			args.filters.append({"gate_pass_setting":0})
+			args.filters.append(['company','in',['Unit 6','Unit 6 IC']])
 	data = compress(execute(**args), args = args)
 
 	return data

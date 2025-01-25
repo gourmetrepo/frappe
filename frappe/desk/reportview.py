@@ -44,6 +44,7 @@ def get():
 		if user in gate_pass_config_user:
 			args.filters.append({"gate_pass_setting":0})
 			args.filters.append(['company','in',['Unit 6','Unit 6 IC']])
+			args.filters.append(['gate_pass_type','in',('Shop Dispatch - IN','Shop Dispatch','Charity','Gifted','Self Consumption')])
 	data = compress(execute(**args), args = args)
 
 	return data

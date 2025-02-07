@@ -918,6 +918,12 @@ class Database(object):
 		return frappe.db.is_missing_column(e)
 
 	def get_descendants(self, doctype, name):
+		if doctype == 'Employee':
+			reporting_string = frappe.db.sql(f"select reporting_dict FROM `tabEmployee` WHERE name = '{name}'",as_dict=True)
+			if reporting_string:
+				return reporting_string[0].reporting_dict.split(",")
+			else:
+				return []
 		'''Return descendants of the current record'''
 		node_location_indexes = self.get_value(doctype, name, ('lft', 'rgt'))
 		if node_location_indexes:

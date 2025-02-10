@@ -21,7 +21,7 @@ body.modal-open[style^="padding-right"] {
 	}
 
 	// Hide scrollbar on touch devices
-	@media(max-width: 991px) {
+	@media (max-width: 991px) {
 		scrollbar-width: none;
 		&::-webkit-scrollbar {
 			width: 0;
@@ -85,7 +85,8 @@ body.modal-open[style^="padding-right"] {
 		}
 	}
 
-	.awesomplete ul {
+	.awesomplete ul,
+	.awesomplete [role="listbox"] {
 		z-index: 2;
 	}
 
@@ -147,7 +148,10 @@ body.modal-open[style^="padding-right"] {
 	.hasDatepicker {
 		z-index: 1140;
 	}
+}
 
+.modal-backdrop.show {
+	opacity: 0.8;
 }
 
 .modal-minimize {
@@ -181,7 +185,8 @@ body.modal-open[style^="padding-right"] {
 		}
 	}
 
-	.modal-body, .modal-footer {
+	.modal-body,
+	.modal-footer {
 		display: none;
 	}
 }
@@ -222,16 +227,38 @@ body.modal-open[style^="padding-right"] {
 			margin-bottom: -24px;
 			button {
 				// same as form-control input
-				height: calc(1.5em + .75rem + 2px);
+				height: calc(1.5em + 0.7rem);
 			}
 		}
 	}
 }
 
+.modal [data-fieldname="email_template_section_break"] {
+	form {
+		display: flex;
+		align-items: center;
+
+		.frappe-control:first-child {
+			&[data-fieldname="email_template"] {
+				margin-right: 10px;
+			}
+			flex: 1;
+		}
+
+		.frappe-control:last-child {
+			margin-bottom: -8px;
+		}
+	}
+}
+
+// modal is xs (for grids)
+.modal .hidden-xs {
+	display: none !important;
+}
+
 .dialog-assignment-row {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	padding: 5px 15px;
 	border-radius: var(--border-radius-md);
 	color: var(--text-color);
@@ -239,13 +266,22 @@ body.modal-open[style^="padding-right"] {
 		margin-bottom: 5px;
 	}
 	@extend .row;
-	.remove-btn {
-		display: none;
+	.btn-group {
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+
+		button {
+			display: inline-flex;
+			align-items: center;
+		}
+	}
+	.assignee {
+		flex: 1;
 	}
 	&:hover {
-		background: var(--fg-hover-color);
-		.remove-btn {
-			display: block;
+		.btn-group {
+			opacity: 1;
+			transition: opacity 0.1s ease-in-out;
 		}
 	}
 	.avatar {

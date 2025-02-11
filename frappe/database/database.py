@@ -920,7 +920,7 @@ class Database(object):
 	def get_descendants(self, doctype, name):
 		if doctype == 'Employee':
 			reporting_string = frappe.db.sql(f"select reporting_dict FROM `tabEmployee` WHERE name = '{name}'",as_dict=True)
-			if reporting_string:
+			if len(reporting_string) > 0 and reporting_string[0].get('reporting_dict'):
 				return reporting_string[0].reporting_dict.split(",")
 			else:
 				return []

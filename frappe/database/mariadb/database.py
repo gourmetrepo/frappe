@@ -81,11 +81,11 @@ class MariaDBDatabase(Database):
 			})
 
 		if usessl:
-			conn = pymysql.connect(self.host, self.user or '', self.password or '',
+			conn = pymysql.connect(host=self.host, user=self.user or '', password=self.password or '',
 				port=self.port, charset='utf8mb4', use_unicode = True, ssl=ssl_params,
 				conv = conversions, local_infile = frappe.conf.local_infile)
 		else:
-			conn = pymysql.connect(self.host, self.user or '', self.password or '',
+			conn = pymysql.connect(host=self.host, user=self.user or '', password=self.password or '',
 				port=self.port, charset='utf8mb4', use_unicode = True, conv = conversions,
 				local_infile = frappe.conf.local_infile)
 
@@ -111,7 +111,7 @@ class MariaDBDatabase(Database):
 	def escape(s, percent=True):
 		"""Excape quotes and percent in given string."""
 		# pymysql expects unicode argument to escape_string with Python 3
-		s = frappe.as_unicode(pymysql.escape_string(frappe.as_unicode(s)), "utf-8").replace("`", "\\`")
+		s = frappe.as_unicode(pymysql.converters.escape_string(frappe.as_unicode(s)), "utf-8").replace("`", "\\`")
 
 		# NOTE separating % escape, because % escape should only be done when using LIKE operator
 		# or when you use python format string to generate query that already has a %s

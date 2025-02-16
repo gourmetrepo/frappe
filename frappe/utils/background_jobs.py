@@ -17,8 +17,8 @@ default_timeout = 700
 queue_timeout = {
 	'background': 10000,
 	'long': 3500,
-	'default': 300,
-	'short': 300,
+	'default': 3500,
+	'short': 700,
     'si_primary': 500,
 	'si_secondary': 500,
 	'si_tertiary': 500,

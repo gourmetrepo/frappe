@@ -36,7 +36,7 @@ def report_builder_log():
 def get():
 	args = get_form_params()
 
-	report_builder_log()
+	# report_builder_log()
 	if args.doctype == 'Gate Pass':
 		from nrp_manufacturing.utils import  get_config_by_name		
 		user = frappe.session.user

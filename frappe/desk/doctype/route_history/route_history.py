@@ -41,3 +41,8 @@ def flush_old_route_records():
 			"modified": last_record_to_keep[0].modified,
 			"user": user
 		})
+
+
+@frappe.whitelist()
+def deferred_insert():
+	pass

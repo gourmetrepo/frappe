@@ -40,17 +40,17 @@ def update_nsm(doc):
 		update_add_node(doc, p or '', pf)
 	elif op != p:
 		update_move_node(doc, pf)
-	else:
-		# Code by Moeiz and AbdulSamad to update lft and rgt whenever emloyee is updated
-		if doc.doctype == "Employee":
-			update_move_node(doc, pf)
+	# else:
+	# 	# Code by Moeiz and AbdulSamad to update lft and rgt whenever emloyee is updated
+	# 	if doc.doctype == "Employee":
+	# 		update_move_node(doc, pf)
 
 
 	# set old parent
-	frappe.db.commit()
+	#frappe.db.commit()
 	doc.set(opf, p)
 	frappe.db.set_value(doc.doctype, doc.name, opf, p or '', update_modified=False)
-	frappe.db.commit()
+	#frappe.db.commit()
 	doc.reload()
 
 def update_add_node(doc, parent, parent_field):

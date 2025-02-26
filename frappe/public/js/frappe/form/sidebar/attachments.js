@@ -102,6 +102,10 @@ frappe.ui.form.Attachments = Class.extend({
 			}
 		}
 		// hash is not escaped, https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+		let minio_creds = frappe.utils.get_config_by_name("MINIO_BASE_CREDS",{});
+		if (file_url.includes(minio_creds['base_url'])) {
+			return file_url;
+		}
 		return encodeURI(file_url).replace(/#/g, '%23');
 	},
 	get_file_id_from_file_url: function(file_url) {

@@ -475,6 +475,10 @@ class File(Document):
 
 
 	def save_file(self, content=None, decode=False, ignore_existing_file_check=False):
+		# Get the Minio credentials
+		from nerp.utils import get_config_by_name
+		minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
+		
 		file_exists = False
 		self.content = content
 		if decode:
@@ -510,12 +514,13 @@ class File(Document):
 		if os.path.exists(encode(get_files_path(self.file_name, is_private=self.is_private))):
 			self.file_name = get_file_name(self.file_name, self.content_hash[-6:])
 
-		if not file_exists:
-			call_hook_method("before_write_file", file_size=self.file_size)
-			write_file_method = get_hook_method('write_file')
-			if write_file_method:
-				return write_file_method(self)
-			return self.save_file_on_filesystem()
+		if minio_creds.get('base_url') not in self.file_url:
+			if not file_exists:
+				call_hook_method("before_write_file", file_size=self.file_size)
+				write_file_method = get_hook_method('write_file')
+				if write_file_method:
+					return write_file_method(self)
+				return self.save_file_on_filesystem()
 
 
 	def save_file_on_filesystem(self):

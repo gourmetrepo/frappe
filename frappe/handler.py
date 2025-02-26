@@ -3,6 +3,8 @@
 
 from __future__ import unicode_literals
 import frappe
+import os
+import tempfile
 from frappe import _
 import frappe.utils
 import frappe.sessions
@@ -13,6 +15,8 @@ from frappe.utils import cint
 from frappe.core.doctype.server_script.server_script_utils import run_server_script_api
 from werkzeug.wrappers import Response
 from six import string_types
+from minio import Minio
+from minio.error import S3Error
 
 def handle():
 	"""handle request"""
@@ -153,6 +157,31 @@ def uploadfile():
 
 	return ret
 
+def upload_file_to_minio(source_file, destination_file):
+	from nerp.utils import get_config_by_name
+	# Get the Minio credentials
+	minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
+	
+	# Create a client with the MinIO server
+	client = Minio(minio_creds.get('base_url'),
+		access_key=minio_creds.get('access_key'),
+		secret_key=minio_creds.get('secret_key'),
+		secure=False,
+	)
+
+	bucket_name = minio_creds.get('bucket_name')
+
+	# Make the bucket if it doesn't exist.
+	found = client.bucket_exists(bucket_name)
+	if not found:
+		client.make_bucket(bucket_name)
+
+	# Upload the file, renaming it in the process
+	res = client.fput_object(bucket_name, destination_file, source_file)
+	presigned_url = client.presigned_get_object(bucket_name, destination_file)
+	
+	return presigned_url
+
 @frappe.whitelist(allow_guest=True)
 def upload_file():
 	if frappe.session.user == 'Guest':
@@ -173,6 +202,7 @@ def upload_file():
 	method = frappe.form_dict.method
 	content = None
 	filename = None
+	minio_url = None
 
 	if 'file' in files:
 		file = files['file']
@@ -193,6 +223,20 @@ def upload_file():
 		is_whitelisted(method)
 		return method()
 	else:
+		# Save the file to a temporary location before uploading
+		temp_dir = tempfile.gettempdir()
+		temp_file_path = os.path.join(temp_dir, filename)
+
+		with open(temp_file_path, 'wb') as f:
+			f.write(content)
+		
+		# Upload to Minio
+		try:
+			minio_url = upload_file_to_minio(source_file=temp_file_path, destination_file=filename)
+			os.remove(temp_file_path)
+		except S3Error as exc:
+			frappe.log_error(message=exc, title="Error uploading file to Minio")
+
 		ret = frappe.get_doc({
 			"doctype": "File",
 			"attached_to_doctype": doctype,
@@ -200,7 +244,7 @@ def upload_file():
 			"attached_to_field": fieldname,
 			"folder": folder,
 			"file_name": filename,
-			"file_url": file_url,
+			"file_url": minio_url if minio_url else file_url,
 			"is_private": cint(is_private),
 			"content": content
 		})

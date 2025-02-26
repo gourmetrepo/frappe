@@ -10,11 +10,33 @@ from frappe.utils.file_manager import extract_images_from_html
 
 from frappe import _
 from six import string_types
+from minio import Minio
+from minio.error import S3Error
 
 @frappe.whitelist()
 def remove_attach():
 	"""remove attachment"""
+	# Get the Minio credentials
+	from nerp.utils import get_config_by_name
+	minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
+
 	fid = frappe.form_dict.get('fid')
+	minio_url = frappe.db.get_value("File", fid, "file_url")
+	if minio_creds.get('base_url') in minio_url:
+		# Create a client with the MinIO server
+		try:		
+			client = Minio(minio_creds.get('base_url'),
+				access_key=minio_creds.get('access_key'),
+				secret_key=minio_creds.get('secret_key'),
+				secure=False,
+			)
+			file_name = frappe.db.get_value("File", fid, "file_name")
+			bucket_name = minio_creds.get('bucket_name')
+
+			client.remove_object(bucket_name, file_name)
+		except S3Error as exc:
+			frappe.log_error(message=exc, title="Error while removing file from Minio")
+	
 	file_name = frappe.form_dict.get('file_name')
 	frappe.delete_doc('File', fid)
 

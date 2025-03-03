@@ -382,31 +382,14 @@ class File(Document):
 			with open(encode(file_path)) as f:
 				content = f.read()
 		else:
-			# Get the Minio credentials
-			from nerp.utils import get_config_by_name
-			minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
-
-			if file_path and minio_creds.get('base_url') in file_path:
-				# Download the file from MinIO using presigned URL
-				response = requests.get(file_path)
-				if response.status_code == 200:
-					content = response.content
-					try:
-						content = content.decode()
-					except UnicodeDecodeError:
-						# for .png, .jpg, etc
-						pass
-				else:
-					raise Exception(f"Failed to fetch file from URL: {file_path}")
-			else:
-				with io.open(encode(file_path), mode='rb') as f:
-					content = f.read()
-					try:
-						# for plain text files
-						content = content.decode()
-					except UnicodeDecodeError:
-						# for .png, .jpg, etc
-						pass
+			with io.open(encode(file_path), mode='rb') as f:
+				content = f.read()
+				try:
+					# for plain text files
+					content = content.decode()
+				except UnicodeDecodeError:
+					# for .png, .jpg, etc
+					pass
 
 		return content
 
@@ -492,10 +475,6 @@ class File(Document):
 
 
 	def save_file(self, content=None, decode=False, ignore_existing_file_check=False):
-		# Get the Minio credentials
-		from nerp.utils import get_config_by_name
-		minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
-		
 		file_exists = False
 		self.content = content
 		if decode:
@@ -530,9 +509,6 @@ class File(Document):
 
 		if os.path.exists(encode(get_files_path(self.file_name, is_private=self.is_private))):
 			self.file_name = get_file_name(self.file_name, self.content_hash[-6:])
-
-		if self.file_url and minio_creds.get('base_url') in self.file_url:
-			return
 
 		if not file_exists:
 			call_hook_method("before_write_file", file_size=self.file_size)

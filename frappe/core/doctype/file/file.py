@@ -382,14 +382,31 @@ class File(Document):
 			with open(encode(file_path)) as f:
 				content = f.read()
 		else:
-			with io.open(encode(file_path), mode='rb') as f:
-				content = f.read()
-				try:
-					# for plain text files
-					content = content.decode()
-				except UnicodeDecodeError:
-					# for .png, .jpg, etc
-					pass
+			# Get the Minio credentials
+			from nerp.utils import get_config_by_name
+			minio_creds = get_config_by_name('MINIO_BASE_CREDS', {})
+
+			if file_path and minio_creds.get('base_url') in file_path:
+				# Download the file from MinIO using presigned URL
+				response = requests.get(file_path)
+				if response.status_code == 200:
+					content = response.content
+					try:
+						content = content.decode()
+					except UnicodeDecodeError:
+						# for .png, .jpg, etc
+						pass
+				else:
+					raise Exception(f"Failed to fetch file from URL: {file_path}")
+			else:
+				with io.open(encode(file_path), mode='rb') as f:
+					content = f.read()
+					try:
+						# for plain text files
+						content = content.decode()
+					except UnicodeDecodeError:
+						# for .png, .jpg, etc
+						pass
 
 		return content
 

@@ -178,6 +178,14 @@ class Database(object):
 				frappe.errprint(self._cursor.mogrify(query, values))
 				time_end = time()
 				frappe.errprint(("Execution time: {0} sec").format(round(time_end - time_start, 2)))
+			
+			# Code by Moeiz to return cursor status on update, delete
+			# If it's an UPDATE or DELETE query, return affected row count
+			query_parts = query.strip().lower().split()
+			query_type = query_parts[0] if query_parts else ""
+			if query_type in ("update", "delete"):
+				affected_rows = self._cursor.rowcount
+				return {"affected_rows": affected_rows}
 
 		except Exception as e:
 			if frappe.conf.db_type == 'postgres':

@@ -15,6 +15,7 @@ def get(module):
 	`/desk/#Module/[name]`."""
 
 	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
+	allow_user, chart = check_frappe_user_role(module)
 	if not data:
 		data = get_data(module)
 		if (frappe.flags.in_patch
@@ -26,7 +27,9 @@ def get(module):
 		_cache = frappe.cache()
 		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
 	out = {
-		"data": data
+		"data": data,
+		"allow_user": allow_user,
+		"chart": chart
 	}
 
 	return out
@@ -571,3 +574,106 @@ def get_report_list(module, is_standard="No"):
 		})
 
 	return out
+
+def check_frappe_user_role(module):
+	session_user = frappe.session.user
+	user = frappe.get_doc("User", session_user)
+	default_company = "Unit 6"
+
+	if user.name == "Administrator":
+		company = default_company
+	else:
+		employee = frappe.get_list( "Employee", filters={"user_id": user.email}, fields="*" )
+		company = employee[0]["company"]
+
+	query = """
+	SELECT 
+		GROUP_CONCAT(DISTINCT sci.chart_url) AS chart_url,
+		GROUP_CONCAT(DISTINCT sci.superset_ip_address) AS superset_ip_address,
+		GROUP_CONCAT(DISTINCT sci.superset_api) AS superset_api,
+		GROUP_CONCAT(DISTINCT smr.role) AS roles,
+        sci.chart_id as chart_id
+	FROM 
+		`tabSuperSet Chart Integration` sci
+	JOIN
+		`tabSelect Multiple Roles` smr
+	ON 
+		smr.parent = sci.name
+	WHERE 
+		sci.module_name = %(module_name)s
+	GROUP BY 
+		sci.module_name
+	"""
+	result = frappe.db.sql(query, {"module_name": module}, as_dict=True)
+
+	if not result or not result[0].get('chart_url'):
+		return (False, [])
+
+	chart_urls = result[0].get('chart_url', '').split(',') if result else []
+	superset_ip_address = result[0].get('superset_ip_address', '') if result else ''
+	superset_api = result[0].get('superset_api', '') if result else ''
+	roles = result[0].get('roles', '').split(',') if result else []
+	chart_id=result[0].get('chart_id')
+    
+
+	user_roles = {role.role for role in user.roles}
+	filter = add_filter(superset_ip_address, superset_api, user, company, chart_id)
+	for row in result:
+		module_roles = set(row.get("roles", "").split(","))
+		if user_roles & module_roles:
+			return (True, {
+						'chart_urls': chart_urls,
+						'filter': filter,
+						'superset_ip_address': superset_ip_address,
+						'superset_api': superset_api
+							})
+
+	return (False, {
+		'chart_urls': chart_urls,
+		'superset_ip_address': superset_ip_address,
+		'superset_api': superset_api
+	})
+
+
+def add_filter(superset_ip_address, superset_api, user, company, chart_id):
+	import requests
+	import json
+
+	url = f"{superset_ip_address+superset_api}"
+	payload = json.dumps({
+		"value": json.dumps({
+			f"NATIVE_FILTER-{chart_id}": {
+				"id": f"NATIVE_FILTER-{chart_id}",
+				"extraFormData": {
+					"filters": [
+						{
+							"col": "company",
+							"op": "IN",
+							"val": [company]
+						}
+					]
+				},
+				"filterState": {
+					"value": [company],
+					"label": company
+				},
+				"ownState": {}
+			}
+		})
+	})
+
+	headers = {
+		'Accept': 'application/json',
+		'Content-Type': 'application/json',
+		'X-CSRFToken': ''
+	}
+
+	response = requests.request("POST", url, headers=headers, data=payload)
+
+	try:
+		json_response = json.loads(response.text.strip())
+		print(json_response)
+		return json_response["key"]
+	except (json.JSONDecodeError, KeyError) as e:
+		print("Error processing the response:", str(e))
+		return None

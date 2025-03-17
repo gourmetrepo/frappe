@@ -363,6 +363,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					}
 				}
 				var custom_html = data.html
+				console.log('custom html',custom_html)
 				if(custom_html !== '' && custom_html !== undefined && custom_html !== null){
 					$('div.datatable').hide();
 					this.$message = $('<div id="custom_html"></div>').appendTo(this.page.main);
@@ -370,9 +371,12 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					this.custom_html_format = custom_html;
 				}else{
 					this.custom_html_format = null;
+					console.log('here');
 					this.$message = $('<div></div>').appendTo(this.page.main);
 					this.$message.html(custom_html)
 				}else{
+					console.log('there');
+					this.$message = $(this.message_div('')).hide().appendTo(this.page.main);
 					this.render_datatable();
 				}
 			} else {
@@ -553,7 +557,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	render_datatable() {
 		let data = this.data;
 		let columns = this.columns.filter((col) => !col.hidden);
-		return data;
 		if (this.raw_data.add_total_row) {
 			data = data.slice();
 			data.splice(-1, 1);

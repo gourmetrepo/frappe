@@ -64,7 +64,7 @@ def generate_report_result(report, filters=None, user=None, custom_columns=None)
 	elif report.report_type == 'Script Report':
 		res = report.execute_script_report(filters)
 
-	columns, result, message, chart, report_summary, skip_total_row = ljust_list(res, 6)
+	columns, result, message, chart, report_summary, skip_total_row, html = ljust_list(res, 6)
 	columns = [get_column_as_dict(col) for col in columns]
 	report_column_names = [col["fieldname"] for col in columns]
 
@@ -100,7 +100,8 @@ def generate_report_result(report, filters=None, user=None, custom_columns=None)
 		"report_summary": report_summary,
 		"skip_total_row": skip_total_row or 0,
 		"status": None,
-		"execution_time": frappe.cache().hget('report_execution_time', report.name) or 0
+		"execution_time": frappe.cache().hget('report_execution_time', report.name) or 0,
+		"html": html
 	}
 
 def normalize_result(result, columns):
@@ -269,7 +270,8 @@ def get_prepared_report_result(report, filters, dn="", user=None):
 				latest_report_data = {
 					"columns": columns,
 					"result": data.get('result'),
-					"chart": data.get('chart')
+					"chart": data.get('chart'),
+					"html": data.get('html'),
 				}
 		except Exception:
 			frappe.log_error(frappe.get_traceback())

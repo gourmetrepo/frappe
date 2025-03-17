@@ -64,7 +64,7 @@ def generate_report_result(report, filters=None, user=None, custom_columns=None)
 	elif report.report_type == 'Script Report':
 		res = report.execute_script_report(filters)
 
-	columns, result, message, chart, report_summary, skip_total_row, html = ljust_list(res, 6)
+	columns, result, message, chart, report_summary, skip_total_row, html = ljust_list(res, 7)
 	columns = [get_column_as_dict(col) for col in columns]
 	report_column_names = [col["fieldname"] for col in columns]
 
@@ -91,7 +91,8 @@ def generate_report_result(report, filters=None, user=None, custom_columns=None)
 
 	if cint(report.add_total_row) and result and not skip_total_row:
 		result = add_total_row(result, columns)
-
+	if html is None:
+		html = ""
 	return {
 		"result": result,
 		"columns": columns,

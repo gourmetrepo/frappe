@@ -328,7 +328,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			'><b style='color: red'>Note:: </b> ${custom_message}</div>`)
 				.show().insertBefore(page_form_inner);
 			}
-
 			if (data.prepared_report) {			
 				this.prepared_report = true;
 				// If query_string contains prepared_report_name then set filters
@@ -371,6 +370,9 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					this.custom_html_format = custom_html;
 				}else{
 					this.custom_html_format = null;
+					this.$message = $('<div></div>').appendTo(this.page.main);
+					this.$message.html(custom_html)
+				}else{
 					this.render_datatable();
 				}
 			} else {
@@ -551,7 +553,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	render_datatable() {
 		let data = this.data;
 		let columns = this.columns.filter((col) => !col.hidden);
-
+		return data;
 		if (this.raw_data.add_total_row) {
 			data = data.slice();
 			data.splice(-1, 1);

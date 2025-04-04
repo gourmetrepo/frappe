@@ -29,6 +29,49 @@ def get_context(context):
 		doc = frappe.form_dict.doc
 	else:
 		doc = frappe.get_doc(frappe.form_dict.doctype, frappe.form_dict.name)
+	if (doc.doctype == 'Sales Order' and frappe.form_dict.get('custom_filters')):
+		doc = doc.as_dict()
+		import operator,math
+		ops = {
+			"=": operator.eq,
+			"!=": operator.ne,
+			# ">": operator.gt,
+			# "<": operator.lt,
+			# ">=": operator.ge,
+			# "<=": operator.le
+		}		
+		for f_name, flt in frappe.form_dict.get('custom_filters').items():
+			doc["items"] = [item for item in doc["items"] if ops[flt[0]](item.get(f_name), flt[1])]
+		doc = frappe.get_doc(doc)
+		from nrp_manufacturing.utils import returnable_items
+		returnables = returnable_items(doc.items,doc.company)
+		doc.returnable_items = {} # reset		
+		for returnable in returnables:
+			ordered_qty = 0
+			for item in doc.items:
+				if item.item_code == returnable.item:
+					ordered_qty = item.qty
+					break
+			if returnable.returnable_qty == 1:
+				qty = ordered_qty / returnable.item_qty
+			else:
+				res = returnable.item_qty / returnable.returnable_qty
+				qty = ordered_qty * res
+			qty = math.ceil(qty)
+            # check if item is ordered then please adjust the RI quantity
+			minus_qty = 0
+			for i in doc.items:
+				if i.item_code == returnable.returnable_item:
+					minus_qty = i.qty
+					break
+			qty -= minus_qty
+			temp_item = doc.append('returnable_items',{})
+			temp_item.item_code = returnable.returnable_item
+			temp_item.item_name = returnable.returnable_item_name
+			temp_item.rate = returnable.sale_price
+			temp_item.item_reference = returnable.item
+			temp_item.qty = qty
+			temp_item.is_allways_return = returnable.is_allways_return
 
 	meta = frappe.get_meta(doc.doctype)
 

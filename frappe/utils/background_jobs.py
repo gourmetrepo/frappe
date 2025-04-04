@@ -44,7 +44,8 @@ queue_timeout = {
 	'hr_primary':500,
 	'hr_secondary':500,
 	'hr_tertiary':500,
-	'bin':300
+	'bin':300,
+	'aop_primary':300
 }
 
 redis_connection = None

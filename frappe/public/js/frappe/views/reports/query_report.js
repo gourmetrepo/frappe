@@ -39,6 +39,7 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			this.setup_events
 		].map(fn => fn.bind(this));
 		this.init_promise = frappe.run_serially(tasks);
+		this.custom_html_format = null;
 		return this.init_promise;
 	}
 
@@ -362,8 +363,16 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 						chart_options && this.render_chart(chart_options);
 					}
 				}
-
-				this.render_datatable();
+				var custom_html = data.html
+				if(custom_html !== '' && custom_html !== undefined && custom_html !== null){
+					$('div.datatable').hide();
+					this.$message = $('<div id="custom_html"></div>').appendTo(this.page.main);
+					this.$message.html(custom_html)
+					this.custom_html_format = custom_html;
+				}else{
+					this.custom_html_format = null;
+					this.render_datatable();
+				}
 			} else {
 				this.data = [];
 				this.toggle_nothing_to_show(true);
@@ -1012,63 +1021,102 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 	}
 
 	export_report() {
-		if (this.export_dialog) {
-			this.export_dialog.clear();
-			this.export_dialog.show();
-			return;
-		}
-
-		this.export_dialog = frappe.prompt([
-			{
-				label: __('Select File Format'),
-				fieldname: 'file_format',
-				fieldtype: 'Select',
-				options: ['Excel', 'CSV'],
-				default: 'Excel',
-				reqd: 1
-			},
-			{
-				label: __("Include indentation"),
-				fieldname: "include_indentation",
-				fieldtype: "Check",
+		if (this.custom_html_format == null) {
+			if (this.export_dialog) {
+				this.export_dialog.clear();
+				this.export_dialog.show();
+				return;
 			}
-		], ({ file_format, include_indentation }) => {
-			this.make_access_log('Export', file_format);
-			if (file_format === 'CSV') {
-				const column_row = this.columns.reduce((acc, col) => {
-					if (!col.hidden) {
-						acc.push(col.label);
+	
+			this.export_dialog = frappe.prompt([
+				{
+					label: __('Select File Format'),
+					fieldname: 'file_format',
+					fieldtype: 'Select',
+					options: ['Excel', 'CSV'],
+					default: 'Excel',
+					reqd: 1
+				},
+				{
+					label: __("Include indentation"),
+					fieldname: "include_indentation",
+					fieldtype: "Check",
+				}
+			], ({ file_format, include_indentation }) => {
+				this.make_access_log('Export', file_format);
+				if (file_format === 'CSV') {
+					const column_row = this.columns.reduce((acc, col) => {
+						if (!col.hidden) {
+							acc.push(col.label);
+						}
+						return acc;
+					}, []);
+					const data = this.get_data_for_csv(include_indentation);
+					const out = [column_row].concat(data);
+	
+					frappe.tools.downloadify(out, null, this.report_name);
+				} else {
+					let filters = this.get_filter_values(true);
+					if (frappe.urllib.get_dict("prepared_report_name")) {
+						filters = Object.assign(frappe.urllib.get_dict("prepared_report_name"), filters);
 					}
-					return acc;
-				}, []);
-				const data = this.get_data_for_csv(include_indentation);
-				const out = [column_row].concat(data);
-
-				frappe.tools.downloadify(out, null, this.report_name);
-			} else {
-				let filters = this.get_filter_values(true);
-				if (frappe.urllib.get_dict("prepared_report_name")) {
-					filters = Object.assign(frappe.urllib.get_dict("prepared_report_name"), filters);
+	
+					const visible_idx = this.datatable.bodyRenderer.visibleRowIndices;
+					if (visible_idx.length + 1 === this.data.length) {
+						visible_idx.push(visible_idx.length);
+					}
+	
+					const args = {
+						cmd: 'frappe.desk.query_report.export_query',
+						report_name: this.report_name,
+						custom_columns: this.custom_columns.length? this.custom_columns: [],
+						file_format_type: file_format,
+						filters: filters,
+						visible_idx,
+						include_indentation,
+					};
+	
+					open_url_post(frappe.request.url, args);
 				}
-
-				const visible_idx = this.datatable.bodyRenderer.visibleRowIndices;
-				if (visible_idx.length + 1 === this.data.length) {
-					visible_idx.push(visible_idx.length);
+			}, __('Export Report: '+ this.report_name), __('Download'));
+		}else{
+			open_url_post('/api/method/nrp_manufacturing.apis.export_excel.download_html_as_excel',
+				{
+					html_content: this.custom_html_format
 				}
-
-				const args = {
-					cmd: 'frappe.desk.query_report.export_query',
-					report_name: this.report_name,
-					custom_columns: this.custom_columns.length? this.custom_columns: [],
-					file_format_type: file_format,
-					filters: filters,
-					visible_idx,
-					include_indentation,
-				};
-
-				open_url_post(frappe.request.url, args);
-			}
-		}, __('Export Report: '+ this.report_name), __('Download'));
+			);
+			// frappe.call({
+			// 	method: "nrp_manufacturing.apis.export_excel.download_html_as_excel",
+			// 	args: {
+			// 		html_content: this.custom_html_format
+			// 	},
+			// 	callback: function(r) {
+			// 		if (r.message && r.message.status === "failed") {
+			// 			console.error("Server Error:", r.message.error);
+			// 			frappe.msgprint(__("Error: " + r.message.error));
+			// 			return;
+			// 		}
+			
+			// 		if (r.message) {
+			// 			var blob = new Blob([r.message], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+			// 			var link = document.createElement("a");
+			// 			link.href = window.URL.createObjectURL(blob);
+			// 			link.download = "table_data.xlsx";
+			// 			document.body.appendChild(link);
+			// 			link.click();
+			// 			document.body.removeChild(link);
+			// 		} else {
+			// 			console.error("No response received from server.");
+			// 			frappe.msgprint(__("No response received from server."));
+			// 		}
+			// 	},
+			// 	error: function(xhr, status, error) {
+			// 		console.error("AJAX Error:", error);
+			// 		frappe.msgprint(__("Failed to download the file. Please check the logs."));
+			// 	}			
+			// });
+			
+		}
 	}
 
 	get_data_for_csv(include_indentation) {
@@ -1156,14 +1204,18 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 			{
 				label: __('PDF'),
 				action: () => {
-					let dialog = frappe.ui.get_print_settings(
-						false,
-						print_settings => this.pdf_report(print_settings),
-						this.report_doc.letter_head,
-						this.get_visible_columns()
-					);
-
-					this.add_portrait_warning(dialog);
+					if (this.custom_html_format == null){
+						let dialog = frappe.ui.get_print_settings(
+							false,
+							print_settings => this.pdf_report(print_settings),
+							this.report_doc.letter_head,
+							this.get_visible_columns()
+						);
+	
+						this.add_portrait_warning(dialog);
+					}else{
+						frappe.render_pdf(this.custom_html_format);
+					}
 				},
 				condition: () => frappe.model.can_print(this.report_doc.ref_doctype),
 				standard: true

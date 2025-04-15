@@ -44,6 +44,7 @@ queue_timeout = {
 	'hr_primary':500,
 	'hr_secondary':500,
 	'hr_tertiary':500,
+	'hr_sync':500,
 	'bin':300
 }
 

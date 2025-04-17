@@ -76,7 +76,9 @@
   "api_key",
   "generate_keys",
   "column_break_65",
-  "api_secret"
+  "api_secret",
+  "user_mobile_devices_section",
+  "user_mobile_devices"
  ],
  "fields": [
   {
@@ -133,7 +135,6 @@
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "in_global_search": 1,
    "in_standard_filter": 1,
    "label": "Full Name",
    "read_only": 1
@@ -164,7 +165,6 @@
   {
    "fieldname": "username",
    "fieldtype": "Data",
-   "in_global_search": 1,
    "in_standard_filter": 1,
    "label": "Username",
    "unique": 1
@@ -580,13 +580,24 @@
    "fieldtype": "Password",
    "label": "API Secret",
    "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "user_mobile_devices_section",
+   "fieldtype": "Section Break",
+   "label": "User Mobile Devices"
+  },
+  {
+   "fieldname": "user_mobile_devices",
+   "fieldtype": "Table",
+   "options": "User Mobile Devices"
   }
  ],
  "icon": "fa fa-user",
  "idx": 413,
  "image_field": "user_image",
  "max_attachments": 5,
- "modified": "2019-10-22 14:16:34.810223",
+ "modified": "2025-04-16 19:47:31.491965",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "User",

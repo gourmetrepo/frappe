@@ -38,6 +38,7 @@ def process_workflow_actions(doc, state):
 		if not workflow: return
 
 		if state == "on_trash":
+			clear_workflow_actions(doc.get('doctype'), doc.get('name'))
 			return
 
 		if is_workflow_action_already_created(doc): return

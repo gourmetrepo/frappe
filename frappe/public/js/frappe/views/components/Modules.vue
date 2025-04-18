@@ -9,7 +9,14 @@
         <div class="details-container">
             <div>
                 <div v-for="(url, index) in this.chart" :key="index" class="chart-container">
-                    <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="redirect_chart_url(superset_ip_address, url, filter)"></iframe>
+                    <!-- <iframe width="100%" height="100%" frameborder="0" allowfullscreen :src="redirect_chart_url(superset_ip_address, url, filter)"></iframe> -->
+                    <iframe
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    allowfullscreen
+                    src="http://10.166.1.61/superset/dashboard/p/3lVz0xDznjd/?standalone=1&show_filters=0"
+                    ></iframe>
                 </div>
 
             </div>

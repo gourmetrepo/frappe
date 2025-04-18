@@ -272,7 +272,7 @@ class Document(BaseDocument):
 		"""Wrapper for _save"""
 		return self._save(*args, **kwargs)
 
-	def _save(self, ignore_permissions=None, ignore_version=None):
+	def _save(self, ignore_permissions=None, ignore_version=None, ignore_workflow=False):
 		"""Save the current document in the database in the **DocType**'s table or
 		`tabSingles` (for single types).
 
@@ -291,6 +291,11 @@ class Document(BaseDocument):
 
 		if ignore_version!=None:
 			self.flags.ignore_version = ignore_version
+		
+		# Code by Moeiz
+		# Ignore workflow
+		if ignore_workflow!=None:
+			self.flags.ignore_workflow = ignore_workflow
 
 		if self.get("__islocal") or not self.get("name"):
 			self.insert()

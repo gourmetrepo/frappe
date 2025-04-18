@@ -15,7 +15,7 @@
                     height="100%"
                     frameborder="0"
                     allowfullscreen
-                    src="http://10.166.1.61/superset/dashboard/p/3lVz0xDznjd/?standalone=1&show_filters=0"
+                    src="http://10.166.1.61/superset/dashboard/p/3lVz0xDznjd/?standalone=2&show_filters=0"
                     ></iframe>
                 </div>
 

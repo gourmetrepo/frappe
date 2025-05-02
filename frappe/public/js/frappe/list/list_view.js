@@ -470,25 +470,19 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	get_header_html() {
 		const subject_field = this.columns[0].df;
-		console.log("before")
-		console.log(this)
-		console.log("this is executed")
 		let subject_html = `
-			<input class="level-item ] hidden-xs" type="checkbox" title="${__("Select All")}">
-			<span class="level-item list-liked-by-me">
-				<i class="octicon octicon-heart text-extra-muted" title="${__("Likes")}"></i>
-			</span>
+			<input class="level-item list-check-all hidden-xs" type="checkbox" title="${__("Select All")}">
 			<span class="level-item">${__(subject_field.label)}</span>
 		`;
 		const $columns = this.columns.map(col => {
 			let classes = [
-				'list-row-col ellipsis',
+				'list-row-col-h-c list-row-col ellipsis',
 				col.type == 'Subject' ? 'list-subject level' : 'hidden-xs',
 				frappe.model.is_numeric_field(col.df) ? 'text-right' : ''
 			].join(' ');
 
 			return `
-				<div class="${classes}">
+				<div class="${classes}" style="text-wrap: pretty;">
 					${col.type === 'Subject' ? subject_html : `
 					<span>${__(col.df && col.df.label || col.type)}</span>`}
 				</div>

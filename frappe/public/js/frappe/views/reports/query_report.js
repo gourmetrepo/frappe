@@ -370,10 +370,6 @@ frappe.views.QueryReport = class QueryReport extends frappe.views.BaseList {
 					this.custom_html_format = custom_html;
 				}else{
 					this.custom_html_format = null;
-					console.log('here');
-					this.$message = $('<div></div>').appendTo(this.page.main);
-					this.$message.html(custom_html)
-				}else{
 					this.render_datatable();
 				}
 			} else {

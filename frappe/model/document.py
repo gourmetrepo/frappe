@@ -855,10 +855,11 @@ class Document(BaseDocument):
 				_evaluate_alert(alert)
 
 	@whitelist.__func__
-	def _submit(self):
+	def _submit(self, ignore_permissions=None, ignore_version=None, ignore_workflow=False):
 		"""Submit the document. Sets `docstatus` = 1, then saves."""
 		self.docstatus = 1
-		self.save()
+		self.save(ignore_permissions=ignore_permissions,
+			ignore_version=ignore_version, ignore_workflow=ignore_workflow)
 
 	@whitelist.__func__
 	def _cancel(self):
@@ -867,9 +868,9 @@ class Document(BaseDocument):
 		self.save()
 
 	@whitelist.__func__
-	def submit(self):
+	def submit(self, *args, **kwargs):
 		"""Submit the document. Sets `docstatus` = 1, then saves."""
-		self._submit()
+		self._submit(*args, **kwargs)
 
 	@whitelist.__func__
 	def cancel(self):

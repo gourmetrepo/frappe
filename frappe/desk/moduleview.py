@@ -15,7 +15,7 @@ def get(module):
 	`/desk/#Module/[name]`."""
 
 	data = frappe.cache().get_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module))
-	allow_user, chart = check_frappe_user_role(module)
+	#allow_user, chart = check_frappe_user_role(module)
 	if not data:
 		data = get_data(module)
 		if (frappe.flags.in_patch
@@ -27,10 +27,14 @@ def get(module):
 		_cache = frappe.cache()
 		_cache.set_value(frappe.scrub(frappe.session.user)+'_module_'+frappe.scrub(module), data)
 	out = {
-		"data": data,
-		"allow_user": allow_user,
-		"chart": chart
+		"data": data
 	}
+	# out = {
+	# 	"data": data,
+	# 	"allow_user": allow_user,
+	# 	"chart": chart
+	# }
+ 
 
 	return out
 

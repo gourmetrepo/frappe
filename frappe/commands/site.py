@@ -394,6 +394,8 @@ def backup(context, with_files=False, backup_path_db=None, backup_path_files=Non
 			frappe.connect()
 			odb = scheduled_backup(ignore_files=not with_files, backup_path_db=backup_path_db, backup_path_files=backup_path_files, backup_path_private_files=backup_path_private_files, force=True, verbose=verbose)
 		except Exception as e:
+			import traceback
+			traceback.print_exc()
 			if verbose:
 				print("Backup failed for {0}. Database or site_config.json may be corrupted".format(site))
 			exit_code = 1

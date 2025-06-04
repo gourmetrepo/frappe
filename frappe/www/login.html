@@ -42,16 +42,51 @@
 							<div class="card-body">
 								<form>
 									<div class="content-login">
-
-										<div class="gourmet-logo">
-											<div class="gourmet-pakistan">
-												<img src="/assets/gerp_theme/images/logo.png" alt="logo">
+										<div class="gourmet-logo-wrapper">
+											
+											<div class="gourmet-logo">
+												<img src="/assets/gerp_theme/images/logo.png" alt="Logo" width="100%">
 											</div>
-										</div>
-										<div class="gourmet-wheel">
-											<h1 class="text-center">{{ _("Gourmet Pakistan") }}</h1>
-											 <canvas id="pizzaCanvas" width="400" height="400"></canvas>
-										</div>
+											<div class="pizza-canvas">
+												<canvas id="pizzaCanvas" width="400" height="400"></canvas>
+											</div>
+											</div>
+
+											<style>
+												.gourmet-logo-wrapper {
+													display: flex;
+													align-items: center;
+													justify-content: space-between;
+													width: 500px;
+													padding: 10px;
+													box-sizing: border-box;
+													min-height: 50px;
+													max-height: 100px;
+												}
+
+												.pizza-canvas {
+													flex: 0 0 400;
+													display: flex;
+													justify-content: flex-end;
+													align-items: center;
+													z-index: -1;
+												}
+
+												.gourmet-logo {
+													flex: 0 0 auto;
+													display: flex;
+													justify-content: left;
+													align-items: left;
+												}
+
+												.gourmet-logo img {
+													max-height: 70%;
+													max-width: 70%;
+													height: 70%;
+													width: 70%;
+												}
+											</style>
+
 										<div class="page-card-head">
 											<span class="indicator blue" data-text="{{ _('Login') }}"></span>
 										</div>

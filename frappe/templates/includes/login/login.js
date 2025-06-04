@@ -344,14 +344,13 @@ var continue_email = function(setup, prompt){
       const centerRadius = 35; // Radius of center circle
 
       const iconURLs = [
-        '/Growth.svg',
-        '/Ownership.svg',
-        '/Unity.svg',
-        '/Respect.svg',
-        '/Mentorship.svg',
-        '/Excellence.svg',
-        '/Transparency.svg',
-        
+        '/assets/gerp_theme/images/Growth.png',
+        '/assets/gerp_theme/images/Ownership.png',
+        '/assets/gerp_theme/images/Unity.png',
+        '/assets/gerp_theme/images/Respect.png',
+        '/assets/gerp_theme/images/Mentorship.png',
+        '/assets/gerp_theme/images/Excellence.png',
+        '/assets/gerp_theme/images/Transparency.png',
       ];
 
       const slices = [
@@ -389,7 +388,7 @@ var continue_email = function(setup, prompt){
         img.onerror = () => {
           // Create a placeholder if image fails to load
           const placeholder = new Image();
-          placeholder.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="white" stroke="#f04f23" stroke-width="2"/></svg>');
+          placeholder.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="white" stroke="#94581F" stroke-width="2"/></svg>');
           loadedIcons[i] = placeholder;
           loadedCount++;
           if (loadedCount === sliceCount) drawAll();
@@ -550,7 +549,7 @@ var continue_email = function(setup, prompt){
           const start = i * sliceAngle;
           const end = start + sliceAngle;
           const mid = (start + end) / 2;
-          const color = `#f04f23`;
+          const color = `#f79233`;
           const { title, desc } = slices[i];
           const icon = loadedIcons[i];
 
@@ -567,7 +566,7 @@ var continue_email = function(setup, prompt){
           ctx.moveTo(sliceCx, sliceCy);
           ctx.arc(sliceCx, sliceCy, radius, start, end);
           ctx.closePath();
-          ctx.fillStyle = i === hoveredSlice ? '#f85f43' : color; // Slightly brighter when hovered
+          ctx.fillStyle = i === hoveredSlice ? '#f79233' : color; // Slightly brighter when hovered
           ctx.fill();
 
           // Add stroke to separate slices
@@ -617,12 +616,12 @@ var continue_email = function(setup, prompt){
         ctx.arc(cx, cy, centerRadius, 0, 2 * Math.PI);
         ctx.fillStyle = isHoveringCenter ? '#f0f0f0' : '#fff'; // Slightly different color when hovering
         ctx.fill();
-        ctx.strokeStyle = '#f04f23';
+        ctx.strokeStyle = '#f79233';
         ctx.lineWidth = 3;
         ctx.stroke();
 
         // Draw "GOURMET" text in center
-        ctx.fillStyle = '#f04f23';
+        ctx.fillStyle = '#f79233';
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

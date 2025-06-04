@@ -51,6 +51,7 @@ def run_background(prepared_report):
 		data = {}
 		data['result'] = result['result']
 		data['chart'] = result['chart']
+		data['html'] = result['html']
 		file_doc = create_json_gz_file( data ,"Prepared Report", instance.name)
 
 		instance.status = "Completed"

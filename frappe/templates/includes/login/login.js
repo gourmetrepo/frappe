@@ -328,3 +328,388 @@ var continue_email = function(setup, prompt){
 	$('#login_email').focus()
 	$('#login_password').focus()
   });
+
+
+
+    const canvas = document.getElementById('pizzaCanvas');
+      const ctx = canvas.getContext('2d');
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const radius = 150;
+      const titleRadius = 102;
+      const descRadius = 200;
+      const iconRadius = 130;
+      const sliceCount = 7;
+      const sliceAngle = (2 * Math.PI) / sliceCount;
+      const centerRadius = 35; // Radius of center circle
+
+      const iconURLs = [
+        '/Growth.svg',
+        '/Ownership.svg',
+        '/Unity.svg',
+        '/Respect.svg',
+        '/Mentorship.svg',
+        '/Excellence.svg',
+        '/Transparency.svg',
+        
+      ];
+
+      const slices = [
+        { title: 'Growth', desc: 'Committing to continuous improvement and progress, both for the organization and for the employees' },
+        { title: 'Ownership', desc: 'Taking responsibility for actions, decision and outcomes, fostering a sense of accountability' },
+        { title: 'Unity', desc: 'Promoting teamwork, collaboration and solidarity to achieve shared goals' },
+        { title: 'Respect', desc: 'Value diversity, fostering an inclusive environment, and treating all individuals with dignity' },
+        { title: 'Mentorship', desc: 'Encouraging personal and professional development through guidance and support for others.' },
+        { title: 'Excellence', desc: 'Striving for the highest standards in products, services and performance.' },
+        { title: 'Transparency', desc: 'Ensuring transparency in communication, decision making and operations, while safeguarding confidentiality' },
+        
+      ];
+
+      let loadedIcons = [];
+      let loadedCount = 0;
+      let hoveredSlice = -1;
+      let isAnimating = false;
+      
+      // Spinning animation variables
+      let isSpinning = false;
+      let spinRotation = 0;
+      let spinSpeed = 0;
+      let targetSpinSpeed = 0.007; // Rotation speed when spinning
+      let spinAcceleration = 0.002;
+      let isHoveringCenter = false;
+
+      iconURLs.forEach((url, i) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          loadedIcons[i] = img;
+          loadedCount++;
+          if (loadedCount === sliceCount) drawAll();
+        };
+        img.onerror = () => {
+          // Create a placeholder if image fails to load
+          const placeholder = new Image();
+          placeholder.src = 'data:image/svg+xml;base64,' + btoa('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="white" stroke="#f04f23" stroke-width="2"/></svg>');
+          loadedIcons[i] = placeholder;
+          loadedCount++;
+          if (loadedCount === sliceCount) drawAll();
+        };
+        img.src = url;
+      });
+
+      // Mouse event handling
+      canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('mouseleave', handleMouseLeave);
+
+      function handleMouseMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Check if hovering over center circle
+        const dx = x - cx;
+        const dy = y - cy;
+        const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+        const wasHoveringCenter = isHoveringCenter;
+        isHoveringCenter = distanceFromCenter <= centerRadius;
+
+        // Start or stop spinning based on center hover
+        if (isHoveringCenter && !wasHoveringCenter) {
+          startSpinning();
+        } else if (!isHoveringCenter && wasHoveringCenter) {
+          stopSpinning();
+        }
+
+        // Handle slice hovering (only when not hovering center and not spinning)
+        if (!isHoveringCenter && !isSpinning && spinSpeed === 0) {
+          const newHoveredSlice = getSliceIndex(x, y);
+          if (newHoveredSlice !== hoveredSlice) {
+            hoveredSlice = newHoveredSlice;
+            animateToHover();
+          }
+        } else {
+          // Clear slice hover when hovering center or spinning
+          if (hoveredSlice !== -1) {
+            hoveredSlice = -1;
+            animateToHover();
+          }
+        }
+      }
+
+      function handleMouseLeave() {
+        isHoveringCenter = false;
+        stopSpinning();
+        if (hoveredSlice !== -1) {
+          hoveredSlice = -1;
+          animateToHover();
+        }
+      }
+
+      function startSpinning() {
+        if (!isSpinning) {
+          isSpinning = true;
+          animateSpin();
+        }
+      }
+
+      function stopSpinning() {
+        isSpinning = false;
+        // Immediately stop rotation for better slice detection
+        spinSpeed = 0;
+      }
+
+      function animateSpin() {
+        if (isSpinning) {
+          // Accelerate to target speed
+          if (spinSpeed < targetSpinSpeed) {
+            spinSpeed = Math.min(spinSpeed + spinAcceleration, targetSpinSpeed);
+          }
+          
+          spinRotation += spinSpeed;
+          if (spinRotation >= 2 * Math.PI) {
+            spinRotation -= 2 * Math.PI;
+          }
+
+          drawAll();
+          requestAnimationFrame(animateSpin);
+        } else {
+          // Stop immediately when not spinning
+          drawAll();
+        }
+      }
+
+      function getSliceIndex(x, y) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Check if mouse is within the pizza circle but not in center
+        if (distance > radius || distance < centerRadius) return -1;
+
+        // Calculate angle (accounting for current rotation only if not spinning)
+        let angle = Math.atan2(dy, dx);
+        if (spinSpeed === 0) {
+          angle -= spinRotation;
+        }
+        
+        // Properly normalize angle to be between 0 and 2π
+        while (angle < 0) angle += 2 * Math.PI;
+        while (angle >= 2 * Math.PI) angle -= 2 * Math.PI;
+
+        // Determine which slice
+        const sliceIndex = Math.floor(angle / sliceAngle);
+        return (sliceIndex >= 0 && sliceIndex < sliceCount) ? sliceIndex : -1;
+      }
+
+      let currentOffsets = new Array(sliceCount).fill(0);
+      const targetOffset = 10; // How much to pop out
+      const animationSpeed = 0.15;
+
+      function animateToHover() {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        function animate() {
+          let stillAnimating = false;
+
+          for (let i = 0; i < sliceCount; i++) {
+            const target = i === hoveredSlice ? targetOffset : 0;
+            const diff = target - currentOffsets[i];
+
+            if (Math.abs(diff) > 0.1) {
+              currentOffsets[i] += diff * animationSpeed;
+              stillAnimating = true;
+            } else {
+              currentOffsets[i] = target;
+            }
+          }
+
+          drawAll();
+
+          if (stillAnimating) {
+            requestAnimationFrame(animate);
+          } else {
+            isAnimating = false;
+          }
+        }
+
+        animate();
+      }
+
+      function drawAll() {
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Save context for rotation
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(spinRotation);
+        ctx.translate(-cx, -cy);
+
+        for (let i = 0; i < sliceCount; i++) {
+          const start = i * sliceAngle;
+          const end = start + sliceAngle;
+          const mid = (start + end) / 2;
+          const color = `#f04f23`;
+          const { title, desc } = slices[i];
+          const icon = loadedIcons[i];
+
+          // Calculate offset for each slice
+          const offset = currentOffsets[i];
+          const offsetX = offset * Math.cos(mid);
+          const offsetY = offset * Math.sin(mid);
+
+          const sliceCx = cx + offsetX;
+          const sliceCy = cy + offsetY;
+
+          // Draw slice with offset
+          ctx.beginPath();
+          ctx.moveTo(sliceCx, sliceCy);
+          ctx.arc(sliceCx, sliceCy, radius, start, end);
+          ctx.closePath();
+          ctx.fillStyle = i === hoveredSlice ? '#f85f43' : color; // Slightly brighter when hovered
+          ctx.fill();
+
+          // Add stroke to separate slices
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 0.3;
+          ctx.stroke();
+
+          // White background for icon
+          ctx.beginPath();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 25;
+          ctx.arc(sliceCx, sliceCy, iconRadius, mid - sliceAngle * 0.5, mid + sliceAngle * 0.5);
+          ctx.stroke();
+
+          // Title
+          drawCurvedTextNatural(ctx, title, sliceCx, sliceCy, titleRadius, mid, sliceAngle * 1, '#fff', 11);
+        }
+
+        // Restore context after rotation for icons (so they stay straight)
+        ctx.restore();
+
+        // Draw icons without rotation (so they remain straight)
+        for (let i = 0; i < sliceCount; i++) {
+          const start = i * sliceAngle;
+          const end = start + sliceAngle;
+          const mid = (start + end) / 2 + spinRotation; // Add spin rotation to position
+          const icon = loadedIcons[i];
+
+          // Calculate offset for each slice
+          const offset = currentOffsets[i];
+          const offsetX = offset * Math.cos(mid);
+          const offsetY = offset * Math.sin(mid);
+
+          const sliceCx = cx + offsetX;
+          const sliceCy = cy + offsetY;
+
+          // Icon (drawn without rotation context, so it stays straight)
+          if (icon) {
+            const iconX = sliceCx + iconRadius * Math.cos(mid) - 9;
+            const iconY = sliceCy + iconRadius * Math.sin(mid) - 9;
+            ctx.drawImage(icon, iconX, iconY, 18, 18);
+          }
+        }
+
+        // Draw center circle with white background and "GOURMET" text (not rotated)
+        ctx.beginPath();
+        ctx.arc(cx, cy, centerRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = isHoveringCenter ? '#f0f0f0' : '#fff'; // Slightly different color when hovering
+        ctx.fill();
+        ctx.strokeStyle = '#f04f23';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Draw "GOURMET" text in center
+        ctx.fillStyle = '#f04f23';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GOURMET', cx, cy);
+      }
+
+      function drawCurvedTextNatural(ctx, text, cx, cy, r, midAngle, maxAngle, color = '#000', fontSize = 14) {
+        ctx.save();
+        ctx.font = `${fontSize}px sans-serif`;
+        ctx.fillStyle = color;
+        ctx.textAlign = 'center';
+
+        const anglePerPixel = 1.2 / r;
+        const textWidth = ctx.measureText(text).width;
+        const textAngle = Math.min(textWidth * anglePerPixel, maxAngle);
+
+        let currentAngle = midAngle - textAngle / 2;
+
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+          const charWidth = ctx.measureText(char).width;
+          const charAngle = charWidth * anglePerPixel;
+
+          const x = cx + r * Math.cos(currentAngle + charAngle / 2);
+          const y = cy + r * Math.sin(currentAngle + charAngle / 2);
+
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.rotate(currentAngle + charAngle / 2 + Math.PI / 2);
+          ctx.fillText(char, 0, 0);
+          ctx.restore();
+
+          currentAngle += charAngle;
+        }
+
+        ctx.restore();
+      }
+
+      function wrapCurvedLines(ctx, text, radius, maxAngle, fontSize) {
+        const words = text.split(' ');
+        const lines = [];
+        let line = '';
+
+        ctx.font = `${fontSize}px sans-serif`;
+        
+        // Improved calculation for curved text wrapping
+        const arcLength = radius * maxAngle;
+        const avgCharWidth = ctx.measureText('M').width; // Use average character width
+        const maxCharsPerLine = Math.floor(arcLength / avgCharWidth * 1.2); // More generous character limit
+        const maxLines = 7; // Allow up to 3 lines
+
+        for (let i = 0; i < words.length; i++) {
+          const testLine = line + (line ? ' ' : '') + words[i];
+          
+          // Check both character count and pixel width
+          if (testLine.length <= maxCharsPerLine && lines.length < maxLines) {
+            line = testLine;
+          } else {
+            if (line) {
+              lines.push(line);
+              line = words[i];
+            } else {
+              // If single word is too long, try to break it
+              if (words[i].length > maxCharsPerLine) {
+                const chunks = breakLongWord(words[i], maxCharsPerLine);
+                lines.push(chunks[0]);
+                if (chunks.length > 1 && lines.length < maxLines) {
+                  line = chunks.slice(1).join('');
+                }
+              } else {
+                line = words[i];
+              }
+            }
+          }
+        }
+        
+        if (line && lines.length < maxLines) {
+          lines.push(line);
+        }
+        
+        return lines.slice(0, maxLines); // Ensure we don't exceed max lines
+      }
+
+      function breakLongWord(word, maxLength) {
+        const chunks = [];
+        for (let i = 0; i < word.length; i += maxLength) {
+          chunks.push(word.slice(i, i + maxLength));
+        }
+        return chunks;
+      }

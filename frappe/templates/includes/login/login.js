@@ -549,7 +549,7 @@ var continue_email = function(setup, prompt){
           const start = i * sliceAngle;
           const end = start + sliceAngle;
           const mid = (start + end) / 2;
-          const color = `#f79233`;
+          const color = `#010B25`;
           const { title, desc } = slices[i];
           const icon = loadedIcons[i];
 
@@ -566,17 +566,17 @@ var continue_email = function(setup, prompt){
           ctx.moveTo(sliceCx, sliceCy);
           ctx.arc(sliceCx, sliceCy, radius, start, end);
           ctx.closePath();
-          ctx.fillStyle = i === hoveredSlice ? '#f79233' : color; // Slightly brighter when hovered
+          ctx.fillStyle = i === hoveredSlice ? '#010B25' : color; // Slightly brighter when hovered
           ctx.fill();
 
           // Add stroke to separate slices
-          ctx.strokeStyle = '#fff';
+          ctx.strokeStyle = '#FFCF01';
           ctx.lineWidth = 0.3;
           ctx.stroke();
 
           // White background for icon
           ctx.beginPath();
-          ctx.strokeStyle = '#fff';
+          ctx.strokeStyle = '#FFCF01';
           ctx.lineWidth = 25;
           ctx.arc(sliceCx, sliceCy, iconRadius, mid - sliceAngle * 0.5, mid + sliceAngle * 0.5);
           ctx.stroke();
@@ -616,12 +616,12 @@ var continue_email = function(setup, prompt){
         ctx.arc(cx, cy, centerRadius, 0, 2 * Math.PI);
         ctx.fillStyle = isHoveringCenter ? '#f0f0f0' : '#fff'; // Slightly different color when hovering
         ctx.fill();
-        ctx.strokeStyle = '#f79233';
+        ctx.strokeStyle = '#010B25';
         ctx.lineWidth = 3;
         ctx.stroke();
 
         // Draw "GOURMET" text in center
-        ctx.fillStyle = '#f79233';
+        ctx.fillStyle = '#010B25';
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';

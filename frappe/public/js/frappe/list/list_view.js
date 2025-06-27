@@ -647,16 +647,16 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	get_meta_html(doc) {
-		let html = '';
-		if (!this.settings.hide_name_column && doc[this.meta.title_field || ''] !== doc.name) {
-			html += `
-				<div class="level-item hidden-xs hidden-sm ellipsis">
-					<a class="text-muted ellipsis" href="${this.get_form_link(doc)}">
-						${doc.name}
-					</a>
-				</div>
-			`;
-		}
+		// let html = '';
+		// if (!this.settings.hide_name_column && doc[this.meta.title_field || ''] !== doc.name) {
+		// 	html += `
+		// 		<div class="level-item hidden-xs hidden-sm ellipsis">
+		// 			<a class="text-muted ellipsis" href="${this.get_form_link(doc)}">
+		// 				${doc.name}
+		// 			</a>
+		// 		</div>
+		// 	`;
+		// }
 
 		if (this.settings.button && this.settings.button.show(doc)) {
 			html += `

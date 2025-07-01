@@ -99,28 +99,70 @@ class LDAPSettings(Document):
 
 		user.remove_roles(*roles_to_remove)
 
-	def create_or_update_user(self, user_data, groups=None):
+	def create_or_update_user(self, user_data, groups=None): 
+		# Core Code not used..
+		# user = None
+		# if frappe.db.exists("User", user_data['email']):
+		# 	user = frappe.get_doc("User", user_data['email'])
+		# 	LDAPSettings.update_user_fields(user=user, user_data=user_data)
+		# else:
+		# 	doc = user_data
+		# 	doc.update({
+		# 		"doctype": "User",
+		# 		"send_welcome_email": 0,
+		# 		"language": "",
+		# 		"user_type": "System User",
+		# 		# "roles": [{
+		# 		# 	"role": self.default_role
+		# 		# }]
+		# 	})
+		# 	user = frappe.get_doc(doc)
+		# 	user.insert(ignore_permissions=True)
+		# # always add default role.
+		# user.add_roles(self.default_role)
+		# if self.ldap_group_field:
+		# 	self.sync_roles(user, groups)
+		# return user
+
+		# This code moved here for removing monkeypatch from nerp
 		user = None
-		if frappe.db.exists("User", user_data['email']):
-			user = frappe.get_doc("User", user_data['email'])
-			LDAPSettings.update_user_fields(user=user, user_data=user_data)
+		if frappe.db.exists("User", {"name":user_data['email'],"enabled":"1"}):
+			user = frappe.get_doc("User", {"name":user_data['email'],"enabled":"1"})
+
+			# frappe.throw("Your Account is Disabled.")
+
+			# Customization
+			# Do not update an existing user
+			# LDAPSettings.update_user_fields(user=user, user_data=user_data)
+			# Customization
+		elif frappe.db.exists("Employee", user_data['username']):
+			employee = frappe.get_doc("Employee", user_data['username'])
+			if frappe.db.exists("User", {"name":employee.user_id,"enabled":"1"}):
+				user = frappe.get_doc("User", {"name":employee.user_id,"enabled":"1"})
+			else :
+				frappe.throw("Your Account is Disabled.")
 		else:
-			doc = user_data
-			doc.update({
-				"doctype": "User",
-				"send_welcome_email": 0,
-				"language": "",
-				"user_type": "System User",
-				# "roles": [{
-				# 	"role": self.default_role
-				# }]
-			})
-			user = frappe.get_doc(doc)
-			user.insert(ignore_permissions=True)
+			frappe.throw("Your Account is Disabled.")
+			user = None
+			# Customization Do not create user if not exists
+			# doc = user_data
+			# doc.update({
+			#     "doctype": "User",
+			#     "send_welcome_email": 0,
+			#     "language": "",
+			#     "user_type": "System User",
+			#     # "roles": [{
+			#     # 	"role": self.default_role
+			#     # }]
+			# })
+			# user = frappe.get_doc(doc)
+			# user.insert(ignore_permissions=True)
+		
+		# Customization, not adding any roles
 		# always add default role.
-		user.add_roles(self.default_role)
-		if self.ldap_group_field:
-			self.sync_roles(user, groups)
+		# user.add_roles(self.default_role)
+		# if self.ldap_group_field:
+		#     self.sync_roles(user, groups)
 		return user
 
 	def get_ldap_attributes(self):
@@ -201,21 +243,40 @@ class LDAPSettings(Document):
 
 		return data
 
+# Core code not in use
+# @frappe.whitelist(allow_guest=True)
+# def login():
+# 	# LDAP LOGIN LOGIC
+# 	args = frappe.form_dict
+# 	ldap = frappe.get_doc("LDAP Settings")
 
+# 	user = ldap.authenticate(frappe.as_unicode(args.usr), frappe.as_unicode(args.pwd))
+
+# 	frappe.local.login_manager.user = user.name
+# 	if should_run_2fa(user.name):
+# 		authenticate_for_2factor(user.name)
+# 		if not confirm_otp_token(frappe.local.login_manager):
+# 			return False
+# 	frappe.local.login_manager.post_login()
+
+# 	# because of a GET request!
+# 	frappe.db.commit()
+
+# code moved here from nerp
 @frappe.whitelist(allow_guest=True)
 def login():
-	# LDAP LOGIN LOGIC
-	args = frappe.form_dict
-	ldap = frappe.get_doc("LDAP Settings")
+    # LDAP LOGIN LOGIC
+    args = frappe.form_dict
+    ldap = frappe.get_doc("LDAP Settings")
 
-	user = ldap.authenticate(frappe.as_unicode(args.usr), frappe.as_unicode(args.pwd))
+    user = ldap.authenticate(frappe.as_unicode(args.usr), frappe.as_unicode(args.pwd))
 
-	frappe.local.login_manager.user = user.name
-	if should_run_2fa(user.name):
-		authenticate_for_2factor(user.name)
-		if not confirm_otp_token(frappe.local.login_manager):
-			return False
-	frappe.local.login_manager.post_login()
+    frappe.local.login_manager.user = user.name
+    if should_run_2fa(user.name):
+        authenticate_for_2factor(user.name)
+        if not confirm_otp_token(frappe.local.login_manager):
+            return False
+    frappe.local.login_manager.post_login()
 
-	# because of a GET request!
-	frappe.db.commit()
+    # because of a GET request!
+    frappe.db.commit()

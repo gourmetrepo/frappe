@@ -159,6 +159,40 @@ class LoginManager:
 			self.company = company.get('company')
 			print(self)
 	def set_user_info(self, resume=False):
+		# Core code. not in use.
+		# # set sid again
+		# frappe.local.cookie_manager.init_cookies()
+
+		# self.full_name = " ".join(filter(None, [self.info.first_name,
+		# 	self.info.last_name]))
+
+		# if self.info.user_type=="Website User":
+		# 	frappe.local.cookie_manager.set_cookie("system_user", "no")
+		# 	if not resume:
+		# 		frappe.local.response["message"] = "No App"
+		# 		frappe.local.response["home_page"] = get_website_user_home_page(self.user)
+		# else:
+		# 	frappe.local.cookie_manager.set_cookie("system_user", "yes")
+		# 	if not resume:
+		# 		frappe.local.response['message'] = 'Logged In'
+		# 		frappe.local.response["home_page"] = "/desk"
+
+		# if not resume:
+		# 	frappe.response["full_name"] = self.full_name
+
+		# # redirect information
+		# redirect_to = frappe.cache().hget('redirect_after_login', self.user)
+		# if redirect_to:
+		# 	frappe.local.response["redirect_to"] = redirect_to
+		# 	frappe.cache().hdel('redirect_after_login', self.user)
+
+
+		# frappe.local.cookie_manager.set_cookie("full_name", self.full_name)
+		# frappe.local.cookie_manager.set_cookie("user_id", self.user)
+		# frappe.local.cookie_manager.set_cookie("company", self.company)
+		# frappe.local.cookie_manager.set_cookie("user_image", self.info.user_image or "")
+
+		# This code is moved from nerp to here while monkeypatch removal..
 		# set sid again
 		frappe.local.cookie_manager.init_cookies()
 
@@ -174,7 +208,12 @@ class LoginManager:
 			frappe.local.cookie_manager.set_cookie("system_user", "yes")
 			if not resume:
 				frappe.local.response['message'] = 'Logged In'
-				frappe.local.response["home_page"] = "/desk"
+				
+				roles = frappe.get_roles()
+				if len(roles) == 3 and "Employee" in roles:
+					frappe.local.response["home_page"] = "/desk#gourmet-self-service"
+				else:
+					frappe.local.response["home_page"] = "/desk"
 
 		if not resume:
 			frappe.response["full_name"] = self.full_name
@@ -188,7 +227,7 @@ class LoginManager:
 
 		frappe.local.cookie_manager.set_cookie("full_name", self.full_name)
 		frappe.local.cookie_manager.set_cookie("user_id", self.user)
-		frappe.local.cookie_manager.set_cookie("company", self.company)
+		frappe.local.cookie_manager.set_cookie("company", self.company or "")
 		frappe.local.cookie_manager.set_cookie("user_image", self.info.user_image or "")
 
 	def make_session(self, resume=False):

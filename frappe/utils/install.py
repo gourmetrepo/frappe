@@ -116,7 +116,7 @@ def complete_setup_wizard():
 	from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 	setup_complete({
 		"language"			:"English",
-		"email"				:"gerp@gicoh.com",
+		"email"				:"test@erpnext.com",
 		"full_name"			:"Test User",
 		"password"			:"test",
 		"country"			:"United States",

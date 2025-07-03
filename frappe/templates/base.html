@@ -5,7 +5,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="generator" content="Grappe">
+	<meta name="generator" content="frappe">
 
 	{% block meta_block %}
 	{% include "templates/includes/meta_block.html" %}
@@ -28,7 +28,7 @@
 	{% if theme.theme_url %}
 	<link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
 	{% else %}
-	<!-- <link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css"> -->
+	<link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css">
 
 	{%- for link in web_include_css %}
 	<link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">

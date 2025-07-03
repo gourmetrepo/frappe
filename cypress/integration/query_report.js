@@ -9,7 +9,7 @@ context('Form', () => {
 
 		cy.get('div[class="page-form flex"]', {timeout: 60000}).should('have.length', 1).then(()=>{
 			cy.get('#page-query-report input[data-fieldname="user"]').as('input');
-			cy.get('@input').focus().type('test@erpnext.com', { delay: 100 });
+			cy.get('@input').focus().type('gerp@gicoh.com', { delay: 100 });
 
 			cy.get('#page-query-report input[data-fieldname="doctype"]').as('input-test');
 			cy.get('@input-test').focus().type('Role', { delay: 100 }).blur();

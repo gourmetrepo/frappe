@@ -12,8 +12,11 @@ class NotificationLog(Document):
 	def after_insert(self):
 		frappe.publish_realtime('notification', after_commit=True, user=self.for_user)
 		set_notifications_as_unseen(self.for_user)
-		if is_email_notifications_enabled_for_type(self.for_user, self.type):
-			send_notification_email(self)
+
+		# Document type would be Notification Log only if notification is being generated for vehicle maintenance
+		if self.document_type != "Notification Log":
+			if is_email_notifications_enabled_for_type(self.for_user, self.type):
+				send_notification_email(self)
 
 
 def get_permission_query_conditions(for_user):

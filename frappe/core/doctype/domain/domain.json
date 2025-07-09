@@ -21,7 +21,7 @@
  "modified_by": "Administrator",
  "module": "Core",
  "name": "Domain",
- "owner": "makarand@erpnext.com",
+ "owner": "makarand@gicoh.com",
  "permissions": [
   {
    "create": 1,

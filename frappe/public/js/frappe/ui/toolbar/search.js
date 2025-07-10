@@ -309,7 +309,7 @@ frappe.search.SearchDialog = Class.extend({
 						data-name="${result.label}"
 						src="${result.image}"
 						alt="${result.label}"
-						onerror="this.src='/assets/frappe/images/fallback-thumbnail.jpg'">
+						onerror="this.src='/assets/grappe/images/fallback-thumbnail.jpg'">
 				</div>
 			</a>`);
 		} else if (result.image === null) {

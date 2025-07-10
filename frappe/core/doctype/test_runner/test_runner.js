@@ -25,8 +25,8 @@ frappe.ui.form.on('Test Runner', {
 	run_tests: function(frm, files) {
 		frappe.flags.in_test = true;
 		let require_list = [
-			"assets/frappe/js/lib/jquery/qunit.js",
-			"assets/frappe/js/lib/jquery/qunit.css"
+			"assets/grappe/js/lib/jquery/qunit.js",
+			"assets/grappe/js/lib/jquery/qunit.css"
 		].concat();
 
 		frappe.require(require_list, () => {

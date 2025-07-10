@@ -13,7 +13,7 @@
 var jscolor = {
 
 
-	dir : 'assets/frappe/js/lib/jscolor/', // location of jscolor directory (leave empty to autodetect)
+	dir : 'assets/grappe/js/lib/jscolor/', // location of jscolor directory (leave empty to autodetect)
 	bindClass : 'color', // class name
 	binding : true, // automatic binding via <input class="...">
 	preloading : true, // use image preloading?
@@ -37,7 +37,7 @@ var jscolor = {
 	getDir : function() {
 		if(!jscolor.dir) {
 			var detected = jscolor.detectDir();
-			jscolor.dir = detected!==false ? detected : 'assets/frappe/js/lib/';
+			jscolor.dir = detected!==false ? detected : 'assets/grappe/js/lib/';
 		}
 		return jscolor.dir;
 	},

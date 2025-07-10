@@ -400,7 +400,7 @@ def get_footer(email_account, footer=None):
 	return footer
 
 def replace_filename_with_cid(message):
-	""" Replaces <img embed="assets/frappe/images/filename.jpg" ...> with
+	""" Replaces <img embed="assets/grappe/images/filename.jpg" ...> with
 		<img src="cid:content_id" ...> and return the modified message and
 		a list of inline_images with {filename, filecontent, content_id}
 	"""

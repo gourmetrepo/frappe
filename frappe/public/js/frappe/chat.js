@@ -1031,7 +1031,7 @@ frappe.chat.sound.play  = function (name, volume = 0.1) {
 	$audio.attr('src', `${frappe.chat.sound.PATH}/chat-${name}.mp3`)
 	$audio[0].play()
 }
-frappe.chat.sound.PATH  = '/assets/frappe/sounds'
+frappe.chat.sound.PATH  = '/assets/grappe/sounds'
 
 // frappe.chat.emoji
 frappe.chat.emojis = [ ]

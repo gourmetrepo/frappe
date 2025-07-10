@@ -243,18 +243,18 @@ get_translated_dict = {
 }
 
 sounds = [
-	{"name": "email", "src": "/assets/frappe/sounds/email.mp3", "volume": 0.1},
-	{"name": "submit", "src": "/assets/frappe/sounds/submit.mp3", "volume": 0.1},
-	{"name": "cancel", "src": "/assets/frappe/sounds/cancel.mp3", "volume": 0.1},
-	{"name": "delete", "src": "/assets/frappe/sounds/delete.mp3", "volume": 0.05},
-	{"name": "click", "src": "/assets/frappe/sounds/click.mp3", "volume": 0.05},
-	{"name": "error", "src": "/assets/frappe/sounds/error.mp3", "volume": 0.1},
-	{"name": "alert", "src": "/assets/frappe/sounds/alert.mp3", "volume": 0.2},
-	# {"name": "chime", "src": "/assets/frappe/sounds/chime.mp3"},
+	{"name": "email", "src": "/assets/grappe/sounds/email.mp3", "volume": 0.1},
+	{"name": "submit", "src": "/assets/grappe/sounds/submit.mp3", "volume": 0.1},
+	{"name": "cancel", "src": "/assets/grappe/sounds/cancel.mp3", "volume": 0.1},
+	{"name": "delete", "src": "/assets/grappe/sounds/delete.mp3", "volume": 0.05},
+	{"name": "click", "src": "/assets/grappe/sounds/click.mp3", "volume": 0.05},
+	{"name": "error", "src": "/assets/grappe/sounds/error.mp3", "volume": 0.1},
+	{"name": "alert", "src": "/assets/grappe/sounds/alert.mp3", "volume": 0.2},
+	# {"name": "chime", "src": "/assets/grappe/sounds/chime.mp3"},
 
 	# frappe.chat sounds
-	{ "name": "chat-message", 	   "src": "/assets/frappe/sounds/chat-message.mp3",      "volume": 0.1 },
-	{ "name": "chat-notification", "src": "/assets/frappe/sounds/chat-notification.mp3", "volume": 0.1 }
+	{ "name": "chat-message", 	   "src": "/assets/grappe/sounds/chat-message.mp3",      "volume": 0.1 },
+	{ "name": "chat-notification", "src": "/assets/grappe/sounds/chat-notification.mp3", "volume": 0.1 }
 	# frappe.chat sounds
 ]
 

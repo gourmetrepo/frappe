@@ -7,7 +7,7 @@ frappe.user_info = function(uid) {
 	if(uid.toLowerCase()==="bot") {
 		return {
 			fullname: __("Bot"),
-			image: "/assets/frappe/images/ui/bot.png",
+			image: "/assets/grappe/images/ui/bot.png",
 			abbr: "B"
 		};
 	}

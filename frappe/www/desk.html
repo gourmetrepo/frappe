@@ -16,9 +16,9 @@
 	<meta name="mobile-web-app-capable" content="yes">
 	<title>Grappe Desk</title>
 	<link rel="shortcut icon"
-		href="{{ favicon or "/assets/frappe/images/favicon.png" }}" type="image/x-icon">
+		href="{{ favicon or "/assets/grappe/images/favicon.png" }}" type="image/x-icon">
 	<link rel="icon"
-		href="{{ favicon or "/assets/frappe/images/favicon.png" }}" type="image/x-icon">
+		href="{{ favicon or "/assets/grappe/images/favicon.png" }}" type="image/x-icon">
 	{% for include in include_css -%}
 	<link type="text/css" rel="stylesheet" href="{{ include }}?ver={{ build_version }}">
 	{%- endfor -%}
@@ -124,7 +124,7 @@
 </head>
 <body>
 	<div class="centered splash" style="width: 100px; height: 100px;">
-        <img src="{{ splash_image or "/assets/frappe/images/frappe-framework-logo.png" }}">
+        <img src="{{ splash_image or "/assets/grappe/images/frappe-framework-logo.png" }}">
     </div>
 	<div class="main-section">
 		<header></header>
@@ -132,7 +132,7 @@
 		<footer></footer>
 	</div>
 
-	<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/grappe/js/lib/jquery/jquery.min.js"></script>
 
 	<script type="text/javascript">
 	window._version_number = "{{ build_version }}";

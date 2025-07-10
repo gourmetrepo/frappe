@@ -24,9 +24,9 @@ class TestPdf(unittest.TestCase):
 				<a href="http://test.com">Test link 1</a>
 				<a href="/about">Test link 2</a>
 				<a href="login">Test link 3</a>
-				<img src="/assets/frappe/test.jpg">
+				<img src="/assets/grappe/test.jpg">
 			</div>
-			<div style="background-image: url('/assets/frappe/bg.jpg')">
+			<div style="background-image: url('/assets/grappe/bg.jpg')">
 				Please mail us at <a href="mailto:test@example.com">email</a>
 			</div>"""
 

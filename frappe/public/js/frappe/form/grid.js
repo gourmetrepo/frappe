@@ -62,7 +62,7 @@ export default class Grid {
 					<div class="rows"></div>
 					<div class="grid-empty text-center">
 						<img
-							src="/assets/frappe/images/ui-states/grid-empty-state.svg"
+							src="/assets/grappe/images/ui-states/grid-empty-state.svg"
 							alt="Grid Empty State"
 							class="grid-empty-illustration"
 						>

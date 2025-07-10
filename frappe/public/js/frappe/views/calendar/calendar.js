@@ -89,9 +89,9 @@ frappe.views.CalendarView = class CalendarView extends frappe.views.ListView {
 
 	get required_libs() {
 		return [
-			'assets/frappe/js/lib/fullcalendar/fullcalendar.min.css',
-			'assets/frappe/js/lib/fullcalendar/fullcalendar.min.js',
-			'assets/frappe/js/lib/fullcalendar/locale-all.js'
+			'assets/grappe/js/lib/fullcalendar/fullcalendar.min.css',
+			'assets/grappe/js/lib/fullcalendar/fullcalendar.min.js',
+			'assets/grappe/js/lib/fullcalendar/locale-all.js'
 		];
 	}
 };

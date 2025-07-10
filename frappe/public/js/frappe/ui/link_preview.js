@@ -175,7 +175,7 @@ frappe.ui.LinkPreview = class {
 			let image_url = encodeURI(preview_data.preview_image);
 			image_html = `
 				<div class="preview-header">
-					<img src="${image_url}" onerror="this.src='/assets/frappe/images/fallback-thumbnail.jpg'" class="preview-image"></img>
+					<img src="${image_url}" onerror="this.src='/assets/grappe/images/fallback-thumbnail.jpg'" class="preview-image"></img>
 				</div>
 			`;
 		}

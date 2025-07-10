@@ -360,7 +360,7 @@ def make_layout(doc, meta, format_data=None):
 			doc.set(df.fieldname, True) # show this field
 
 		if df.fieldtype=='Signature' and not doc.get(df.fieldname):
-			placeholder_image = '/assets/frappe/images/signature-placeholder.png'
+			placeholder_image = '/assets/grappe/images/signature-placeholder.png'
 			doc.set(df.fieldname, placeholder_image)
 
 		if is_visible(df, doc) and has_value(df, doc):

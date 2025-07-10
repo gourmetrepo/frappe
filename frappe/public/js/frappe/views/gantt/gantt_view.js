@@ -216,8 +216,8 @@ frappe.views.GanttView = class GanttView extends frappe.views.ListView {
 
 	get required_libs() {
 		return [
-			"assets/frappe/node_modules/frappe-gantt/dist/frappe-gantt.css",
-			"assets/frappe/node_modules/frappe-gantt/dist/frappe-gantt.min.js"
+			"assets/grappe/node_modules/frappe-gantt/dist/frappe-gantt.css",
+			"assets/grappe/node_modules/frappe-gantt/dist/frappe-gantt.min.js"
 		];
 	}
 };

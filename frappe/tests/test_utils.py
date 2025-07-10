@@ -69,9 +69,9 @@ class TestDataManipulation(unittest.TestCase):
 				<a href="http://test.com">Test link 1</a>
 				<a href="/about">Test link 2</a>
 				<a href="login">Test link 3</a>
-				<img src="/assets/frappe/test.jpg">
+				<img src="/assets/grappe/test.jpg">
 			</div>
-			<div style="background-image: url('/assets/frappe/bg.jpg')">
+			<div style="background-image: url('/assets/grappe/bg.jpg')">
 				Please mail us at <a href="mailto:test@example.com">email</a>
 			</div>
 		'''
@@ -82,8 +82,8 @@ class TestDataManipulation(unittest.TestCase):
 		self.assertTrue('<a href="http://test.com">Test link 1</a>' in html)
 		self.assertTrue('<a href="{0}/about">Test link 2</a>'.format(url) in html)
 		self.assertTrue('<a href="{0}/login">Test link 3</a>'.format(url) in html)
-		self.assertTrue('<img src="{0}/assets/frappe/test.jpg">'.format(url) in html)
-		self.assertTrue('style="background-image: url(\'{0}/assets/frappe/bg.jpg\') !important"'.format(url) in html)
+		self.assertTrue('<img src="{0}/assets/grappe/test.jpg">'.format(url) in html)
+		self.assertTrue('style="background-image: url(\'{0}/assets/grappe/bg.jpg\') !important"'.format(url) in html)
 		self.assertTrue('<a href="mailto:test@example.com">email</a>' in html)
 
 class TestMathUtils(unittest.TestCase):

@@ -600,8 +600,8 @@ frappe.ui.form.qz_init = function () {
 			resolve();
 		} else {
 			let qz_required_assets = [
-				"/assets/frappe/node_modules/js-sha256/build/sha256.min.js",
-				"/assets/frappe/node_modules/qz-tray/qz-tray.js"
+				"/assets/grappe/node_modules/js-sha256/build/sha256.min.js",
+				"/assets/grappe/node_modules/qz-tray/qz-tray.js"
 			];
 			frappe.require(qz_required_assets,() => {
 				qz.api.setPromiseType(function promise(resolver) {

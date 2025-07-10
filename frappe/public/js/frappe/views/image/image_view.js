@@ -337,7 +337,7 @@ frappe.views.GalleryView = Class.extend({
 	},
 	load_lib: function () {
 		return new Promise(resolve => {
-			var asset_dir = 'assets/frappe/js/lib/photoswipe/';
+			var asset_dir = 'assets/grappe/js/lib/photoswipe/';
 			frappe.require([
 				asset_dir + 'photoswipe.css',
 				asset_dir + 'default-skin.css',

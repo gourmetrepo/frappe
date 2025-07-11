@@ -30,8 +30,7 @@
  "fields": [
   {
    "fieldname": "file_name",
-   "fieldtype": "Data",
-   "in_global_search": 1,
+   "fieldtype": "Text",
    "label": "File Name",
    "oldfieldname": "file_name",
    "oldfieldtype": "Data",
@@ -172,7 +171,7 @@
  ],
  "icon": "fa fa-file",
  "idx": 1,
- "modified": "2019-08-30 19:46:20.796453",
+ "modified": "2025-05-16 11:07:28.978098",
  "modified_by": "Administrator",
  "module": "Core",
  "name": "File",

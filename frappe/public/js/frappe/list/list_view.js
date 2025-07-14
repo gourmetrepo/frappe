@@ -305,7 +305,25 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		} else if (window.innerWidth > 1440) {
 			column_count = 8;
 		}
-
+		var arr_setting =frappe.utils.get_config_by_name("DOCTYPE_LIST_ARRANGMENT",{})
+		var doctype_name=this.doctype
+		var arr_final = arr_setting[doctype_name]
+		// console.log(arr_final)
+		if (arr_final != undefined ){
+			// arr_final.forEach(function(name,index){
+			// 	i = index + 2
+			// 	this.columns[1] = {"df":{'label':name,"type":"Field"}}
+			// })
+			var unchangedPart = this.columns.slice(0, 2);
+			var sortedPart=this.columns.slice(2).sort(function(a, b) {
+				var aIndex = arr_final.indexOf(a.df.fieldname);
+				var bIndex = arr_final.indexOf(b.df.fieldname);
+				return aIndex - bIndex;
+			  });
+			
+			var arrangedArr = unchangedPart.concat(sortedPart);
+			this.columns=arrangedArr	  
+		}
 		this.columns = this.columns.slice(0, column_count);
 	}
 

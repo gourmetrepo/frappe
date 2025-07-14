@@ -174,7 +174,7 @@ def get_list_context(context, doctype, web_form_name=None):
 
 	return list_context
 
-def get_list(doctype, txt, filters, limit_start, limit_page_length=20, ignore_permissions=False,
+def get_list(doctype, txt, filters, limit_start, limit_page_length=50, ignore_permissions=False,
 	fields=None, order_by=None):
 	meta = frappe.get_meta(doctype)
 	if not filters:

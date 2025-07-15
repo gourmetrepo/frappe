@@ -342,7 +342,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	freeze() {
 		if (this.list_view_settings && !this.list_view_settings.disable_count) {
 			this.$result.find('.list-count').html(`<span>${__('Refreshing')}...</span>`);
-			//this.$result.find('.list-count').html(``);
 		}
 	}
 
@@ -355,6 +354,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	}
 
 	before_refresh() {
+		console.log("before_refresh")
 		if (frappe.route_options) {
 			this.filters = this.parse_filters_from_route_options();
 			frappe.route_options = null;
@@ -421,7 +421,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		this.list_sidebar.reload_stats();
 	}
 
-	render() {	
+	render() {
 		this.render_list();
 		this.on_row_checked();
 		this.render_count();
@@ -442,7 +442,14 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 		}
 	}
 
-	render_count() {
+	// render_count() {
+		// if (!this.list_view_settings.disable_count) {
+			// this.get_count_str().then(str => {
+				// this.$result.find('.list-count').html(`<span>${str}</span>`);
+			// });
+		// }
+	// }
+		render_count() {
 		if ( (frappe.session.user_email=='muhammadyasir@gourmetpakistan.com' || frappe.session.user_email=='muhammad.rauf@gourmetpakistan.com' || frappe.session.user_email=='anwar.haq@gourmetpakistan.com' || frappe.session.user_email=='khizer.shujra@gourmetpakistan.com' || frappe.session.user_email=='rizwan.ali@gourmetpakistan.com'  || frappe.session.user_email=='zubair@gourmetpakistan.com' || frappe.session.user_email=='zulqarnain@gourmetpakistan.com' || frappe.session.user_email=='shaharyar@gourmetpakistan.com')) {
 			if(this.doctype!='Stock Ledger Entry' && this.doctype!='GL Entry' && this.doctype!='Batch'){
 			this.get_count_str().then(str => {
@@ -548,9 +555,9 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 					<div class="level-left ellipsis">
 						${left}
 					</div>
-					<span>
+					<div class="level-right text-muted ellipsis">
 						${right}
-					</span>
+					</div>
 				</div>
 			</div>
 		`;
@@ -559,7 +566,7 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 	get_column_html(col, doc) {
 		if (col.type === 'Status') {
 			return `
-				<div class="list-row-col hidden-xs ellipsis" style ="flex:1 !important;">
+				<div class="list-row-col hidden-xs ellipsis">
 					${this.get_indicator_html(doc)}
 				</div>
 			`;
@@ -1456,10 +1463,12 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 	parse_filters_from_route_options() {
 		const filters = [];
+		console.log("parse_filters_from_route_options")
 		for (let field in frappe.route_options) {
 
 			let doctype = null;
 			let value = frappe.route_options[field];
+			console.log(value)
 			let value_array;
 			if ($.isArray(value) && value[0].startsWith('[') && value[0].endsWith(']')) {
 					value_array = [];
@@ -1472,12 +1481,14 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 				.replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
 				.replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
 				value = JSON.parse(value);
-				}
+				console.log('Valid JSON string');}
 				else {
+				console.log("not valid")
 				value = eval(value);
 				const fil_str = value[1].join(',');
 				
 				value[1]=fil_str;
+				console.log(value)
 				}
 				}
 

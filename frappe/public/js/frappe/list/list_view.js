@@ -705,9 +705,8 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 			</span>`;
 
 		html += `
-			<div class="level-item hidden-xs list-row-activity">
+			<div class="level-item hidden-xs list-row-activity" style ="min-width: 65px !important;">
 				${modified}
-				${assigned_to}
 				${comment_count}
 			</div>
 			<div class="level-item visible-xs text-right">

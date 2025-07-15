@@ -765,16 +765,6 @@ frappe.views.ListView = class ListView extends frappe.views.BaseList {
 
 		let subject_html = `
 			<input class="level-item list-row-checkbox hidden-xs" type="checkbox" data-name="${escape(doc.name)}">
-			<span class="level-item" style="margin-bottom: 1px;">
-				<i class="octicon octicon-heart like-action ${heart_class}"
-					data-name="${doc.name}" data-doctype="${this.doctype}"
-					data-liked-by="${encodeURI(doc._liked_by) || '[]'}"
-				>
-				</i>
-				<span class="likes-count">
-					${ liked_by.length > 99 ? __("99") + '+' : __(liked_by.length || '')}
-				</span>
-			</span>
 			<span class="level-item ${seen} ellipsis" title="${escaped_subject}">
 				<a class="ellipsis" href="${this.get_form_link(doc)}" title="${escaped_subject}" data-doctype="${this.doctype}" data-name="${doc.name}">
 				${subject}

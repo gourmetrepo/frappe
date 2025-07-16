@@ -805,7 +805,7 @@
  "module": "Data Migration", 
  "name": "Data Migration Run", 
  "name_case": "", 
- "owner": "faris@gicoh.com", 
+ "owner": "faris@erpnext.com", 
  "permissions": [
   {
    "amend": 0, 

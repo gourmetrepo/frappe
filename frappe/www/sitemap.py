@@ -17,7 +17,7 @@ def get_context(context):
 	"""generate the sitemap XML"""
 
 	# the site might be accessible from multiple host_names
-	# for e.g gadgets.gerp@gicoh.com and gadgetsinternational.com
+	# for e.g gadgets.erpnext.com and gadgetsinternational.com
 	# so it should be picked from the request
 	host = frappe.utils.get_host_name_from_request()
 

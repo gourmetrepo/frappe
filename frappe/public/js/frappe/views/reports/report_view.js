@@ -840,10 +840,11 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			out[cdt] = child_table_fields;
 
 			out[cdt].push({
-				label: __('ID'),
+				label: __('IDC'),
 				fieldname: 'name',
 				fieldtype: 'Data',
-				parent: cdt
+				parent: cdt,
+				reqd: 1
 			});
 			// add index column for child tables
 			out[cdt].push({
@@ -867,7 +868,7 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 			columns: 2,
 			options: columns[this.doctype]
 				.filter(df => {
-					return !df.hidden && df.fieldname !== 'name';
+					return !df.hidden;
 				})
 				.map(df => ({
 					label: __(df.label),

@@ -839,6 +839,12 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 
 			out[cdt] = child_table_fields;
 
+			out[cdt].push({
+				label: __('ID'),
+				fieldname: 'name',
+				fieldtype: 'Data',
+				parent: cdt
+			});
 			// add index column for child tables
 			out[cdt].push({
 				label: __('Index'),

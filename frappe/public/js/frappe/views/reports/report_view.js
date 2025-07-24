@@ -960,6 +960,15 @@ frappe.views.ReportView = class ReportView extends frappe.views.ListView {
 				parent: doctype,
 			};
 		}
+		// child table name column
+		if (fieldname === 'name' && doctype !== this.doctype) {
+			docfield = {
+				label: "ID " + this.doctype,
+				fieldtype: "Data",
+				parent: doctype,
+			};
+		}
+		
 
 		if (!docfield) {
 			docfield = frappe.model.get_std_field(fieldname, true);

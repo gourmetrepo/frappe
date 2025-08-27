@@ -46,6 +46,7 @@ queue_timeout = {
 	'hr_tertiary':500,
 	'hr_sync':500,
 	'bin':300,
+	'hbl_integration': 1500,
 	'aop_primary':300
 }
 
